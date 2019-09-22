@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "cruft"
+version = "0.0.1"
+description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
+authors = ["Timothy Crosley <timothy.crosley@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+vulture = "^1.0"
+bandit = "^1.6"
+pytest = "^5.1"
+safety = "^1.8"
+isort = "^4.3"
+flake8-bugbear = "^19.8"
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
+mypy = "^0.720.0"
+ipython = "^7.7"
+pytest-cov = "^2.7"
+pytest-mock = "^1.10"
+pep8-naming = "^0.8.2"
+portray = "^1.3.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
