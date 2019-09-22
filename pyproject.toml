@@ -8,6 +8,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6"
+cookiecutter = "^1.6"
+gitpython = "^3.0"
+hug = "^2.6"
 
 [tool.poetry.dev-dependencies]
 vulture = "^1.0"
@@ -24,6 +27,9 @@ pytest-mock = "^1.10"
 pep8-naming = "^0.8.2"
 portray = "^1.3.0"
 
+[tool.poetry.scripts]
+cruft = "cruft.cli:__hug__.cli"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
