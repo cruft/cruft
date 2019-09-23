@@ -1,5 +1,6 @@
 import json
 import os
+from functools import partial
 from pathlib import Path
 from shutil import move
 from subprocess import run
@@ -12,6 +13,8 @@ from cookiecutter.prompt import prompt_for_config
 from git import Repo
 
 from cruft.exceptions import NoCruftFound, UnableToFindCookiecutterTemplate
+
+json_dump = partial(json.dump, ensure_ascii=False, indent=4, separators=(",", ": "))
 
 
 def create(
@@ -71,10 +74,9 @@ def create(
         context["cookiecutter"]["_template"] = template_git_url
 
         with open(os.path.join(main_cookiecutter_directory, ".cruft.json"), "w") as cruft_file:
-            json.dump(
+            json_dump(
                 {"template": template_git_url, "commit": last_commit, "context": context},
                 cruft_file,
-                ensure_ascii=False,
             )
 
         result = generate_files(
@@ -193,7 +195,7 @@ def update(expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply
                 cruft_state["commit"] = last_commit
                 cruft_state["context"] = new_context
                 with open(cruft_file, "w") as cruft_output:
-                    json.dump(cruft_state, cruft_output)
+                    json_dump(cruft_state, cruft_output)
             finally:
                 os.chdir(current_directory)
 
