@@ -31,6 +31,13 @@ hypothesis-auto = "^1.1"
 
 [tool.poetry.scripts]
 cruft = "cruft.cli:__hug__.cli"
+
+[tool.portray.mkdocs.theme]
+favicon = "art/logo.png"
+logo = "art/logo.png"
+name = "material"
+palette = {primary = "orange", accent = "cyan"}
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
