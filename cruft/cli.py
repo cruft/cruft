@@ -26,6 +26,8 @@ def _check_command_output(up_to_date: bool) -> None:
 def _update_output(updated: bool) -> None:
     if not updated:
         print("Nothing to do, project's cruft is already up to date!")
+    else:
+        print("Good work! Project's cruft has been updated and is as clean as possible!")
 
 
 cli = hug.cli(api=hug.API(__name__, doc=logo.ascii_art))

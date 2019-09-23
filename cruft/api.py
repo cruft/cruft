@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from functools import partial
 from pathlib import Path
 from shutil import move
@@ -106,7 +107,9 @@ def check(expanded_dir: str = ".") -> bool:
     return False
 
 
-def update(expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply_ask: bool = False):
+def update(
+    expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply_ask: bool = False
+) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = os.path.join(expanded_dir, ".cruft.json")
     if not os.path.isfile(cruft_file):
@@ -165,15 +168,10 @@ def update(expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply
             new_main_directory = os.path.join(new_output_dir, main_directory)
             old_main_directory = os.path.join(old_output_dir, main_directory)
 
-            diff_old_path = os.path.join(compare_directory, "a")
-            diff_new_path = os.path.join(compare_directory, "b")
-            move(old_main_directory, diff_old_path)
-            move(new_main_directory, diff_new_path)
-
             diff = run(
-                ["git", "diff", diff_old_path, diff_new_path], capture_output=True
+                ["git", "diff", old_main_directory, new_main_directory], capture_output=True
             ).stdout.decode("utf8")
-            diff = diff.replace(diff_old_path, "").replace(diff_new_path, "")
+            diff = diff.replace(old_main_directory, "").replace(new_main_directory, "")
 
             print("The following diff would be applied:\n")
             print(diff)
@@ -185,7 +183,7 @@ def update(expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply
                     update = input("Apply diff and update [y/n]? ")
 
                 if update.lower() == "n":
-                    return None
+                    sys.exit("User cancelled Cookiecutter template update.")
 
             current_directory = os.getcwd()
             try:
