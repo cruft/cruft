@@ -4,7 +4,7 @@ import sys
 from functools import partial
 from pathlib import Path
 from shutil import move
-from subprocess import run
+from subprocess import run  # nosec
 from tempfile import TemporaryDirectory
 from typing import Optional
 
@@ -44,18 +44,6 @@ def create(
                 main_cookiecutter_directory = file_path
                 break
 
-        main_cookiecutter_directory: str = ""
-        for file_name in os.listdir(cookiecutter_template_dir):
-            file_path = os.path.join(cookiecutter_template_dir, file_name)
-            if (
-                os.path.isdir(file_path)
-                and "{{" in file_name
-                and "}}" in file_name
-                and "cookiecutter." in file_name
-            ):
-                main_cookiecutter_directory = file_path
-                break
-
         if not main_cookiecutter_directory:
             raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
 
@@ -80,7 +68,7 @@ def create(
                 cruft_file,
             )
 
-        result = generate_files(
+        generate_files(
             repo_dir=cookiecutter_template_dir,
             context=context,
             overwrite_if_exists=overwrite_if_exists,
@@ -107,6 +95,25 @@ def check(expanded_dir: str = ".") -> bool:
     return False
 
 
+def _generate_output(
+    context_file: str,
+    cruft_state: dict,
+    cookiecutter_input: bool,
+    template_dir: str,
+    output_dir: str,
+) -> dict:
+    context = generate_context(
+        context_file=context_file, extra_context=cruft_state["context"]["cookiecutter"]
+    )
+    context["cookiecutter"] = prompt_for_config(context, not cookiecutter_input)
+    context["cookiecutter"]["_template"] = cruft_state["template"]
+
+    generate_files(
+        repo_dir=template_dir, context=context, overwrite_if_exists=True, output_dir=output_dir
+    )
+    return context
+
+
 def update(
     expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply_ask: bool = False
 ) -> bool:
@@ -129,37 +136,25 @@ def update(
 
             new_output_dir = os.path.join(compare_directory, "new_output")
 
-            context = generate_context(
-                context_file=context_file, extra_context=cruft_state["context"]["cookiecutter"]
-            )
-            context["cookiecutter"] = prompt_for_config(context, not cookiecutter_input)
-            context["cookiecutter"]["_template"] = cruft_state["template"]
-
-            result = generate_files(
-                repo_dir=template_dir,
-                context=context,
-                overwrite_if_exists=True,
+            new_context = _generate_output(
+                context_file=context_file,
+                cruft_state=cruft_state,
+                cookiecutter_input=cookiecutter_input,
+                template_dir=template_dir,
                 output_dir=new_output_dir,
             )
-            new_context = context
 
             old_output_dir = os.path.join(compare_directory, "old_output")
             repo.head.reset(commit=cruft_state["commit"], working_tree=True)
-
-            context = generate_context(
-                context_file=context_file, extra_context=cruft_state["context"]["cookiecutter"]
-            )
-            context["cookiecutter"] = prompt_for_config(context, not cookiecutter_input)
-            context["cookiecutter"]["_template"] = cruft_state["template"]
-
-            result = generate_files(
-                repo_dir=template_dir,
-                context=context,
-                overwrite_if_exists=True,
+            _generate_output(
+                context_file=context_file,
+                cruft_state=cruft_state,
+                cookiecutter_input=cookiecutter_input,
+                template_dir=template_dir,
                 output_dir=old_output_dir,
             )
 
-            main_directory = ""
+            main_directory: str = ""
             for file_name in os.listdir(old_output_dir):
                 file_path = os.path.join(old_output_dir, file_name)
                 if os.path.isdir(file_path):
@@ -180,7 +175,7 @@ def update(
             if not skip_apply_ask:
                 update = ""
                 while update.lower() not in ("y", "n"):
-                    update = input("Apply diff and update [y/n]? ")
+                    update = input("Apply diff and update [y/n]? ")  # nosec
 
                 if update.lower() == "n":
                     sys.exit("User cancelled Cookiecutter template update.")
