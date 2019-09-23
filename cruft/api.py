@@ -26,7 +26,7 @@ def create(
     extra_context: Optional[dict] = None,
     no_input: bool = False,
     overwrite_if_exists: bool = False,
-):
+) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     with TemporaryDirectory() as cookiecutter_template_dir:
         repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
@@ -68,7 +68,7 @@ def create(
                 cruft_file,
             )
 
-        generate_files(
+        return generate_files(
             repo_dir=cookiecutter_template_dir,
             context=context,
             overwrite_if_exists=overwrite_if_exists,
