@@ -1,4 +1,4 @@
-cruft
+[![cruft - Fight Back Against the Boilerplate Monster!](https://raw.github.com/timothycrosley/cruft/master/art/logo_large.png)](https://timothycrosley.github.io/cruft/)
 _________________
 
 [![PyPI version](https://badge.fury.io/py/cruft.svg)](http://badge.fury.io/py/cruft)
