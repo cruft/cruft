@@ -89,7 +89,7 @@ def create(
 
 
 def check(expanded_dir: str = ".") -> bool:
-    """Checks to see if their have been any updates to the Cookiecutter template used
+    """Checks to see if there have been any updates to the Cookiecutter template used
     to generate this project.
     """
     cruft_file = os.path.join(expanded_dir, ".cruft.json")
