@@ -11,7 +11,7 @@ __________________________________________________/\\\\\_______________
        __\///\\\\\\\\_\/\\\_________\//\\\\\\\\\_____\/\\\_________\//\\\\\___
         ____\////////__\///___________\/////////______\///___________\/////____
 
-                If you need the boilerplate, then left cruft manage it.
+               If you need the boilerplate, at least let cruft manage it.
 
 Version: {__version__}
 Copyright Timothy Edmund Crosley 2019 MIT License

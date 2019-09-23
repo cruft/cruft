@@ -8,7 +8,7 @@ from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.prompt import prompt_for_config
 from git import Repo
 
-from cruft.exceptions import UnableToFindCookiecutterTemplate
+from cruft.exceptions import NoCruftFound, UnableToFindCookiecutterTemplate
 
 
 def create(
@@ -57,7 +57,7 @@ def create(
 
         with open(os.path.join(main_cookiecutter_directory, ".cruft.json"), "w") as cruft_file:
             json.dump(
-                {"template": "template_git_url", "commit": last_commit, "context": context},
+                {"template": template_git_url, "commit": last_commit, "context": context},
                 cruft_file,
                 ensure_ascii=False,
             )
@@ -68,3 +68,37 @@ def create(
             overwrite_if_exists=overwrite_if_exists,
             output_dir=output_dir,
         )
+
+
+def check(expanded_dir: str = ".") -> bool:
+    """Checks to see if their have been any updates to the Cookiecutter template used
+    to generate this project.
+    """
+    cruft_file = os.path.join(expanded_dir, ".cruft.json")
+    if not os.path.isfile(cruft_file):
+        raise NoCruftFound(os.path.abspath(expanded_dir))
+
+    with open(cruft_file) as cruft_open_file:
+        cruft_state = json.load(cruft_open_file)
+        with TemporaryDirectory() as cookiecutter_template_dir:
+            repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
+            last_commit = repo.head.object.hexsha
+            if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
+                return True
+
+    return False
+
+
+def update(expanded_dir: str = "."):
+    """Update specified project's cruft to the latest and greatest release."""
+    cruft_file = os.path.join(expanded_dir, ".cruft.json")
+    if not os.path.isfile(cruft_file):
+        raise NoCruftFound(os.path.abspath(expanded_dir))
+
+    with open(cruft_file) as cruft_open_file:
+        cruft_state = json.load(cruft_open_file)
+        with TemporaryDirectory() as cookiecutter_template_dir:
+            repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
+            last_commit = repo.head.object.hexsha
+            if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
+                return False
