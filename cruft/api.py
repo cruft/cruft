@@ -11,6 +11,7 @@ from typing import Optional
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.prompt import prompt_for_config
+from examples import example
 from git import Repo
 
 from cruft.exceptions import NoCruftFound, UnableToFindCookiecutterTemplate
@@ -18,6 +19,7 @@ from cruft.exceptions import NoCruftFound, UnableToFindCookiecutterTemplate
 json_dump = partial(json.dump, ensure_ascii=False, indent=4, separators=(",", ": "))
 
 
+@example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True)
 def create(
     template_git_url: str,
     output_dir: str = ".",
