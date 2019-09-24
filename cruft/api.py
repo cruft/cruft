@@ -4,7 +4,7 @@ import sys
 from functools import partial
 from pathlib import Path
 from shutil import move
-from subprocess import run  # nosec
+from subprocess import PIPE, run  # nosec
 from tempfile import TemporaryDirectory
 from typing import Optional
 
@@ -180,7 +180,7 @@ def update(
             old_main_directory = os.path.join(old_output_dir, main_directory)
 
             diff = run(
-                ["git", "diff", old_main_directory, new_main_directory], capture_output=True
+                ["git", "diff", old_main_directory, new_main_directory], stdout=PIPE, stderr=PIPE
             ).stdout.decode("utf8")
             diff = diff.replace(old_main_directory, "").replace(new_main_directory, "")
 
