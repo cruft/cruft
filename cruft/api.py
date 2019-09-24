@@ -53,7 +53,7 @@ def create(
                 main_cookiecutter_directory = file_path
                 break
 
-        if not main_cookiecutter_directory:
+        if not main_cookiecutter_directory:  # pragma: no cover
             raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
 
         context_file = os.path.join(cookiecutter_template_dir, "cookiecutter.json")
@@ -142,7 +142,7 @@ def update(
             try:
                 repo = Repo.clone_from(cruft_state["template"], template_dir)
                 last_commit = repo.head.object.hexsha
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 raise InvalidCookiecutterRepository(e)
 
             if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
@@ -188,7 +188,7 @@ def update(
             print(diff)
             print("")
 
-            if not skip_apply_ask:
+            if not skip_apply_ask:  # pragma: no cover
                 update = ""
                 while update.lower() not in ("y", "n"):
                     update = input("Apply diff and update [y/n]? ")  # nosec

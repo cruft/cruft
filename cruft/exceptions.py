@@ -8,7 +8,7 @@ class CruftError(Exception):
 class UnableToFindCookiecutterTemplate(CruftError):
     """Raised when Cruft is unable to find a cookiecutter template"""
 
-    def __init__(self, directory):
+    def __init__(self, directory: str):
         super().__init__(self, f"Was unable to locate a Cookiecutter template in `{directory}` !")
         self.directory = directory
 
@@ -16,7 +16,7 @@ class UnableToFindCookiecutterTemplate(CruftError):
 class NoCruftFound(CruftError):
     """Raised when no .cruft.json state is found in the current directory"""
 
-    def __init__(self, directory):
+    def __init__(self, directory: str):
         super().__init__(
             self, f"Was unable to locate a `.cruft.json` state file in `{directory}` !"
         )
