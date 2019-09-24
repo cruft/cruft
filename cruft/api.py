@@ -14,7 +14,11 @@ from cookiecutter.prompt import prompt_for_config
 from examples import example
 from git import Repo
 
-from cruft.exceptions import NoCruftFound, UnableToFindCookiecutterTemplate
+from cruft.exceptions import (
+    InvalidCookiecutterRepository,
+    NoCruftFound,
+    UnableToFindCookiecutterTemplate,
+)
 
 json_dump = partial(json.dump, ensure_ascii=False, indent=4, separators=(",", ": "))
 
@@ -31,8 +35,11 @@ def create(
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     with TemporaryDirectory() as cookiecutter_template_dir:
-        repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
-        last_commit = repo.head.object.hexsha
+        try:
+            repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
+            last_commit = repo.head.object.hexsha
+        except Exception as e:
+            raise InvalidCookiecutterRepository(e)
 
         main_cookiecutter_directory: str = ""
         for file_name in os.listdir(cookiecutter_template_dir):
@@ -78,6 +85,7 @@ def create(
         )
 
 
+@example()
 def check(expanded_dir: str = ".") -> bool:
     """Checks to see if there have been any updates to the Cookiecutter template used
     to generate this project.
@@ -116,6 +124,8 @@ def _generate_output(
     return context
 
 
+@example()
+@example(skip_apply_ask=True)
 def update(
     expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply_ask: bool = False
 ) -> bool:
@@ -129,8 +139,12 @@ def update(
         with TemporaryDirectory() as compare_directory:
             template_dir = os.path.join(compare_directory, "template")
 
-            repo = Repo.clone_from(cruft_state["template"], template_dir)
-            last_commit = repo.head.object.hexsha
+            try:
+                repo = Repo.clone_from(cruft_state["template"], template_dir)
+                last_commit = repo.head.object.hexsha
+            except Exception as e:
+                raise InvalidCookiecutterRepository(e)
+
             if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
                 return False
 

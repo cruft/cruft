@@ -21,3 +21,9 @@ class NoCruftFound(CruftError):
             self, f"Was unable to locate a `.cruft.json` state file in `{directory}` !"
         )
         self.directory = directory
+
+
+class InvalidCookiecutterRepository(CruftError):
+    """Raised when an invalid cookiecutter repository is provided"""
+
+    pass
