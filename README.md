@@ -12,4 +12,12 @@ _________________
 [Read Latest Documentation](https://timothycrosley.github.io/cruft/) - [Browse GitHub Code Repository](https://github.com/timothycrosley/cruft/)
 _________________
 
-**cruft** Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Fully compatible with existing [Cookiecutter](https://github.com/cookiecutter/cookiecutter) templates.
+**cruft** allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Fully compatible with existing [Cookiecutter](https://github.com/cookiecutter/cookiecutter) templates.
+
+Creating new projects from templates using cruft is easy:
+
+![Example Usage New Project](https://raw.githubusercontent.com/timothycrosley/cruft/master/art/example.gif)
+
+And, so is updating them as the template changes overtime:
+
+![Example Usage New Project](https://raw.githubusercontent.com/timothycrosley/cruft/master/art/example_update.gif)
