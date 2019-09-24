@@ -16,3 +16,9 @@ __________________________________________________/\\\\\_______________
 Version: {__version__}
 Copyright Timothy Edmund Crosley 2019 MIT License
 """
+
+__doc__ = f"""
+```python
+{ascii_art}
+```
+"""
