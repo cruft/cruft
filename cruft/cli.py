@@ -5,6 +5,7 @@ it should maintain 1:1 compatibility with the programmatic API definition in the
 [API module](/reference/cruft/api)
 
 - `cruft create`: Expands the specified Cookiecutter template on disk.
+- `cruft check`: Checks to see if the expanded template is up-to-date with latest version.
 - `cruft update`: Attempts to updates an expanded Cookiecutter template to the latest version.
 """
 import sys

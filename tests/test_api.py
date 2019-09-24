@@ -2,6 +2,7 @@ import os
 
 import pytest
 from examples import verify_and_test_examples
+from git import Repo
 from git.exc import GitCommandError
 from hypothesis_auto import auto_pytest, auto_pytest_magic
 
@@ -26,6 +27,15 @@ def test_check_examples(project_dir):
 
     os.chdir(project_dir)
     verify_and_test_examples(api.check)
+
+
+def test_update_and_check_real_repo(tmpdir):
+    tmpdir.chdir()
+    repo = Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    repo.head.reset(commit="86a6e6beda8095690414ff7652c15b7ae36e6128", working_tree=True)
+    repo_dir = str(tmpdir)
+    assert not api.check(repo_dir)
+    assert api.update(repo_dir, skip_apply_ask=True)
 
 
 def test_update_examples(project_dir, tmpdir):
