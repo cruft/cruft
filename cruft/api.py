@@ -3,7 +3,7 @@ import os
 import sys
 from functools import partial
 from pathlib import Path
-from shutil import move
+from shutil import move, rmtree
 from subprocess import PIPE, run  # nosec
 from tempfile import TemporaryDirectory
 from typing import Optional
@@ -181,6 +181,15 @@ def update(
 
             new_main_directory = os.path.join(new_output_dir, main_directory)
             old_main_directory = os.path.join(old_output_dir, main_directory)
+
+            for skip_file in cruft_state.get("skip", []):
+                file_path_old = os.path.join(old_main_directory, skip_file)
+                file_path_new = os.path.join(new_main_directory, skip_file)
+                for file_path in (file_path_old, file_path_new):
+                    if os.path.isdir(file_path):
+                        rmtree(file_path)
+                    else:
+                        os.remove(file_path)
 
             diff = run(
                 ["git", "diff", "--no-index", old_main_directory, new_main_directory],
