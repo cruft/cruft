@@ -85,6 +85,17 @@ and update the `.cruft.json` file for you.
 Checking to see if a project is missing a template update is as easy as running `cruft check`. If the project is out-of-date an error and exit code 1 will be returned.
 `cruft check` can be added to CI pipelines to ensure projects don't unintentionally drift.
 
+
+## Linking an Existing Project
+
+Have an existing project that you created from a template in the past using Cookiecutter directly? You can link it to the template that was used to create it using: `cruft link TEMPLATE_REPOSITORY`.
+
+For example:
+
+        cruft link https://github.com/timothycrosley/cookiecutter-python/
+
+You can then specify the last commit of the template the project has been updated to be consistent with, or accept the default of using the latest commit from the template.
+
 ## Why Create cruft?
 
 Since I first saw videos of [quickly](https://www.youtube.com/watch?v=9EctXzH2dss) being used to automate Ubuntu application creation, I've had a love/hate relationship with these kinds of tools.
