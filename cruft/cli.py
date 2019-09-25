@@ -17,6 +17,7 @@ from cruft import api, logo
 
 def _check_command_output(up_to_date: bool) -> None:
     if not up_to_date:
+        print("")
         sys.exit(
             "FAILURE: Project's cruft is out of date! Run `cruft update` to clean this mess up."
         )
@@ -27,12 +28,24 @@ def _check_command_output(up_to_date: bool) -> None:
 
 def _update_output(updated: bool) -> None:
     if not updated:
+        print("")
         print("Nothing to do, project's cruft is already up to date!")
     else:
+        print("")
         print("Good work! Project's cruft has been updated and is as clean as possible!")
+
+
+def _link_output(linked: bool) -> None:
+    if linked:
+        print("")
+        print("Project successfully linked to template!")
+    else:
+        print("")
+        print("Project linking failed :(")
 
 
 cli = hug.cli(api=hug.API(__name__, doc=logo.ascii_art))
 cli(api.create)
 cli.output(_update_output)(api.update)
 cli.output(_check_command_output)(api.check)
+cli.output(_link_output)(api.link)

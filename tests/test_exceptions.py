@@ -15,3 +15,9 @@ def test_no_cruft():
     instance = exceptions.NoCruftFound(".")
     assert instance.directory == "."
     assert isinstance(instance, exceptions.CruftError)
+
+
+def test_cruft_already_present():
+    instance = exceptions.CruftAlreadyPresent(".")
+    assert instance.file_location == "."
+    assert isinstance(instance, exceptions.CruftError)

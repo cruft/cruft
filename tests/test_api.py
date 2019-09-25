@@ -51,3 +51,14 @@ def test_update_examples(project_dir, tmpdir):
 
     os.chdir(project_dir)
     verify_and_test_examples(api.update)
+
+
+def test_link_examples(project_dir, tmpdir):
+    os.chdir(project_dir)
+    with pytest.raises(exceptions.CruftAlreadyPresent):
+        verify_and_test_examples(api.link)
+
+    tmpdir.chdir()
+    Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    os.remove(os.path.join(tmpdir, ".cruft.json"))
+    verify_and_test_examples(api.link)

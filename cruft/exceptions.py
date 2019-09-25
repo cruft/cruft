@@ -23,6 +23,14 @@ class NoCruftFound(CruftError):
         self.directory = directory
 
 
+class CruftAlreadyPresent(CruftError):
+    """Raised when there is an attempt to create a new .cruft.json file but one already exists"""
+
+    def __init__(self, file_location: str):
+        super().__init__(self, f"`.cruft.json` is already defined at `{file_location}` !")
+        self.file_location = file_location
+
+
 class InvalidCookiecutterRepository(CruftError):
     """Raised when an invalid cookiecutter repository is provided"""
 

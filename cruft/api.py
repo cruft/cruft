@@ -15,6 +15,7 @@ from examples import example
 from git import Repo
 
 from cruft.exceptions import (
+    CruftAlreadyPresent,
     InvalidCookiecutterRepository,
     NoCruftFound,
     UnableToFindCookiecutterTemplate,
@@ -230,3 +231,74 @@ def update(
                 os.chdir(current_directory)
 
             return True
+
+
+@example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True, use_latest=True)
+def link(
+    template_git_url: str,
+    project_dir: str = ".",
+    use_latest: bool = False,
+    no_input: bool = False,
+    config_file: Optional[str] = None,
+    default_config: bool = False,
+    extra_context: Optional[dict] = None,
+) -> bool:
+    """Links an existing project created from a template, to the template it was created from."""
+    cruft_file = os.path.join(project_dir, ".cruft.json")
+    if os.path.isfile(os.path.join(project_dir, ".cruft.json")):
+        raise CruftAlreadyPresent(cruft_file)
+
+    with TemporaryDirectory() as cookiecutter_template_dir:
+        try:
+            repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
+            last_commit = repo.head.object.hexsha
+        except Exception as e:  # pragma: no cover
+            raise InvalidCookiecutterRepository(e)
+
+        main_cookiecutter_directory: str = ""
+        for file_name in os.listdir(cookiecutter_template_dir):
+            file_path = os.path.join(cookiecutter_template_dir, file_name)
+            if (
+                os.path.isdir(file_path)
+                and "{{" in file_name
+                and "}}" in file_name
+                and "cookiecutter." in file_name
+            ):
+                main_cookiecutter_directory = file_path
+                break
+
+        if not main_cookiecutter_directory:  # pragma: no cover
+            raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
+
+        context_file = os.path.join(cookiecutter_template_dir, "cookiecutter.json")
+
+        config_dict = get_user_config(config_file=config_file, default_config=default_config)
+
+        context = generate_context(
+            context_file=context_file,
+            default_context=config_dict["default_context"],
+            extra_context=extra_context,
+        )
+
+        # prompt the user to manually configure at the command line.
+        # except when 'no-input' flag is set
+        context["cookiecutter"] = prompt_for_config(context, no_input)
+        context["cookiecutter"]["_template"] = template_git_url
+
+        if use_latest or no_input:
+            use_commit = last_commit
+        else:
+            print("")
+            print(f"The latest commit to the template is {last_commit}")
+            print("Press enter to link against this commit or provide an alternative commit.")
+            print("")
+            use_commit = input(f"Link to template at commit [{last_commit}]: ")  # nosec
+            use_commit = use_commit if use_commit.strip() else last_commit
+
+        with open(cruft_file, "w") as write_cruft:
+            json_dump(
+                {"template": template_git_url, "commit": use_commit, "context": context},
+                write_cruft,
+            )
+
+    return True
