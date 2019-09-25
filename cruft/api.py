@@ -127,7 +127,10 @@ def _generate_output(
 @example()
 @example(skip_apply_ask=True)
 def update(
-    expanded_dir: str = ".", cookiecutter_input: bool = False, skip_apply_ask: bool = False
+    expanded_dir: str = ".",
+    cookiecutter_input: bool = False,
+    skip_apply_ask: bool = False,
+    skip_update: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = os.path.join(expanded_dir, ".cruft.json")
@@ -188,18 +191,23 @@ def update(
             print(diff)
             print("")
 
-            if not skip_apply_ask:  # pragma: no cover
-                update = ""
-                while update.lower() not in ("y", "n"):
-                    update = input("Apply diff and update [y/n]? ")  # nosec
+            if not skip_apply_ask and not skip_update:  # pragma: no cover
+                update: str = ""
+                while update not in ("y", "n", "s"):
+                    print('Respond with "s" to intentionally skip the update while marking '
+                          "your project as up-to-date.")
+                    update = input("Apply diff and update [y/n/s]? ").lower()  # nosec
 
-                if update.lower() == "n":
+                if update == "n":
                     sys.exit("User cancelled Cookiecutter template update.")
+                elif update == "s":
+                    skip_update = True
 
             current_directory = os.getcwd()
             try:
                 os.chdir(expanded_dir)
-                run(["git", "apply"], input=diff.encode("utf8"))
+                if not skip_update:
+                    run(["git", "am", "-3"], input=diff.encode("utf8"))
 
                 cruft_state["commit"] = last_commit
                 cruft_state["context"] = new_context
