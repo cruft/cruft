@@ -6,3 +6,4 @@ poetry run black --check -l 100 cruft/ tests/
 poetry run flake8 cruft/ tests/ --max-line 100 --ignore F403,F401,W503
 poetry run safety check
 poetry run bandit -r cruft/
+poetry run cruft check
