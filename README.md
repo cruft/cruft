@@ -66,6 +66,20 @@ To update an existing project, that was created using cruft, run `cruft update` 
 If there are any updates, cruft will have you review them before applying. If you accept the changes cruft will apply them to your project
 and update the `.cruft.json` file for you.
 
+!!! tip
+    Sometimes certain files just aren't good fits for updating. Such as test cases or `__init__` files. You can tell cruft to always skip updating these files on a project by project basis by added them
+    to a skip section within your .cruft.json file:
+
+        {
+            "template": "https://github.com/timothycrosley/cookiecutter-python",
+            "commit": "8a65a360d51250221193ed0ec5ed292e72b32b0b",
+            "skip": [
+                "cruft/__init__.py",
+                "tests"
+            ],
+            ...
+        }
+
 ## Checking a Project
 
 Checking to see if a project is missing a template update is as easy as running `cruft check`. If the project is out-of-date an error and exit code 1 will be returned.
