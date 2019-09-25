@@ -287,7 +287,7 @@ def link(
 
         if use_latest or no_input:
             use_commit = last_commit
-        else:
+        else:  # pragma: no cover
             print("")
             print(f"The latest commit to the template is {last_commit}")
             print("Press enter to link against this commit or provide an alternative commit.")
