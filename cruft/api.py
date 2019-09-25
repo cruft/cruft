@@ -183,7 +183,9 @@ def update(
             old_main_directory = os.path.join(old_output_dir, main_directory)
 
             diff = run(
-                ["git", "diff", old_main_directory, new_main_directory], stdout=PIPE, stderr=PIPE
+                ["git", "diff", "--no-index", old_main_directory, new_main_directory],
+                stdout=PIPE,
+                stderr=PIPE,
             ).stdout.decode("utf8")
             diff = diff.replace(old_main_directory, "").replace(new_main_directory, "")
 
@@ -194,8 +196,10 @@ def update(
             if not skip_apply_ask and not skip_update:  # pragma: no cover
                 update: str = ""
                 while update not in ("y", "n", "s"):
-                    print('Respond with "s" to intentionally skip the update while marking '
-                          "your project as up-to-date.")
+                    print(
+                        'Respond with "s" to intentionally skip the update while marking '
+                        "your project as up-to-date."
+                    )
                     update = input("Apply diff and update [y/n/s]? ").lower()  # nosec
 
                 if update == "n":
@@ -207,7 +211,7 @@ def update(
             try:
                 os.chdir(expanded_dir)
                 if not skip_update:
-                    run(["git", "am", "-3"], input=diff.encode("utf8"))
+                    run(["patch", "--merge"], input=diff.encode("utf8"))
 
                 cruft_state["commit"] = last_commit
                 cruft_state["context"] = new_context

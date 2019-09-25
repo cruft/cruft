@@ -21,6 +21,7 @@ def _check_command_output(up_to_date: bool) -> None:
             "FAILURE: Project's cruft is out of date! Run `cruft update` to clean this mess up."
         )
     else:
+        print("")
         print("SUCCESS: Good work! Project's cruft is up to date and as clean as possible :).")
 
 
