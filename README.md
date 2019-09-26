@@ -80,6 +80,12 @@ and update the `.cruft.json` file for you.
             ...
         }
 
+    Or, if you have toml installed, you can add skip files directly to a `tool.cruft` section of your `pyproject.toml` file:
+
+        [tool.cruft]
+        skip = ["cruft/__init__.py", "tests"]
+
+
 ## Checking a Project
 
 Checking to see if a project is missing a template update is as easy as running `cruft check`. If the project is out-of-date an error and exit code 1 will be returned.

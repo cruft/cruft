@@ -21,6 +21,11 @@ from cruft.exceptions import (
     UnableToFindCookiecutterTemplate,
 )
 
+try:
+    import toml  # type: ignore
+except ImportError:  # pragma: no cover
+    toml = None  # type: ignore
+
 json_dump = partial(json.dump, ensure_ascii=False, indent=4, separators=(",", ": "))
 
 
@@ -134,12 +139,18 @@ def update(
     skip_update: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
+    pyproject_file = os.path.join(expanded_dir, "pyproject.toml")
     cruft_file = os.path.join(expanded_dir, ".cruft.json")
     if not os.path.isfile(cruft_file):
-        raise NoCruftFound(os.path.abspath(expanded_dir))
+        raise NoCruftFound(cruft_file)
 
     with open(cruft_file) as cruft_open_file:
         cruft_state = json.load(cruft_open_file)
+
+        if toml and os.path.isfile(pyproject_file):
+            pyproject_cruft = toml.load(pyproject_file).get("tool", {}).get("cruft", {})
+            cruft_state.setdefault("skip", []).extend(pyproject_cruft.get("skip", []))
+
         with TemporaryDirectory() as compare_directory:
             template_dir = os.path.join(compare_directory, "template")
 
@@ -189,7 +200,7 @@ def update(
                 for file_path in (file_path_old, file_path_new):
                     if os.path.isdir(file_path):
                         rmtree(file_path)
-                    else:
+                    elif os.path.isfile(file_path):
                         os.remove(file_path)
 
             diff = run(
@@ -245,7 +256,7 @@ def link(
 ) -> bool:
     """Links an existing project created from a template, to the template it was created from."""
     cruft_file = os.path.join(project_dir, ".cruft.json")
-    if os.path.isfile(os.path.join(project_dir, ".cruft.json")):
+    if os.path.isfile(cruft_file):
         raise CruftAlreadyPresent(cruft_file)
 
     with TemporaryDirectory() as cookiecutter_template_dir:

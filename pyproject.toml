@@ -12,6 +12,10 @@ cookiecutter = "^1.6"
 gitpython = "^3.0"
 hug = "^2.6"
 examples = "^1.0"
+toml = { version = "^0.10", optional = true }
+
+[tool.poetry.extras]
+pyproject = ["toml"]
 
 [tool.poetry.dev-dependencies]
 vulture = "^1.0"
@@ -42,3 +46,5 @@ palette = {primary = "orange", accent = "cyan"}
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
+[tool.cruft]
+skip = ["cruft/__init__.py", "tests"]
