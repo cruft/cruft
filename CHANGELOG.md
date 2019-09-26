@@ -16,6 +16,9 @@ OR
 
 Changelog
 =========
+## 1.1.1 - 25 September 2019
+- Added optional support for reading skip options from `pyproject.toml`.
+
 ## 1.1.0 - 24 September 2019
 - Added `link` command to link existing repositories to the Cookiecutter template that created them.
 - Added `skip` option to `.cruft.json` file allowing template updates to be skipped per a repository.
