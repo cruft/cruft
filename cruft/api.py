@@ -26,7 +26,7 @@ try:
 except ImportError:  # pragma: no cover
     toml = None  # type: ignore
 
-json_dump = partial(json.dump, ensure_ascii=False, indent=4, separators=(",", ": "))
+json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", ": "))
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True)
@@ -41,33 +41,28 @@ def create(
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     with TemporaryDirectory() as cookiecutter_template_dir:
+        cookiecutter_template_dir = Path(cookiecutter_template_dir)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
             last_commit = repo.head.object.hexsha
         except Exception as e:
             raise InvalidCookiecutterRepository(e)
 
-        main_cookiecutter_directory: str = ""
-        for file_name in os.listdir(cookiecutter_template_dir):
-            file_path = os.path.join(cookiecutter_template_dir, file_name)
-            if (
-                os.path.isdir(file_path)
-                and "{{" in file_name
-                and "}}" in file_name
-                and "cookiecutter." in file_name
-            ):
-                main_cookiecutter_directory = file_path
+        main_cookiecutter_directory: Optional[Path] = None
+        for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
+            if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
+                main_cookiecutter_directory = dir_item
                 break
 
         if not main_cookiecutter_directory:  # pragma: no cover
             raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
 
-        context_file = os.path.join(cookiecutter_template_dir, "cookiecutter.json")
+        context_file = cookiecutter_template_dir / "cookiecutter.json"
 
         config_dict = get_user_config(config_file=config_file, default_config=default_config)
 
         context = generate_context(
-            context_file=context_file,
+            context_file=str(context_file),
             default_context=config_dict["default_context"],
             extra_context=extra_context,
         )
@@ -77,11 +72,9 @@ def create(
         context["cookiecutter"] = prompt_for_config(context, no_input)
         context["cookiecutter"]["_template"] = template_git_url
 
-        with open(os.path.join(main_cookiecutter_directory, ".cruft.json"), "w") as cruft_file:
-            json_dump(
-                {"template": template_git_url, "commit": last_commit, "context": context},
-                cruft_file,
-            )
+        (main_cookiecutter_directory / ".cruft.json").write_text(
+            json_dumps({"template": template_git_url, "commit": last_commit, "context": context})
+        )
 
         return generate_files(
             repo_dir=cookiecutter_template_dir,
@@ -96,17 +89,17 @@ def check(expanded_dir: str = ".") -> bool:
     """Checks to see if there have been any updates to the Cookiecutter template used
     to generate this project.
     """
-    cruft_file = os.path.join(expanded_dir, ".cruft.json")
-    if not os.path.isfile(cruft_file):
-        raise NoCruftFound(os.path.abspath(expanded_dir))
+    expanded_dir = Path(expanded_dir)
+    cruft_file = expanded_dir / ".cruft.json"
+    if not cruft_file.is_file():
+        raise NoCruftFound(expanded_dir.resolve())
 
-    with open(cruft_file) as cruft_open_file:
-        cruft_state = json.load(cruft_open_file)
-        with TemporaryDirectory() as cookiecutter_template_dir:
-            repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
-            last_commit = repo.head.object.hexsha
-            if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
-                return True
+    cruft_state = json.loads(cruft_file.read_text())
+    with TemporaryDirectory() as cookiecutter_template_dir:
+        repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
+        last_commit = repo.head.object.hexsha
+        if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
+            return True
 
     return False
 
@@ -139,20 +132,21 @@ def update(
     skip_update: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
-    pyproject_file = os.path.join(expanded_dir, "pyproject.toml")
-    cruft_file = os.path.join(expanded_dir, ".cruft.json")
-    if not os.path.isfile(cruft_file):
+    expanded_dir = Path(expanded_dir)
+    pyproject_file = expanded_dir / "pyproject.toml"
+    cruft_file = expanded_dir / ".cruft.json"
+    if not cruft_file.is_file():
         raise NoCruftFound(cruft_file)
 
-    with open(cruft_file) as cruft_open_file:
-        cruft_state = json.load(cruft_open_file)
+    cruft_state = json.loads(cruft_file.read_text())
 
-    if toml and os.path.isfile(pyproject_file):
-        pyproject_cruft = toml.load(pyproject_file).get("tool", {}).get("cruft", {})
+    if toml and pyproject_file.is_file():
+        pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         cruft_state.setdefault("skip", []).extend(pyproject_cruft.get("skip", []))
 
     with TemporaryDirectory() as compare_directory:
-        template_dir = os.path.join(compare_directory, "template")
+        compare_directory = Path(compare_directory)
+        template_dir = compare_directory / "template"
 
         try:
             repo = Repo.clone_from(cruft_state["template"], template_dir)
@@ -163,72 +157,69 @@ def update(
         if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
             return False
 
-        context_file = os.path.join(template_dir, "cookiecutter.json")
+        context_file = template_dir / "cookiecutter.json"
 
-        new_output_dir = os.path.join(compare_directory, "new_output")
+        new_output_dir = compare_directory / "new_output"
 
         new_context = _generate_output(
-            context_file=context_file,
+            context_file=str(context_file),
             cruft_state=cruft_state,
             cookiecutter_input=cookiecutter_input,
-            template_dir=template_dir,
-            output_dir=new_output_dir,
+            template_dir=str(template_dir),
+            output_dir=str(new_output_dir),
         )
 
-        old_output_dir = os.path.join(compare_directory, "old_output")
+        old_output_dir = compare_directory / "old_output"
         repo.head.reset(commit=cruft_state["commit"], working_tree=True)
         _generate_output(
-            context_file=context_file,
+            context_file=str(context_file),
             cruft_state=cruft_state,
             cookiecutter_input=cookiecutter_input,
-            template_dir=template_dir,
-            output_dir=old_output_dir,
+            template_dir=str(template_dir),
+            output_dir=str(old_output_dir),
         )
 
-        main_directory: str = ""
-        for file_name in os.listdir(old_output_dir):
-            file_path = os.path.join(old_output_dir, file_name)
-            if os.path.isdir(file_path):
-                main_directory = file_name
+        for dir_item in old_output_dir.glob("*"):
+            if dir_item.is_dir():
+                old_main_directory = dir_item
 
-        new_main_directory = os.path.join(new_output_dir, main_directory)
-        old_main_directory = os.path.join(old_output_dir, main_directory)
+        new_main_directory = new_output_dir / old_main_directory.name
 
         for skip_file in cruft_state.get("skip", []):
-            file_path_old = os.path.join(old_main_directory, skip_file)
-            file_path_new = os.path.join(new_main_directory, skip_file)
+            file_path_old = old_main_directory / skip_file
+            file_path_new = new_main_directory / skip_file
             for file_path in (file_path_old, file_path_new):
-                if os.path.isdir(file_path):
+                if file_path.is_dir():
                     rmtree(file_path)
-                elif os.path.isfile(file_path):
-                    os.remove(file_path)
+                elif file_path.is_file():
+                    file_path.unlink()
 
         diff = run(
-            ["git", "diff", "--no-index", old_main_directory, new_main_directory],
+            ["git", "diff", "--no-index", str(old_main_directory), str(new_main_directory)],
             stdout=PIPE,
             stderr=PIPE,
         ).stdout.decode("utf8")
-        diff = diff.replace(old_main_directory, "").replace(new_main_directory, "")
+        diff = diff.replace(str(old_main_directory), "").replace(str(new_main_directory), "")
 
         print("The following diff would be applied:\n")
         print(diff)
         print("")
 
         if not skip_apply_ask and not skip_update:  # pragma: no cover
-            update: str = ""
-            while update not in ("y", "n", "s"):
+            update_str: str = ""
+            while update_str not in ("y", "n", "s"):
                 print(
                     'Respond with "s" to intentionally skip the update while marking '
                     "your project as up-to-date."
                 )
-                update = input("Apply diff and update [y/n/s]? ").lower()  # nosec
+                update_str = input("Apply diff and update [y/n/s]? ").lower()  # nosec
 
-            if update == "n":
+            if update_str == "n":
                 sys.exit("User cancelled Cookiecutter template update.")
-            elif update == "s":
+            elif update_str == "s":
                 skip_update = True
 
-        current_directory = os.getcwd()
+        current_directory = Path.cwd()
         try:
             os.chdir(expanded_dir)
             if not skip_update:
@@ -236,8 +227,7 @@ def update(
 
             cruft_state["commit"] = last_commit
             cruft_state["context"] = new_context
-            with open(cruft_file, "w") as cruft_output:
-                json_dump(cruft_state, cruft_output)
+            cruft_file.write_text(json_dumps(cruft_state))
         finally:
             os.chdir(current_directory)
 
@@ -255,33 +245,29 @@ def link(
     extra_context: Optional[dict] = None,
 ) -> bool:
     """Links an existing project created from a template, to the template it was created from."""
-    cruft_file = os.path.join(project_dir, ".cruft.json")
-    if os.path.isfile(cruft_file):
+    project_dir = Path(project_dir)
+    cruft_file = project_dir / ".cruft.json"
+    if cruft_file.is_file():
         raise CruftAlreadyPresent(cruft_file)
 
     with TemporaryDirectory() as cookiecutter_template_dir:
+        cookiecutter_template_dir = Path(cookiecutter_template_dir)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
             last_commit = repo.head.object.hexsha
         except Exception as e:  # pragma: no cover
             raise InvalidCookiecutterRepository(e)
 
-        main_cookiecutter_directory: str = ""
-        for file_name in os.listdir(cookiecutter_template_dir):
-            file_path = os.path.join(cookiecutter_template_dir, file_name)
-            if (
-                os.path.isdir(file_path)
-                and "{{" in file_name
-                and "}}" in file_name
-                and "cookiecutter." in file_name
-            ):
-                main_cookiecutter_directory = file_path
+        main_cookiecutter_directory: Optional[Path] = None
+        for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
+            if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
+                main_cookiecutter_directory = dir_item
                 break
 
         if not main_cookiecutter_directory:  # pragma: no cover
             raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
 
-        context_file = os.path.join(cookiecutter_template_dir, "cookiecutter.json")
+        context_file = cookiecutter_template_dir / "cookiecutter.json"
 
         config_dict = get_user_config(config_file=config_file, default_config=default_config)
 
@@ -306,10 +292,8 @@ def link(
             use_commit = input(f"Link to template at commit [{last_commit}]: ")  # nosec
             use_commit = use_commit if use_commit.strip() else last_commit
 
-        with open(cruft_file, "w") as write_cruft:
-            json_dump(
-                {"template": template_git_url, "commit": use_commit, "context": context},
-                write_cruft,
-            )
+        cruft_file.write_text(
+            json_dumps({"template": template_git_url, "commit": use_commit, "context": context})
+        )
 
     return True
