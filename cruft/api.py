@@ -40,8 +40,8 @@ def create(
     overwrite_if_exists: bool = False,
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
-    with TemporaryDirectory() as cookiecutter_template_dir:
-        cookiecutter_template_dir = Path(cookiecutter_template_dir)
+    with TemporaryDirectory() as cookiecutter_template_dir_str:
+        cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
             last_commit = repo.head.object.hexsha
@@ -89,10 +89,10 @@ def check(expanded_dir: str = ".") -> bool:
     """Checks to see if there have been any updates to the Cookiecutter template used
     to generate this project.
     """
-    expanded_dir = Path(expanded_dir)
-    cruft_file = expanded_dir / ".cruft.json"
+    expanded_dir_path = Path(expanded_dir)
+    cruft_file = expanded_dir_path / ".cruft.json"
     if not cruft_file.is_file():
-        raise NoCruftFound(expanded_dir.resolve())
+        raise NoCruftFound(expanded_dir_path.resolve())
 
     cruft_state = json.loads(cruft_file.read_text())
     with TemporaryDirectory() as cookiecutter_template_dir:
@@ -132,9 +132,9 @@ def update(
     skip_update: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
-    expanded_dir = Path(expanded_dir)
-    pyproject_file = expanded_dir / "pyproject.toml"
-    cruft_file = expanded_dir / ".cruft.json"
+    expanded_dir_path = Path(expanded_dir)
+    pyproject_file = expanded_dir_path / "pyproject.toml"
+    cruft_file = expanded_dir_path / ".cruft.json"
     if not cruft_file.is_file():
         raise NoCruftFound(cruft_file)
 
@@ -144,8 +144,8 @@ def update(
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         cruft_state.setdefault("skip", []).extend(pyproject_cruft.get("skip", []))
 
-    with TemporaryDirectory() as compare_directory:
-        compare_directory = Path(compare_directory)
+    with TemporaryDirectory() as compare_directory_str:
+        compare_directory = Path(compare_directory_str)
         template_dir = compare_directory / "template"
 
         try:
@@ -221,7 +221,7 @@ def update(
 
         current_directory = Path.cwd()
         try:
-            os.chdir(expanded_dir)
+            os.chdir(expanded_dir_path)
             if not skip_update:
                 run(["patch", "--merge"], input=diff.encode("utf8"))
 
@@ -245,13 +245,13 @@ def link(
     extra_context: Optional[dict] = None,
 ) -> bool:
     """Links an existing project created from a template, to the template it was created from."""
-    project_dir = Path(project_dir)
-    cruft_file = project_dir / ".cruft.json"
+    project_dir_path = Path(project_dir)
+    cruft_file = project_dir_path / ".cruft.json"
     if cruft_file.is_file():
         raise CruftAlreadyPresent(cruft_file)
 
-    with TemporaryDirectory() as cookiecutter_template_dir:
-        cookiecutter_template_dir = Path(cookiecutter_template_dir)
+    with TemporaryDirectory() as cookiecutter_template_dir_str:
+        cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
             last_commit = repo.head.object.hexsha
