@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from cruft import exceptions
 
 
@@ -7,6 +9,12 @@ def test_invalid_cookiecutter_repository():
 
 def test_unable_to_find_cookiecutter_template():
     instance = exceptions.UnableToFindCookiecutterTemplate(".")
+    assert instance.directory == "."
+    assert isinstance(instance, exceptions.CruftError)
+
+
+def test_unable_to_find_cookiecutter_template_path():
+    instance = exceptions.UnableToFindCookiecutterTemplate(Path("."))
     assert instance.directory == "."
     assert isinstance(instance, exceptions.CruftError)
 
