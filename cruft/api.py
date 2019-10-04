@@ -223,7 +223,7 @@ def update(
         try:
             os.chdir(expanded_dir_path)
             if not skip_update:
-                run(["patch", "--merge"], input=diff.encode("utf8"))
+                run(["patch", "-p1", "--merge"], input=diff.encode("utf8"))
 
             cruft_state["commit"] = last_commit
             cruft_state["context"] = new_context
