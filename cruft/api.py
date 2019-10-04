@@ -140,9 +140,10 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
+    skip_cruft = cruft_state.get("skip", [])
     if toml and pyproject_file.is_file():
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
-        cruft_state.setdefault("skip", []).extend(pyproject_cruft.get("skip", []))
+        skip_cruft.extend(pyproject_cruft.get("skip", []))
 
     with TemporaryDirectory() as compare_directory_str:
         compare_directory = Path(compare_directory_str)
@@ -185,7 +186,7 @@ def update(
 
         new_main_directory = new_output_dir / old_main_directory.name
 
-        for skip_file in cruft_state.get("skip", []):
+        for skip_file in skip_cruft:
             file_path_old = old_main_directory / skip_file
             file_path_new = new_main_directory / skip_file
             for file_path in (file_path_old, file_path_new):
