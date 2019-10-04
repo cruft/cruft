@@ -16,6 +16,11 @@ OR
 
 Changelog
 =========
+## 1.1.2 - 3 October 2019
+- [Fixed Issue #3](https://github.com/timothycrosley/cruft/issues/3): Patch failed to apply.
+- Updated to use pathlib.
+- Improved `pyproject.toml` skip_files, avoiding duplication into `.cruft.json` file.
+
 ## 1.1.1 - 25 September 2019
 - Added optional support for reading skip options from `pyproject.toml`.
 
