@@ -14,6 +14,8 @@ import hug
 
 from cruft import api, logo
 
+hug_api = hug.API(__name__, doc=logo.ascii_art)
+
 
 def _check_command_output(up_to_date: bool) -> None:
     if not up_to_date:
@@ -44,7 +46,7 @@ def _link_output(linked: bool) -> None:
         print("Project linking failed :(")
 
 
-cli = hug.cli(api=hug.API(__name__, doc=logo.ascii_art))
+cli = hug.cli(api=hug_api)
 cli(api.create)
 cli.output(_update_output)(api.update)
 cli.output(_check_command_output)(api.check)

@@ -1,3 +1,3 @@
 from . import cli
 
-cli.__hug__.cli()
+cli.hug_api.cli()
