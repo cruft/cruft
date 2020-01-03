@@ -200,7 +200,11 @@ def update(
             stdout=PIPE,
             stderr=PIPE,
         ).stdout.decode("utf8")
-        diff = diff.replace("\\\\", "\\").replace(str(old_main_directory), "").replace(str(new_main_directory), "")
+        diff = (
+            diff.replace("\\\\", "\\")
+            .replace(str(old_main_directory), "")
+            .replace(str(new_main_directory), "")
+        )
 
         print("The following diff would be applied:\n")
         print(diff)
