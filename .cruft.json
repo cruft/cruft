@@ -1,6 +1,6 @@
 {
     "template": "https://github.com/timothycrosley/cookiecutter-python",
-    "commit": "257431bdcb994dbd2df4c73f3ac3a152770c32b9",
+    "commit": "5f2c774c99969c8483d7f329e38db5b1a7fc5050",
     "context": {
         "cookiecutter": {
             "full_name": "Timothy Crosley",
