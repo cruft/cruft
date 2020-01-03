@@ -33,6 +33,7 @@ pep8-naming = "^0.8.2"
 portray = "^1.3.0"
 hypothesis-auto = "^1.1"
 numpy = "^1.17"
+pydantic = "^0.32"
 
 [tool.poetry.scripts]
 cruft = "cruft.cli:hug_api.cli"
