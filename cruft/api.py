@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 from functools import partial
 from pathlib import Path
 from shutil import move, rmtree
@@ -18,6 +19,7 @@ from cruft.exceptions import (
     CruftAlreadyPresent,
     InvalidCookiecutterRepository,
     NoCruftFound,
+    TempDirectoryDeleteFailed,
     UnableToFindCookiecutterTemplate,
 )
 
@@ -27,6 +29,30 @@ except ImportError:  # pragma: no cover
     toml = None  # type: ignore
 
 json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", ": "))
+
+
+class RobustTemporaryDirectory(TemporaryDirectory):
+    """Retries deletion on __exit__
+
+    Inspired by https://github.com/easybuilders/easybuild-framework/blob/
+    bf663f70e44256644f4adc5bcbfc7d1a3fbc1232/easybuild/tools/filetools.py#L1366
+    """
+
+    def cleanup(self):
+        if self._finalizer.detach():
+            n = 3
+            ok = False
+            for _ in range(0, n):
+                try:
+                    rmtree(self.name)
+                    ok = True
+                except OSError:
+                    time.sleep(0.01)
+            if not ok:
+                raise TempDirectoryDeleteFailed(
+                    f"Failed to remove path {self.name} with shutil.rmtree, "
+                    f"even after {n} attempts."
+                )
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True)
@@ -40,7 +66,7 @@ def create(
     overwrite_if_exists: bool = False,
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
-    with TemporaryDirectory() as cookiecutter_template_dir_str:
+    with RobustTemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
@@ -95,7 +121,7 @@ def check(expanded_dir: str = ".") -> bool:
         raise NoCruftFound(expanded_dir_path.resolve())
 
     cruft_state = json.loads(cruft_file.read_text())
-    with TemporaryDirectory() as cookiecutter_template_dir:
+    with RobustTemporaryDirectory() as cookiecutter_template_dir:
         repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
         last_commit = repo.head.object.hexsha
         if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
@@ -145,7 +171,7 @@ def update(
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
 
-    with TemporaryDirectory() as compare_directory_str:
+    with RobustTemporaryDirectory() as compare_directory_str:
         compare_directory = Path(compare_directory_str)
         template_dir = compare_directory / "template"
 
@@ -255,7 +281,7 @@ def link(
     if cruft_file.is_file():
         raise CruftAlreadyPresent(cruft_file)
 
-    with TemporaryDirectory() as cookiecutter_template_dir_str:
+    with RobustTemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
