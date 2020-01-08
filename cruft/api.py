@@ -1,7 +1,7 @@
 import json
 import os
+import stat
 import sys
-import time
 from functools import partial
 from pathlib import Path
 from shutil import move, rmtree
@@ -12,16 +12,14 @@ from typing import Optional
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.prompt import prompt_for_config
-from examples import example
-from git import Repo
-
 from cruft.exceptions import (
     CruftAlreadyPresent,
     InvalidCookiecutterRepository,
     NoCruftFound,
-    TempDirectoryDeleteFailed,
     UnableToFindCookiecutterTemplate,
 )
+from examples import example
+from git import Repo
 
 try:
     import toml  # type: ignore
@@ -34,25 +32,22 @@ json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", 
 class RobustTemporaryDirectory(TemporaryDirectory):
     """Retries deletion on __exit__
 
-    Inspired by https://github.com/easybuilders/easybuild-framework/blob/
-    bf663f70e44256644f4adc5bcbfc7d1a3fbc1232/easybuild/tools/filetools.py#L1366
+    This is caused by Windows behavior that you cannot delete a directory
+    if it contains any read-only files.
+
+    cf. https://bugs.python.org/issue19643
     """
 
     def cleanup(self):
         if self._finalizer.detach():
-            n = 3
-            ok = False
-            for _ in range(0, n):
-                try:
-                    rmtree(self.name)
-                    ok = True
-                except OSError:
-                    time.sleep(0.01)
-            if not ok:
-                raise TempDirectoryDeleteFailed(
-                    f"Failed to remove path {self.name} with shutil.rmtree, "
-                    f"even after {n} attempts."
-                )
+
+            def readonly_handler(rm_func, path, exc_info):
+                if issubclass(exc_info[0], PermissionError) and exc_info[1].winerror == 5:
+                    os.chmod(path, stat.S_IWRITE)
+                    return rm_func(path)
+                raise exc_info[1]
+
+            rmtree(self.name, onerror=readonly_handler)
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True)
