@@ -6,7 +6,7 @@ import time
 from functools import partial
 from pathlib import Path
 from shutil import move, rmtree
-from subprocess import PIPE, run  # nosec
+from subprocess import PIPE, CalledProcessError, run  # nosec
 from tempfile import TemporaryDirectory
 from typing import Optional
 
@@ -280,7 +280,22 @@ def update(
         try:
             os.chdir(expanded_dir_path)
             if not skip_update:
-                run(["patch", "-p1", "--merge"], input=diff.encode("utf8"))
+                try:
+                    run(
+                        ["patch", "-p1", "--merge"],
+                        input=diff.encode("utf8"),
+                        stderr=PIPE,
+                        check=True,
+                    )
+                except CalledProcessError as error:
+                    if b"unrecognized option `--merge'" in error.stderr:
+                        print(
+                            "Running patch with --no-backup-if-mismatch, this could silently fail"
+                            " to apply changes, verify changes with above diff."
+                        )
+                        run(["patch", "-p1", "--no-backup-if-mismatch"], input=diff.encode("utf8"))
+                    else:
+                        print(error.stderr, file=sys.stderr)
 
             cruft_state["commit"] = last_commit
             cruft_state["context"] = new_context
