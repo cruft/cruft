@@ -37,6 +37,7 @@ def create(
     default_config: bool = False,
     extra_context: Optional[dict] = None,
     no_input: bool = False,
+    directory: str = "",
     overwrite_if_exists: bool = False,
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
@@ -49,6 +50,9 @@ def create(
             raise InvalidCookiecutterRepository(e)
 
         main_cookiecutter_directory: Optional[Path] = None
+        if directory:
+            cookiecutter_template_dir = cookiecutter_template_dir / directory
+
         for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
             if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
                 main_cookiecutter_directory = dir_item
