@@ -164,7 +164,9 @@ def update(
 
         directory = cruft_state.get("directory", "")
 
-        context_file = template_dir / directory / "cookiecutter.json"
+        template_dir = template_dir / directory
+
+        context_file = template_dir / "cookiecutter.json"
 
         new_output_dir = compare_directory / "new_output"
 
