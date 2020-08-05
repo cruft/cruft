@@ -1,8 +1,5 @@
 [tool.poetry]
 name = "cruft"
-packages = [
- {"include" = "cruft"}
-]
 version = "1.2.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
 authors = ["Timothy Crosley <timothy.crosley@gmail.com>"]
