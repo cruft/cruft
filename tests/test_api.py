@@ -2,12 +2,11 @@ import json
 import os
 
 import pytest
+from cruft import api, exceptions
 from examples import verify_and_test_examples
 from git import Repo
 from git.exc import GitCommandError
 from hypothesis_auto import auto_pytest, auto_pytest_magic
-
-from cruft import api, exceptions
 
 
 def test_create_examples(tmpdir):

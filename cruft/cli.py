@@ -11,7 +11,6 @@ it should maintain 1:1 compatibility with the programmatic API definition in the
 import sys
 
 import hug
-
 from cruft import api, logo
 
 hug_api = hug.API(__name__, doc=logo.ascii_art)
