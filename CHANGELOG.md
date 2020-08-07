@@ -16,6 +16,10 @@ OR
 
 Changelog
 =========
+## 1.2.0 - 7 August 2020
+- [Fixed issue #26](https://github.com/timothycrosley/cruft/issues/26): Support for Directory as there are multiple templates in single repo
+- [Fixed issue #18 & #13](https://github.com/timothycrosley/cruft/issues/18): Commands fail with OSError randomly on windows
+
 ## 1.1.2 - 3 October 2019
 - [Fixed Issue #3](https://github.com/timothycrosley/cruft/issues/3): Patch failed to apply.
 - Updated to use pathlib.
