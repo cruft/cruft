@@ -37,6 +37,7 @@ def create(
     default_config: bool = False,
     extra_context: Optional[dict] = None,
     no_input: bool = False,
+    directory: str = "",
     overwrite_if_exists: bool = False,
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
@@ -49,6 +50,9 @@ def create(
             raise InvalidCookiecutterRepository(e)
 
         main_cookiecutter_directory: Optional[Path] = None
+        if directory:
+            cookiecutter_template_dir = cookiecutter_template_dir / directory
+
         for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
             if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
                 main_cookiecutter_directory = dir_item
@@ -73,7 +77,7 @@ def create(
         context["cookiecutter"]["_template"] = template_git_url
 
         (main_cookiecutter_directory / ".cruft.json").write_text(
-            json_dumps({"template": template_git_url, "commit": last_commit, "context": context})
+            json_dumps({"template": template_git_url, "commit": last_commit, "context": context, "directory": directory})
         )
 
         return generate_files(
@@ -158,6 +162,10 @@ def update(
         if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
             return False
 
+        directory = cruft_state.get("directory", "")
+
+        template_dir = template_dir / directory
+
         context_file = template_dir / "cookiecutter.json"
 
         new_output_dir = compare_directory / "new_output"
@@ -232,6 +240,7 @@ def update(
 
             cruft_state["commit"] = last_commit
             cruft_state["context"] = new_context
+            cruft_state["directory"] = directory
             cruft_file.write_text(json_dumps(cruft_state))
         finally:
             os.chdir(current_directory)
@@ -248,6 +257,7 @@ def link(
     config_file: Optional[str] = None,
     default_config: bool = False,
     extra_context: Optional[dict] = None,
+    directory: str = ""
 ) -> bool:
     """Links an existing project created from a template, to the template it was created from."""
     project_dir_path = Path(project_dir)
@@ -264,6 +274,9 @@ def link(
             raise InvalidCookiecutterRepository(e)
 
         main_cookiecutter_directory: Optional[Path] = None
+        if directory:
+            cookiecutter_template_dir = cookiecutter_template_dir / directory
+
         for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
             if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
                 main_cookiecutter_directory = dir_item
@@ -298,7 +311,8 @@ def link(
             use_commit = use_commit if use_commit.strip() else last_commit
 
         cruft_file.write_text(
-            json_dumps({"template": template_git_url, "commit": use_commit, "context": context})
+            json_dumps({"template": template_git_url, "commit": use_commit,
+                        "context": context, "directory": directory})
         )
 
     return True
