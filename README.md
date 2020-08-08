@@ -2,7 +2,7 @@
 _________________
 
 [![PyPI version](https://badge.fury.io/py/cruft.svg)](http://badge.fury.io/py/cruft)
-![Build Status](https://github.com/timothycrosley/cruft/workflows/Run%20tests/badge.svg)
+[![Build Status](https://github.com/timothycrosley/cruft/workflows/Run%20tests/badge.svg)](https://github.com/timothycrosley/cruft/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster)
 [![codecov](https://codecov.io/gh/timothycrosley/cruft/branch/master/graph/badge.svg)](https://codecov.io/gh/timothycrosley/cruft)
 [![Join the chat at https://gitter.im/timothycrosley/cruft](https://badges.gitter.im/timothycrosley/cruft.svg)](https://gitter.im/timothycrosley/cruft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://pypi.python.org/pypi/cruft/)
