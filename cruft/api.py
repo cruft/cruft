@@ -5,7 +5,7 @@ import sys
 import time
 from functools import partial
 from pathlib import Path
-from shutil import move, rmtree
+from shutil import rmtree
 from subprocess import PIPE, CalledProcessError, run  # nosec
 from tempfile import TemporaryDirectory
 from typing import Optional
@@ -70,11 +70,12 @@ class RobustTemporaryDirectory(TemporaryDirectory):
 def create(
     template_git_url: str,
     output_dir: str = ".",
-    config_file: Optional[str] = None,
+    config_file: str = None,
     default_config: bool = False,
-    extra_context: Optional[dict] = None,
+    extra_context: dict = None,
     no_input: bool = False,
     directory: str = "",
+    checkout: str = None,
     overwrite_if_exists: bool = False,
 ) -> str:
     """Expand a Git based Cookiecutter template into a new project on disk."""
@@ -82,6 +83,10 @@ def create(
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         try:
             repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
+            # If the user provides us with a branch or a git reference
+            # move the head to that reference.
+            if checkout is not None:
+                repo.git.checkout(checkout)
             last_commit = repo.head.object.hexsha
         except Exception as e:
             raise InvalidCookiecutterRepository(e)
@@ -133,7 +138,7 @@ def create(
 
 
 @example()
-def check(expanded_dir: str = ".") -> bool:
+def check(expanded_dir: str = ".", checkout: str = None) -> bool:
     """Checks to see if there have been any updates to the Cookiecutter template used
     to generate this project.
     """
@@ -145,6 +150,10 @@ def check(expanded_dir: str = ".") -> bool:
     cruft_state = json.loads(cruft_file.read_text())
     with RobustTemporaryDirectory() as cookiecutter_template_dir:
         repo = Repo.clone_from(cruft_state["template"], cookiecutter_template_dir)
+        # If the user provides us with a branch or a git reference
+        # move the head to that reference.
+        if checkout is not None:
+            repo.git.checkout(checkout)
         last_commit = repo.head.object.hexsha
         if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
             return True
@@ -178,6 +187,7 @@ def update(
     cookiecutter_input: bool = False,
     skip_apply_ask: bool = False,
     skip_update: bool = False,
+    checkout: str = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     expanded_dir_path = Path(expanded_dir)
@@ -199,6 +209,10 @@ def update(
 
         try:
             repo = Repo.clone_from(cruft_state["template"], template_dir)
+            # If the user provides us with a branch or a git reference
+            # move the head to that reference.
+            if checkout is not None:
+                repo.git.checkout(checkout)
             last_commit = repo.head.object.hexsha
         except Exception as e:  # pragma: no cover
             raise InvalidCookiecutterRepository(e)
@@ -313,9 +327,9 @@ def link(
     project_dir: str = ".",
     use_latest: bool = False,
     no_input: bool = False,
-    config_file: Optional[str] = None,
+    config_file: str = None,
     default_config: bool = False,
-    extra_context: Optional[dict] = None,
+    extra_context: dict = None,
     directory: str = "",
 ) -> bool:
     """Links an existing project created from a template, to the template it was created from."""
