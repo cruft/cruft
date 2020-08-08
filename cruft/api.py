@@ -202,7 +202,7 @@ def update(
     if toml and pyproject_file.is_file():
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
-        
+
     with RobustTemporaryDirectory() as compare_directory_str:
         compare_directory = Path(compare_directory_str)
         template_dir = compare_directory / "template"
