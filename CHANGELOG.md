@@ -16,6 +16,15 @@ OR
 
 Changelog
 =========
+## 1.3.0 - 9 August 2020
+- [Fixed issue #8](https://github.com/timothycrosley/cruft/issues/8): Fall back to no-backup if patch doesn't support --merge.
+- [Fixed issue #11](https://github.com/timothycrosley/cruft/issues/11): Config file flag --config_file broken.
+- [Implemented #24](https://github.com/timothycrosley/cruft/issues/24): Allow `cruft update` to specify a branch of the cookiecutter repo.
+- [Implemented #10](https://github.com/timothycrosley/cruft/issues/10): Provide a mechanism to choose template version.
+
+Internal:
+- Refactored `api` module into a collection of smaller better scoped modules.
+
 ## 1.2.0 - 7 August 2020
 - [Fixed issue #26](https://github.com/timothycrosley/cruft/issues/26): Support for Directory as there are multiple templates in single repo
 - [Fixed issue #18 & #13](https://github.com/timothycrosley/cruft/issues/18): Commands fail with OSError randomly on windows
