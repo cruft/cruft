@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "cruft"
-version = "1.4.0"
+version = "2.0.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
-authors = ["Timothy Crosley <timothy.crosley@gmail.com>"]
+authors = ["Timothy Crosley <timothy.crosley@gmail.com>", "Sambhav Kothari <sambhavs.email@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
@@ -10,12 +10,14 @@ readme = "README.md"
 python = "^3.6"
 cookiecutter = "^1.6"
 gitpython = "^3.0"
-hug = "^2.6"
-examples = "^1.0"
 toml = { version = "^0.10", optional = true }
+typer = "^0.3.1"
+click = "^7.1.2"
+examples = {version = "^1.0.2", optional = true}
 
 [tool.poetry.extras]
 pyproject = ["toml"]
+examples = ["examples"]
 
 [tool.poetry.dev-dependencies]
 vulture = "^1.0"
@@ -28,15 +30,13 @@ mypy = "^0.730.0"
 ipython = "^7.7"
 pytest = "^5.0"
 pytest-cov = "^2.7"
-pytest-mock = "^1.10"
 pep8-naming = "^0.8.2"
 portray = "^1.3.0"
-hypothesis-auto = "^1.1"
-numpy = "^1.17"
-pydantic = "^0.32"
+examples = "^1.0.2"
+pytest-xdist = "^1.34.0"
 
 [tool.poetry.scripts]
-cruft = "cruft.cli:hug_api.cli"
+cruft = "cruft._cli:app"
 
 [tool.portray.mkdocs.theme]
 favicon = "art/logo.png"
@@ -46,7 +46,7 @@ palette = {primary = "orange", accent = "cyan"}
 
 [tool.cruft]
 skip = ["cruft/__init__.py", "tests"]
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-

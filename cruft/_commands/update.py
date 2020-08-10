@@ -1,16 +1,17 @@
 import json
-import sys
 from pathlib import Path
 from shutil import rmtree
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from typing import Any, Dict
+from tempfile import TemporaryDirectory
+from typing import Any, Dict, Optional
 
+import click
+import typer
 from cookiecutter.generate import generate_files
-from examples import example
 from git import Repo
 
-from cruft.commands._utils import (
-    RobustTemporaryDirectory,
+from .utils import (
+    example,
     generate_cookiecutter_context,
     get_cookiecutter_repo,
     get_cruft_file,
@@ -25,35 +26,37 @@ except ImportError:  # pragma: no cover
 CruftState = Dict[str, Any]
 
 
+@example(skip_apply_ask=False)
 @example()
-@example(skip_apply_ask=True)
 def update(
-    expanded_dir: str = ".",
+    project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
-    skip_apply_ask: bool = False,
+    skip_apply_ask: bool = True,
     skip_update: bool = False,
-    checkout: str = None,
+    checkout: Optional[str] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
-    expanded_dir_path = Path(expanded_dir)
-    pyproject_file = expanded_dir_path / "pyproject.toml"
-    cruft_file = get_cruft_file(expanded_dir_path)
+    pyproject_file = project_dir / "pyproject.toml"
+    cruft_file = get_cruft_file(project_dir)
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    with RobustTemporaryDirectory() as compare_directory_str:
+    with TemporaryDirectory() as compare_directory_str:
         # Initial setup
         compare_directory = Path(compare_directory_str)
         template_dir = compare_directory / "template"
         repo = get_cookiecutter_repo(cruft_state["template"], template_dir, checkout)
-        directory = cruft_state.get("directory", "")
+        directory = cruft_state.get("directory", None)
         if directory:
             template_dir = template_dir / directory
         last_commit = repo.head.object.hexsha
 
         # Bail early if the repo is already up to date
         if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
-            return False
+            typer.secho(
+                "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+            )
+            return True
 
         # Generate clean outputs via the cookiecutter
         # from the current cruft state commit of the cookiectter and the updated
@@ -69,17 +72,20 @@ def update(
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
-        _apply_project_updates(
-            old_main_directory, new_main_directory, expanded_dir_path, skip_update, skip_apply_ask
-        )
+        if _apply_project_updates(
+            old_main_directory, new_main_directory, project_dir, skip_update, skip_apply_ask
+        ):
 
-        # Update the cruft state and dump the new state
-        # to the cruft file
-        cruft_state["commit"] = last_commit
-        cruft_state["context"] = new_context
-        cruft_state["directory"] = directory
-        cruft_file.write_text(json_dumps(cruft_state))
-
+            # Update the cruft state and dump the new state
+            # to the cruft file
+            cruft_state["commit"] = last_commit
+            cruft_state["context"] = new_context
+            cruft_state["directory"] = directory
+            cruft_file.write_text(json_dumps(cruft_state))
+            typer.secho(
+                "Good work! Project's cruft has been updated and is as clean as possible!",
+                fg=typer.colors.GREEN,
+            )
         return True
 
 
@@ -123,9 +129,9 @@ def _generate_project_updates(
     repo.head.reset(commit=cruft_state["commit"], working_tree=True)
 
     old_output_dir = compare_directory / "old_output"
-    _, old_main_directory = _generate_output(
-        cruft_state, template_dir, cookiecutter_input, old_output_dir
-    )
+    # We should not prompt for the cookiecutter input for the current
+    # project state
+    _, old_main_directory = _generate_output(cruft_state, template_dir, False, old_output_dir)
     return old_main_directory, new_main_directory, new_context
 
 
@@ -174,11 +180,7 @@ def _get_diff(old_main_directory: Path, new_main_directory: Path):
         stdout=PIPE,
         stderr=PIPE,
     ).stdout.decode("utf8")
-    diff = (
-        diff.replace("\\\\", "\\")
-        .replace(str(old_main_directory), "")
-        .replace(str(new_main_directory), "")
-    )
+    diff = diff.replace(str(old_main_directory), "").replace(str(new_main_directory), "")
     return diff
 
 
@@ -214,7 +216,7 @@ def _apply_patch(diff: str, expanded_dir_path: Path):
             patch_command, input=diff.encode("utf8"), stderr=PIPE, check=True, cwd=expanded_dir_path
         )
     except CalledProcessError as error:
-        print(error.stderr.decode(), file=sys.stderr)
+        typer.secho(error.stderr.decode(), err=True)
 
 
 def _apply_project_updates(
@@ -223,27 +225,34 @@ def _apply_project_updates(
     project_dir: Path,
     skip_update: bool,
     skip_apply_ask: bool,
-):
+) -> bool:
     diff = _get_diff(old_main_directory, new_main_directory)
 
-    if not skip_apply_ask and not skip_update:  # pragma: no cover
-        input_str: str = ""
-        while input_str not in ("y", "n", "s"):
-            print(
+    if not skip_apply_ask and not skip_update:
+        input_str: str = "v"
+        while input_str == "v":
+            typer.echo(
                 'Respond with "s" to intentionally skip the update while marking '
                 "your project as up-to-date or "
                 'respond with "v" to view the changes that will be applied.'
             )
-            input_str = input("Apply diff and update [y/n/s/v]? ").lower()  # nosec
+            input_str = typer.prompt(
+                "Apply diff and update?",
+                type=click.Choice(("y", "n", "s", "v")),
+                show_choices=True,
+                default="y",
+            )
             if input_str == "v":
                 if diff.strip():
                     _view_diff(old_main_directory, new_main_directory)
                 else:
-                    print("There are no changes.")
+                    click.secho("There are no changes.", fg=typer.colors.YELLOW)
         if input_str == "n":
-            sys.exit("User cancelled Cookiecutter template update.")
+            typer.echo("User cancelled Cookiecutter template update.")
+            return False
         elif input_str == "s":
             skip_update = True
 
     if not skip_update:
         _apply_patch(diff, project_dir)
+    return True

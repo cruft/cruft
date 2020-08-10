@@ -1,3 +1,3 @@
-from . import cli
+from cruft import _cli
 
-cli.hug_api.cli()
+_cli.app(prog_name="cruft")

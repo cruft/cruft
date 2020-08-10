@@ -1,30 +1,33 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Any, Dict, Optional
 
 from cookiecutter.generate import generate_files
-from examples import example
 
-from cruft.commands._utils import (
-    RobustTemporaryDirectory,
+from .utils import (
+    example,
     generate_cookiecutter_context,
     get_cookiecutter_repo,
     json_dumps,
+    resolve_template_url,
 )
 
 
-@example("https://github.com/timothycrosley/cookiecutter-python/", no_input=True)
+@example("https://github.com/timothycrosley/cookiecutter-python/")
 def create(
     template_git_url: str,
-    output_dir: str = ".",
-    config_file: str = None,
+    output_dir: Path = Path("."),
+    config_file: Optional[Path] = None,
     default_config: bool = False,
-    extra_context: dict = None,
-    no_input: bool = False,
-    directory: str = "",
-    checkout: str = None,
+    extra_context: Optional[Dict[str, Any]] = None,
+    no_input: bool = True,
+    directory: Optional[str] = None,
+    checkout: Optional[str] = None,
     overwrite_if_exists: bool = False,
-) -> str:
+) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
-    with RobustTemporaryDirectory() as cookiecutter_template_dir_str:
+    template_git_url = resolve_template_url(template_git_url)
+    with TemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         repo = get_cookiecutter_repo(template_git_url, cookiecutter_template_dir, checkout)
         last_commit = repo.head.object.hexsha
@@ -41,16 +44,18 @@ def create(
             no_input,
         )
 
-        project_dir = generate_files(
-            repo_dir=cookiecutter_template_dir,
-            context=context,
-            overwrite_if_exists=overwrite_if_exists,
-            output_dir=output_dir,
+        project_dir = Path(
+            generate_files(
+                repo_dir=cookiecutter_template_dir,
+                context=context,
+                overwrite_if_exists=overwrite_if_exists,
+                output_dir=str(output_dir),
+            )
         )
 
         # After generating the project - save the cruft state
         # into the cruft file.
-        (Path(project_dir) / ".cruft.json").write_text(
+        (project_dir / ".cruft.json").write_text(
             json_dumps(
                 {
                     "template": template_git_url,

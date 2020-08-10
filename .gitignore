@@ -32,6 +32,7 @@ htmlcov
 .pytest_cache
 .mypy_cache
 .hypothesis
+coverage.xml
 
 # Translations
 *.mo
