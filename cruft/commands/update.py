@@ -2,7 +2,7 @@ import json
 import sys
 from pathlib import Path
 from shutil import rmtree
-from subprocess import PIPE, CalledProcessError, run  # nosec
+from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
 from typing import Any, Dict
 
 from cookiecutter.generate import generate_files
@@ -162,7 +162,15 @@ def _remove_skip_files(
 
 def _get_diff(old_main_directory: Path, new_main_directory: Path):
     diff = run(
-        ["git", "diff", "--no-index", str(old_main_directory), str(new_main_directory)],
+        [
+            "git",
+            "diff",
+            "--no-index",
+            "--no-ext-diff",
+            "--no-color",
+            str(old_main_directory),
+            str(new_main_directory),
+        ],
         stdout=PIPE,
         stderr=PIPE,
     ).stdout.decode("utf8")
@@ -171,35 +179,42 @@ def _get_diff(old_main_directory: Path, new_main_directory: Path):
         .replace(str(old_main_directory), "")
         .replace(str(new_main_directory), "")
     )
-
-    print("The following diff would be applied:\n")
-    print(diff)
-    print("")
     return diff
 
 
+def _view_diff(old_main_directory: Path, new_main_directory: Path):
+    run(["git", "diff", "--no-index", str(old_main_directory), str(new_main_directory)])
+
+
+def _is_git_repo(directory: Path):
+    # Taken from https://stackoverflow.com/a/16925062
+    # This works even if we are in a sub folder in a git
+    # repo
+    output = run(
+        ["git", "rev-parse", "--is-inside-work-tree"], stdout=PIPE, stderr=DEVNULL, cwd=directory
+    )
+    if b"true" in output.stdout:
+        return True
+    return False
+
+
 def _apply_patch(diff: str, expanded_dir_path: Path):
+    # Git 3 way merge is the our best bet
+    # at applying patches. But it only works
+    # with git repos. If the repo is not a git dir
+    # we fall back to git apply --reject which applies
+    # diffs cleanly where applicable otherwise creates
+    # *.rej files where there are conflicts
+    if _is_git_repo(expanded_dir_path):
+        patch_command = ["git", "apply", "-3"]
+    else:
+        patch_command = ["git", "apply", "--reject"]
     try:
         run(
-            ["patch", "-p1", "--merge"],
-            input=diff.encode("utf8"),
-            stderr=PIPE,
-            check=True,
-            cwd=expanded_dir_path,
+            patch_command, input=diff.encode("utf8"), stderr=PIPE, check=True, cwd=expanded_dir_path
         )
     except CalledProcessError as error:
-        if b"unrecognized option `--merge'" in error.stderr:
-            print(
-                "Running patch with --no-backup-if-mismatch, this could silently fail"
-                " to apply changes, verify changes with above diff."
-            )
-            run(
-                ["patch", "-p1", "--no-backup-if-mismatch"],
-                input=diff.encode("utf8"),
-                cwd=expanded_dir_path,
-            )
-        else:
-            print(error.stderr, file=sys.stderr)
+        print(error.stderr.decode(), file=sys.stderr)
 
 
 def _apply_project_updates(
@@ -209,21 +224,25 @@ def _apply_project_updates(
     skip_update: bool,
     skip_apply_ask: bool,
 ):
-
     diff = _get_diff(old_main_directory, new_main_directory)
 
     if not skip_apply_ask and not skip_update:  # pragma: no cover
-        update_str: str = ""
-        while update_str not in ("y", "n", "s"):
+        input_str: str = ""
+        while input_str not in ("y", "n", "s"):
             print(
                 'Respond with "s" to intentionally skip the update while marking '
-                "your project as up-to-date."
+                "your project as up-to-date or "
+                'respond with "v" to view the changes that will be applied.'
             )
-            update_str = input("Apply diff and update [y/n/s]? ").lower()  # nosec
-
-        if update_str == "n":
+            input_str = input("Apply diff and update [y/n/s/v]? ").lower()  # nosec
+            if input_str == "v":
+                if diff.strip():
+                    _view_diff(old_main_directory, new_main_directory)
+                else:
+                    print("There are no changes.")
+        if input_str == "n":
             sys.exit("User cancelled Cookiecutter template update.")
-        elif update_str == "s":
+        elif input_str == "s":
             skip_update = True
 
     if not skip_update:
