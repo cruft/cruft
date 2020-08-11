@@ -7,6 +7,11 @@ _________________
 [![Join the chat at https://gitter.im/timothycrosley/cruft](https://badges.gitter.im/timothycrosley/cruft.svg)](https://gitter.im/timothycrosley/cruft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://pypi.python.org/pypi/cruft/)
 [![Downloads](https://pepy.tech/badge/cruft)](https://pepy.tech/project/cruft)
+
+#### Trending Contributors
+
+[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/0)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/0)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/1)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/1)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/2)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/2)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/3)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/3)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/4)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/4)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/5)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/5)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/6)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/6)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/7)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/7)
+
 _________________
 
 [Read Latest Documentation](https://timothycrosley.github.io/cruft/) - [Browse GitHub Code Repository](https://github.com/timothycrosley/cruft/)
