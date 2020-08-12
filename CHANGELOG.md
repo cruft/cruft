@@ -16,6 +16,11 @@ OR
 
 Changelog
 =========
+## 1.4.0 - 11 August 2020
+- [Fixed issue #21](https://github.com/timothycrosley/cruft/issues/21): Improve messaging when diff is empty.
+- [Implemented #15](https://github.com/timothycrosley/cruft/issues/15): Allow piping diff to an external utility.
+- [Implemented #33](https://github.com/timothycrosley/cruft/issues/24): When possible, use git apply instead of `patch` .
+
 ## 1.3.0 - 9 August 2020
 - [Fixed issue #8](https://github.com/timothycrosley/cruft/issues/8): Fall back to no-backup if patch doesn't support --merge.
 - [Fixed issue #11](https://github.com/timothycrosley/cruft/issues/11): Config file flag --config_file broken.
