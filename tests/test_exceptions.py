@@ -4,7 +4,9 @@ from cruft import exceptions
 
 
 def test_invalid_cookiecutter_repository():
-    assert isinstance(exceptions.InvalidCookiecutterRepository(), exceptions.CruftError)
+    instance = exceptions.InvalidCookiecutterRepository(".")
+    assert isinstance(instance, exceptions.CruftError)
+    assert instance.cookiecutter_repo == "."
 
 
 def test_unable_to_find_cookiecutter_template():
