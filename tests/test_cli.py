@@ -23,6 +23,18 @@ def cookiecutter_dir(tmpdir):
     )
 
 
+@pytest.fixture
+def cookiecutter_dir_updated(tmpdir):
+    yield Path(
+        cruft.create(
+            "https://github.com/samj1912/cookiecutter-test",
+            Path(tmpdir),
+            directory="dir",
+            checkout="updated",
+        )
+    )
+
+
 def test_create(cruft_runner, tmpdir):
     result = cruft_runner(
         [
@@ -57,6 +69,17 @@ def test_create_interactive(cruft_runner, tmpdir):
 
 def test_check(cruft_runner, cookiecutter_dir):
     result = cruft_runner(["check", "--project-dir", str(cookiecutter_dir)])
+    assert result.exit_code == 0
+
+
+def test_check_strict(cruft_runner, cookiecutter_dir_updated):
+    result = cruft_runner(["check", "--project-dir", str(cookiecutter_dir_updated)])
+    assert result.exit_code == 1
+    assert "failure" in result.stdout.lower()
+
+
+def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
+    result = cruft_runner(["check", "--project-dir", str(cookiecutter_dir_updated), "--not-strict"])
     assert result.exit_code == 0
 
 
@@ -136,6 +159,20 @@ def test_update_interactive_view(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", str(cookiecutter_dir), "-c", "updated"], input="v\ny\n"
     )
+    assert result.exit_code == 0
+    assert "cruft has been updated" in result.stdout
+
+
+def test_update_not_strict(cruft_runner, cookiecutter_dir_updated):
+    result = cruft_runner(
+        ["update", "--project-dir", str(cookiecutter_dir_updated), "--not-strict"]
+    )
+    assert result.exit_code == 0
+    assert "Nothing to do, project's cruft is already up to date" in result.stdout
+
+
+def test_update_strict(cruft_runner, cookiecutter_dir_updated):
+    result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir_updated), "-y"])
     assert result.exit_code == 0
     assert "cruft has been updated" in result.stdout
 

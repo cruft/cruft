@@ -99,3 +99,7 @@ def test_directory_and_checkout(tmpdir):
         checkout="updated",
     )
     assert cruft.check(output_path, checkout="updated")
+    # Add checks for strictness where master is an older
+    # version than updated
+    assert not cruft.check(output_path, strict=True)
+    assert cruft.check(output_path, strict=False)
