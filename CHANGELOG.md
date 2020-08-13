@@ -16,6 +16,12 @@ OR
 
 Changelog
 =========
+## 2.0.0 - 12 August 2020
+- [Implemented #31](https://github.com/timothycrosley/cruft/issues/31): Moved from hug -> typer and refactored Python API.
+- [Implemented #39](https://github.com/timothycrosley/cruft/issues/39): Simplify internals by fully droping Windows support beyond WSL.
+- [Fixed issue #7](https://github.com/timothycrosley/cruft/issues/7): Incorrect CLI help documentation.
+- [Fixed issue #23](https://github.com/timothycrosley/cruft/issues/23): Relative paths not supported.
+
 ## 1.4.0 - 11 August 2020
 - [Fixed issue #21](https://github.com/timothycrosley/cruft/issues/21): Improve messaging when diff is empty.
 - [Implemented #15](https://github.com/timothycrosley/cruft/issues/15): Allow piping diff to an external utility.
