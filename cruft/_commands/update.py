@@ -15,6 +15,7 @@ from .utils import (
     generate_cookiecutter_context,
     get_cookiecutter_repo,
     get_cruft_file,
+    is_project_updated,
     json_dumps,
 )
 
@@ -34,6 +35,7 @@ def update(
     skip_apply_ask: bool = True,
     skip_update: bool = False,
     checkout: Optional[str] = None,
+    strict: bool = True,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     pyproject_file = project_dir / "pyproject.toml"
@@ -52,7 +54,7 @@ def update(
         last_commit = repo.head.object.hexsha
 
         # Bail early if the repo is already up to date
-        if last_commit == cruft_state["commit"] or not repo.index.diff(cruft_state["commit"]):
+        if is_project_updated(repo, cruft_state["commit"], last_commit, strict):
             typer.secho(
                 "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
             )

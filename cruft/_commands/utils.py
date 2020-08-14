@@ -1,11 +1,6 @@
 import json
-import os
-import stat
-import time
 from functools import partial, wraps
 from pathlib import Path
-from shutil import rmtree
-from tempfile import TemporaryDirectory
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
@@ -120,6 +115,17 @@ def get_cruft_file(project_dir_path: Path, exists: bool = True):
     if exists and not cruft_file.is_file():
         raise NoCruftFound(project_dir_path.resolve())
     return cruft_file
+
+
+def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, strict: bool):
+    return (
+        # If the latest commit exactly matches the current commit
+        latest_commit == current_commit
+        # Or if there have been no changes to the cookiecutter
+        or not repo.index.diff(current_commit)
+        # or if the strict flag is off, we allow for newer commits to count as up to date
+        or (repo.is_ancestor(latest_commit, current_commit) and not strict)
+    )
 
 
 json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", ": "))

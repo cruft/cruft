@@ -28,8 +28,18 @@ def check(
         "-c",
         help="The git reference to check against. Supports branches, tags and commit hashes.",
     ),
+    strict: bool = typer.Option(
+        True,
+        "--strict/--not-strict",
+        help=(
+            "If enabled, ensures that the project commit is exactly"
+            " the same as the checked out cookiecutter template."
+            "If disabled, the check passes if the checked out cookiecutter template"
+            " commit is an ancestor of the project commit."
+        ),
+    ),
 ) -> None:
-    if _commands.check(project_dir=project_dir, checkout=checkout):
+    if _commands.check(project_dir=project_dir, checkout=checkout, strict=strict):
         raise typer.Exit()
     else:
         raise typer.Exit(1)
@@ -201,6 +211,18 @@ def update(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
+    strict: bool = typer.Option(
+        True,
+        "--strict/--not-strict",
+        help=(
+            "If enabled, ensures that the project is updated to be"
+            " the same as the checked out cookiecutter template. This means that"
+            " if the cookiecutter template is an older commit, the current project changes will"
+            " be rolled back to the previous version."
+            " If disabled, the update is skipped if the checked out cookiecutter template"
+            " commit is an ancestor of the project commit."
+        ),
+    ),
 ) -> None:
     _commands.update(
         project_dir=project_dir,
@@ -208,4 +230,5 @@ def update(
         skip_apply_ask=skip_apply_ask,
         skip_update=skip_update,
         checkout=checkout,
+        strict=strict,
     )
