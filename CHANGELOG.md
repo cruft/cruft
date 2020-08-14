@@ -16,6 +16,9 @@ OR
 
 Changelog
 =========
+## 2.1.0 - 13 August 2020
+- [Fixed issue #42](https://github.com/timothycrosley/cruft/issues/42): Cruft check fails if the current version of the project is ahead of the cookiecutter
+
 ## 2.0.0 - 12 August 2020
 - [Implemented #31](https://github.com/timothycrosley/cruft/issues/31): Moved from hug -> typer and refactored Python API.
 - [Implemented #39](https://github.com/timothycrosley/cruft/issues/39): Simplify internals by fully droping Windows support beyond WSL.
