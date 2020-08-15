@@ -16,6 +16,9 @@ OR
 
 Changelog
 =========
+## 2.2.0 - 16 August 2020
+- [Fixed issue #44](https://github.com/timothycrosley/cruft/issues/44): Cruft update can drop changes
+
 ## 2.1.0 - 13 August 2020
 - [Fixed issue #42](https://github.com/timothycrosley/cruft/issues/42): Cruft check fails if the current version of the project is ahead of the cookiecutter
 

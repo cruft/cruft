@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from subprocess import run
 
 import pytest
 from examples import verify_and_test_examples
@@ -46,6 +47,22 @@ def test_update_and_check_real_repo(tmpdir):
         json.dump(cruft_state, cruft_file)
     repo_dir = Path(tmpdir)
     assert not cruft.check(repo_dir)
+    # Update should fail since we have an unclean git repo
+    assert not cruft.update(repo_dir)
+    # Commit the changes so that the repo is clean
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=repo_dir,
+    )
     assert cruft.update(repo_dir, skip_apply_ask=True)
 
 
