@@ -147,6 +147,43 @@ def test_update(cruft_runner, cookiecutter_dir):
     assert result.exit_code == 0
 
 
+def test_update_with_conflicts(cruft_runner, cookiecutter_dir):
+    with (cookiecutter_dir / "README.md").open("w") as f:
+        f.write("conflicts")
+    result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y", "-c", "updated"])
+    assert "cruft has been updated" in result.stdout
+    assert "Project directory may have *.rej files" in result.stdout
+    assert result.exit_code == 0
+    assert set(cookiecutter_dir.glob("**/*.rej"))
+
+
+def test_update_with_conflicts_with_git(cruft_runner, cookiecutter_dir):
+    with (cookiecutter_dir / "README.md").open("w") as f:
+        f.write("conflicts")
+    # Commit the changes so that the repo is clean
+    run(["git", "init"], cwd=cookiecutter_dir)
+    run(["git", "add", "-A"], cwd=cookiecutter_dir)
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=cookiecutter_dir,
+    )
+    result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y", "-c", "updated"])
+    assert "cruft has been updated" in result.stdout
+    assert result.exit_code == 0
+    assert set(cookiecutter_dir.glob("**/*.rej"))
+    assert "Project directory may have *.rej files" in result.stdout
+    assert "Retrying again with a different update stratergy." in result.stdout
+
+
 def test_update_interactive_cancelled(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", str(cookiecutter_dir), "-c", "updated"], input="n\n"
