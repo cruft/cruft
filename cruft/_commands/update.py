@@ -1,9 +1,10 @@
 import json
+import os
 from pathlib import Path
 from shutil import rmtree
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Set
 
 import click
 import typer
@@ -41,6 +42,16 @@ def update(
     pyproject_file = project_dir / "pyproject.toml"
     cruft_file = get_cruft_file(project_dir)
 
+    # If the project dir is a git repository, we ensure
+    # that the user has a clean working directory before proceeding.
+    if not _is_project_repo_clean(project_dir):
+        typer.secho(
+            "Cruft cannot apply updates on an unclean git project."
+            " Please make sure your git working tree is clean before proceeding.",
+            fg=typer.colors.RED,
+        )
+        return False
+
     cruft_state = json.loads(cruft_file.read_text())
 
     with TemporaryDirectory() as compare_directory_str:
@@ -67,10 +78,14 @@ def update(
             compare_directory, cruft_state, template_dir, cookiecutter_input, repo
         )
 
-        # Remove any files from the generated versions that we are supposed
-        # to skip before generating the diff and applying updates
-        _remove_skip_files(cruft_state, pyproject_file, old_main_directory, new_main_directory)
-
+        # Get all paths that we are supposed to skip before generating the diff and applying updates
+        skip_paths = _get_skip_paths(cruft_state, pyproject_file)
+        # We also get the list of paths that were deleted from the project
+        # directory but were present in the template that the project is linked against
+        # This is to avoid introducing changes that won't apply cleanly to the current project.
+        deleted_paths = _get_deleted_files(old_main_directory, project_dir)
+        # We now remove both the skipped and deleted paths from the new and old project
+        _remove_paths(old_main_directory, new_main_directory, skip_paths | deleted_paths)
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
@@ -142,25 +157,34 @@ def _generate_project_updates(
 ##############################
 
 
-def _remove_skip_files(
-    cruft_state: CruftState,
-    pyproject_file: Path,
-    old_main_directory: Path,
-    new_main_directory: Path,
-):
+def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
     skip_cruft = cruft_state.get("skip", [])
     if toml and pyproject_file.is_file():
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
+    return set(map(Path, skip_cruft))
 
-    for skip_file in skip_cruft:
-        file_path_old = old_main_directory / skip_file
-        file_path_new = new_main_directory / skip_file
-        for file_path in (file_path_old, file_path_new):
-            if file_path.is_dir():
-                rmtree(file_path)
-            elif file_path.is_file():
-                file_path.unlink()
+
+def _get_deleted_files(template_dir: Path, project_dir: Path):
+    cwd = Path.cwd()
+    os.chdir(template_dir)
+    template_paths = set(Path(".").glob("**/*"))
+    os.chdir(cwd)
+    os.chdir(project_dir)
+    deleted_paths = set(filter(lambda path: not path.exists(), template_paths))
+    os.chdir(cwd)
+    return deleted_paths
+
+
+def _remove_paths(old_main_directory: Path, new_main_directory: Path, paths_to_remove: Set[Path]):
+    for path_to_remove in paths_to_remove:
+        old_path = old_main_directory / path_to_remove
+        new_path = new_main_directory / path_to_remove
+        for path in (old_path, new_path):
+            if path.is_dir():
+                rmtree(path)
+            elif path.is_file():
+                path.unlink()
 
 
 #################################################
@@ -200,6 +224,15 @@ def _is_git_repo(directory: Path):
     if b"true" in output.stdout:
         return True
     return False
+
+
+def _is_project_repo_clean(directory: Path):
+    if not _is_git_repo(directory):
+        return True
+    output = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
+    if output.stdout.strip():
+        return False
+    return True
 
 
 def _apply_patch(diff: str, expanded_dir_path: Path):

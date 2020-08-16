@@ -1,6 +1,7 @@
 import json
 from functools import partial
 from pathlib import Path
+from subprocess import run  # nosec
 
 import pytest
 from typer.testing import CliRunner
@@ -133,6 +134,13 @@ def test_update_noop(cruft_runner, cookiecutter_dir):
     assert result.exit_code == 0
 
 
+def test_update_unclean(cruft_runner, cookiecutter_dir):
+    run(["git", "init"], cwd=cookiecutter_dir)
+    result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y"])
+    assert "Cruft cannot apply updates on an unclean git project." in result.stdout
+    assert result.exit_code == 1
+
+
 def test_update(cruft_runner, cookiecutter_dir):
     result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y", "-c", "updated"])
     assert "cruft has been updated" in result.stdout
@@ -180,6 +188,17 @@ def test_update_strict(cruft_runner, cookiecutter_dir_updated):
 def test_update_interactive_view_no_changes(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", str(cookiecutter_dir), "-c", "no-changes"], input="v\ny\n"
+    )
+    assert result.exit_code == 0
+    assert "There are no changes" in result.stdout
+    assert "cruft has been updated" in result.stdout
+
+
+def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecutter_dir):
+    # Remove the file that changed.
+    (cookiecutter_dir / "README.md").unlink()
+    result = cruft_runner(
+        ["update", "--project-dir", str(cookiecutter_dir), "-c", "updated"], input="v\ny\n"
     )
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout

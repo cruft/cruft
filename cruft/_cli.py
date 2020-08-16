@@ -39,9 +39,7 @@ def check(
         ),
     ),
 ) -> None:
-    if _commands.check(project_dir=project_dir, checkout=checkout, strict=strict):
-        raise typer.Exit()
-    else:
+    if not _commands.check(project_dir=project_dir, checkout=checkout, strict=strict):
         raise typer.Exit(1)
 
 
@@ -224,11 +222,12 @@ def update(
         ),
     ),
 ) -> None:
-    _commands.update(
+    if not _commands.update(
         project_dir=project_dir,
         cookiecutter_input=cookiecutter_input,
         skip_apply_ask=skip_apply_ask,
         skip_update=skip_update,
         checkout=checkout,
         strict=strict,
-    )
+    ):
+        raise typer.Exit(1)
