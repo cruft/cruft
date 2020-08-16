@@ -205,7 +205,7 @@ def _get_diff(old_main_directory: Path, new_main_directory: Path):
         ],
         stdout=PIPE,
         stderr=PIPE,
-    ).stdout.decode("utf8")
+    ).stdout.decode()
     diff = diff.replace(str(old_main_directory), "").replace(str(new_main_directory), "")
     return diff
 
@@ -235,6 +235,47 @@ def _is_project_repo_clean(directory: Path):
     return True
 
 
+def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
+    try:
+        run(
+            ["git", "apply", "--reject"],
+            input=diff.encode(),
+            stderr=PIPE,
+            stdout=PIPE,
+            check=True,
+            cwd=expanded_dir_path,
+        )
+    except CalledProcessError as error:
+        typer.secho(error.stderr.decode(), err=True)
+        typer.secho(
+            (
+                "Project directory may have *.rej files reflecting merge conflicts with the update."
+                " Please resolve those conflicts manually."
+            ),
+            fg=typer.colors.YELLOW,
+        )
+
+
+def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
+    try:
+        run(
+            ["git", "apply", "-3"],
+            input=diff.encode(),
+            stderr=PIPE,
+            stdout=PIPE,
+            check=True,
+            cwd=expanded_dir_path,
+        )
+    except CalledProcessError as error:
+        typer.secho(error.stderr.decode(), err=True)
+        if _is_project_repo_clean(expanded_dir_path):
+            typer.secho(
+                "Failed to apply the update. Retrying again with a different update stratergy.",
+                fg=typer.colors.YELLOW,
+            )
+            _apply_patch_with_rejections(diff, expanded_dir_path)
+
+
 def _apply_patch(diff: str, expanded_dir_path: Path):
     # Git 3 way merge is the our best bet
     # at applying patches. But it only works
@@ -243,15 +284,9 @@ def _apply_patch(diff: str, expanded_dir_path: Path):
     # diffs cleanly where applicable otherwise creates
     # *.rej files where there are conflicts
     if _is_git_repo(expanded_dir_path):
-        patch_command = ["git", "apply", "-3"]
+        _apply_three_way_patch(diff, expanded_dir_path)
     else:
-        patch_command = ["git", "apply", "--reject"]
-    try:
-        run(
-            patch_command, input=diff.encode("utf8"), stderr=PIPE, check=True, cwd=expanded_dir_path
-        )
-    except CalledProcessError as error:
-        typer.secho(error.stderr.decode(), err=True)
+        _apply_patch_with_rejections(diff, expanded_dir_path)
 
 
 def _apply_project_updates(
@@ -288,6 +323,6 @@ def _apply_project_updates(
         elif input_str == "s":
             skip_update = True
 
-    if not skip_update:
+    if not skip_update and diff.strip():
         _apply_patch(diff, project_dir)
     return True
