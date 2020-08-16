@@ -1,0 +1,7 @@
+-   id: cruft
+    name: cruft
+    entry: 'cruft check'
+    require_serial: true
+    language: python
+    types: [python]
+    pass_filenames: false
