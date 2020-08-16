@@ -16,7 +16,7 @@ OR
 
 Changelog
 =========
-## 2.3.0 - 17 August 2020
+## 2.3.0 - 16 August 2020
 - [Fixed issue #46](https://github.com/timothycrosley/cruft/issues/46): Cruft update fails to apply without providing conflits to resolve manually
 
 ## 2.2.0 - 16 August 2020
