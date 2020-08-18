@@ -6,7 +6,7 @@ _________________
 [![codecov](https://codecov.io/gh/cruft/cruft/branch/master/graph/badge.svg)](https://codecov.io/gh/cruft/cruft)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://timothycrosley.github.io/isort/)
-[![Join the chat at https://gitter.im/timothycrosley/cruft](https://badges.gitter.im/timothycrosley/cruft.svg)](https://gitter.im/timothycrosley/cruft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/cruft/community](https://badges.gitter.im/cruft/community.svg)](https://gitter.im/cruft/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://pypi.python.org/pypi/cruft/)
 [![Downloads](https://pepy.tech/badge/cruft)](https://pepy.tech/project/cruft)
 
