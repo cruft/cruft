@@ -1,9 +1,9 @@
-[![cruft - Fight Back Against the Boilerplate Monster!](https://raw.github.com/timothycrosley/cruft/master/art/logo_large.png)](https://timothycrosley.github.io/cruft/)
+[![cruft - Fight Back Against the Boilerplate Monster!](https://raw.github.com/cruft/cruft/master/art/logo_large.png)](https://cruft.github.io/cruft/)
 _________________
 
 [![PyPI version](https://badge.fury.io/py/cruft.svg)](http://badge.fury.io/py/cruft)
-[![Build Status](https://github.com/timothycrosley/cruft/workflows/Run%20tests/badge.svg)](https://github.com/timothycrosley/cruft/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster)
-[![codecov](https://codecov.io/gh/timothycrosley/cruft/branch/master/graph/badge.svg)](https://codecov.io/gh/timothycrosley/cruft)
+[![Build Status](https://github.com/cruft/cruft/workflows/Run%20tests/badge.svg)](https://github.com/cruft/cruft/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster)
+[![codecov](https://codecov.io/gh/cruft/cruft/branch/master/graph/badge.svg)](https://codecov.io/gh/cruft/cruft)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://timothycrosley.github.io/isort/)
 [![Join the chat at https://gitter.im/timothycrosley/cruft](https://badges.gitter.im/timothycrosley/cruft.svg)](https://gitter.im/timothycrosley/cruft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -12,11 +12,11 @@ _________________
 
 #### Trending Contributors
 
-[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/0)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/0)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/1)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/1)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/2)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/2)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/3)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/3)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/4)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/4)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/5)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/5)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/6)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/6)[![](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/images/7)](https://sourcerer.io/fame/samj1912/timothycrosley/cruft/links/7)
+[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/0)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/0)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/1)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/1)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/2)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/2)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/3)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/3)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/4)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/4)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/5)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/5)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/6)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/6)[![](https://sourcerer.io/fame/samj1912/cruft/cruft/images/7)](https://sourcerer.io/fame/samj1912/cruft/cruft/links/7)
 
 _________________
 
-[Read Latest Documentation](https://timothycrosley.github.io/cruft/) - [Browse GitHub Code Repository](https://github.com/timothycrosley/cruft/)
+[Read Latest Documentation](https://cruft.github.io/cruft/) - [Browse GitHub Code Repository](https://github.com/cruft/cruft/)
 _________________
 
 **cruft** allows you to maintain all the necessary boilerplate for packaging and building projects separate from the code you intentionally write.
@@ -24,11 +24,11 @@ Fully compatible with existing [Cookiecutter](https://github.com/cookiecutter/co
 
 Creating new projects from templates using cruft is easy:
 
-![Example Usage New Project](https://raw.githubusercontent.com/timothycrosley/cruft/master/art/example.gif)
+![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example.gif)
 
 And, so is updating them as the template changes overtime:
 
-![Example Usage New Project](https://raw.githubusercontent.com/timothycrosley/cruft/master/art/example_update.gif)
+![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example_update.gif)
 
 Many project template utilities exist that automate the copying and pasting of code to create new projects. This *seems* great! However, once created, most leave you with that copy-and-pasted code to manage through the life of your project.
 
