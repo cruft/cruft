@@ -2,6 +2,7 @@
 _________________
 
 [![PyPI version](https://badge.fury.io/py/cruft.svg)](http://badge.fury.io/py/cruft)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/cruft.svg)](https://anaconda.org/conda-forge/cruft)
 [![Build Status](https://github.com/cruft/cruft/workflows/Run%20tests/badge.svg)](https://github.com/cruft/cruft/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster)
 [![codecov](https://codecov.io/gh/cruft/cruft/branch/master/graph/badge.svg)](https://codecov.io/gh/cruft/cruft)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
