@@ -17,6 +17,11 @@ def test_invalid_cookiecutter_repo(tmpdir):
         cruft.create("DNE", Path(tmpdir))
 
 
+def test_invalid_cookiecutter_reference(tmpdir):
+    with pytest.raises(exceptions.InvalidCookiecutterRepository):
+        cruft.create("https://github.com/samj1912/cookiecutter-test", Path(tmpdir), checkout="DNE")
+
+
 def test_no_cookiecutter_dir(tmpdir):
     with pytest.raises(exceptions.UnableToFindCookiecutterTemplate):
         cruft.create("https://github.com/samj1912/cookiecutter-test", Path(tmpdir))

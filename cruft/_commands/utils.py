@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context
 from cookiecutter.prompt import prompt_for_config
-from git import Repo
+from git import GitCommandError, Repo
 
 from cruft.exceptions import (
     CruftAlreadyPresent,
@@ -45,7 +45,15 @@ def resolve_template_url(url: str) -> str:
     # work properly in case the generated project directory
     # does not reside in the same relative path.
     if not parsed_url.scheme or parsed_url.scheme == "file":
-        return str((Path(parsed_url.netloc) / Path(parsed_url.path)).absolute())
+        file_path = (Path(parsed_url.netloc) / Path(parsed_url.path)).absolute()
+        # Below is to handle cases like "git@github.com"
+        # which passes through to this block, but will obviously not
+        # exist in the file system.
+        # In this case we simply return the URL. If the user did
+        # pass in a valid file path that does not exist, we do not need to
+        # worry as we will never to be able use it in check/update etc. anyway
+        if file_path.exists():
+            return str(file_path)
     return url
 
 
@@ -54,12 +62,19 @@ def get_cookiecutter_repo(
 ):
     try:
         repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
-        if checkout is not None:
+    except GitCommandError as error:
+        raise InvalidCookiecutterRepository(
+            template_git_url, f"Failed to clone the repo. {error.stderr.strip()}"
+        )
+    if checkout is not None:
+        try:
             repo.git.checkout(checkout)
-    except Exception:
-        raise InvalidCookiecutterRepository(template_git_url)
-    else:
-        return repo
+        except GitCommandError as error:
+            raise InvalidCookiecutterRepository(
+                template_git_url,
+                f"Failed to check out the reference {checkout}. {error.stderr.strip()}",
+            )
+    return repo
 
 
 def _validate_cookiecutter(cookiecutter_template_dir: Path):

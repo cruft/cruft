@@ -42,6 +42,8 @@ class CruftAlreadyPresent(CruftError):
 class InvalidCookiecutterRepository(CruftError):
     """Raised when an invalid cookiecutter repository is provided."""
 
-    def __init__(self, cookiecutter_repo: str):
-        super().__init__(f"{cookiecutter_repo} is not a valid Cookiecutter git repository!")
+    def __init__(self, cookiecutter_repo: str, details: str = ""):
         self.cookiecutter_repo = cookiecutter_repo
+        super().__init__(
+            f"Unable to initialize the cookiecutter using {cookiecutter_repo}! {details.strip()}"
+        )

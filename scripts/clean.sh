@@ -1,5 +1,5 @@
 #!/bin/bash
 set -euxo pipefail
 
-poetry run isort --multi-line=3 --trailing-comma --force-grid-wrap=0 --use-parentheses --line-width=100 cruft/ tests/
-poetry run black cruft/ tests/ -l 100
+poetry run isort cruft/ tests/
+poetry run black cruft/ tests/

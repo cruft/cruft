@@ -50,3 +50,9 @@ skip = ["cruft/__init__.py", "tests"]
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "hug"
