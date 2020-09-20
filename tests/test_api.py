@@ -11,7 +11,7 @@ from git import Repo
 
 import cruft
 from cruft import exceptions
-from cruft._commands.utils import get_cruft_file
+from cruft._commands import utils
 
 
 def test_invalid_cookiecutter_repo(tmpdir):
@@ -108,7 +108,7 @@ def test_directory_and_checkout(tmpdir):
         directory="dir",
         checkout="initial",
     )
-    cruft_file = get_cruft_file(output_path)
+    cruft_file = utils.cruft.get_cruft_file(output_path)
     assert cruft_file.exists()
     assert cruft.check(output_path, checkout="initial")
     assert not cruft.check(output_path, checkout="updated")

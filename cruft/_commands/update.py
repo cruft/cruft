@@ -7,15 +7,8 @@ from typing import Any, Dict, Optional
 import click
 import typer
 
-from .utils import (
-    diff_utils,
-    example,
-    generate_utils,
-    get_cookiecutter_repo,
-    get_cruft_file,
-    is_project_updated,
-    json_dumps,
-)
+from . import utils
+from .utils import example
 
 CruftState = Dict[str, Any]
 
@@ -31,7 +24,7 @@ def update(
     strict: bool = True,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
-    cruft_file = get_cruft_file(project_dir)
+    cruft_file = utils.cruft.get_cruft_file(project_dir)
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
@@ -53,11 +46,11 @@ def update(
         new_template_dir = tmpdir / "new_template"
 
         # Clone the template
-        repo = get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
+        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
         last_commit = repo.head.object.hexsha
 
         # Bail early if the repo is already up to date
-        if is_project_updated(repo, cruft_state["commit"], last_commit, strict):
+        if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
             typer.secho(
                 "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
             )
@@ -66,14 +59,14 @@ def update(
         # Generate clean outputs via the cookiecutter
         # from the current cruft state commit of the cookiectter and the updated
         # cookiecutter.
-        _ = generate_utils.cookiecutter_template(
+        _ = utils.generate.cookiecutter_template(
             output_dir=current_template_dir,
             repo=repo,
             project_dir=project_dir,
             cookiecutter_input=cookiecutter_input,
             checkout=cruft_state["commit"],
         )
-        new_context = generate_utils.cookiecutter_template(
+        new_context = utils.generate.cookiecutter_template(
             output_dir=new_template_dir,
             repo=repo,
             project_dir=project_dir,
@@ -91,7 +84,7 @@ def update(
             # to the cruft file
             cruft_state["commit"] = last_commit
             cruft_state["context"] = new_context
-            cruft_file.write_text(json_dumps(cruft_state))
+            cruft_file.write_text(utils.cruft.json_dumps(cruft_state))
             typer.secho(
                 "Good work! Project's cruft has been updated and is as clean as possible!",
                 fg=typer.colors.GREEN,
@@ -186,7 +179,7 @@ def _apply_project_updates(
     skip_update: bool,
     skip_apply_ask: bool,
 ) -> bool:
-    diff = diff_utils.get_diff(old_main_directory, new_main_directory)
+    diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
     if not skip_apply_ask and not skip_update:
         input_str: str = "v"
@@ -204,7 +197,7 @@ def _apply_project_updates(
             )
             if input_str == "v":
                 if diff.strip():
-                    diff_utils.display_diff(old_main_directory, new_main_directory)
+                    utils.diff.display_diff(old_main_directory, new_main_directory)
                 else:
                     click.secho("There are no changes.", fg=typer.colors.YELLOW)
         if input_str == "n":

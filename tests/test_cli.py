@@ -8,7 +8,7 @@ from typer.testing import CliRunner
 
 import cruft
 from cruft._cli import app
-from cruft._commands.utils import get_cruft_file
+from cruft._commands import utils
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def test_check_stale(cruft_runner, cookiecutter_dir):
 
 
 def test_link(cruft_runner, cookiecutter_dir):
-    get_cruft_file(cookiecutter_dir).unlink()
+    utils.cruft.get_cruft_file(cookiecutter_dir).unlink()
     result = cruft_runner(
         [
             "link",
@@ -110,7 +110,7 @@ def test_link(cruft_runner, cookiecutter_dir):
 
 
 def test_link_interactive(cruft_runner, cookiecutter_dir):
-    cruft_file = get_cruft_file(cookiecutter_dir)
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
     commit = json.loads(cruft_file.read_text())["commit"]
     cruft_file.unlink()
     result = cruft_runner(

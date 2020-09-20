@@ -8,7 +8,8 @@ from typing import Any, Dict, Optional, Set
 from cookiecutter.generate import generate_files
 from git import Repo
 
-from . import CookiecutterContext, generate_cookiecutter_context, get_cruft_file
+from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
+from .cruft import get_cruft_file
 
 try:
     import toml  # type: ignore

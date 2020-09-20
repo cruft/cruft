@@ -6,12 +6,12 @@ from tempfile import TemporaryDirectory
 
 import typer
 
-from .utils import diff_utils, generate_utils, get_cookiecutter_repo, get_cruft_file
+from . import utils
 
 
 def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
     """Show the diff between the project and the linked Cookiecutter template"""
-    cruft_file = get_cruft_file(project_dir)
+    cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
     checkout = cruft_state.get("commit")
 
@@ -27,10 +27,10 @@ def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
         local_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Let's clone the template
-        repo = get_cookiecutter_repo(cruft_state["template"], repo_dir)
+        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir)
 
         # We generate the template for the revision expected by the project
-        generate_utils.cookiecutter_template(
+        utils.generate.cookiecutter_template(
             output_dir=remote_template_dir, repo=repo, project_dir=project_dir, checkout=checkout
         )
 
@@ -48,7 +48,7 @@ def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
                 destination.chmod(local_path.stat().st_mode)
 
         # Finally we can compute and print the diff.
-        diff = diff_utils.get_diff(remote_template_dir, local_template_dir)
+        diff = utils.diff.get_diff(remote_template_dir, local_template_dir)
 
         if diff.strip():
             has_diff = True
@@ -69,6 +69,6 @@ def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
                 # to git diff so that they can benefit from coloration and paging.
                 # Ouputing absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
-                diff_utils.display_diff(remote_template_dir, local_template_dir)
+                utils.diff.display_diff(remote_template_dir, local_template_dir)
 
     return not (has_diff and exit_code)
