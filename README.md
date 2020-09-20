@@ -109,6 +109,12 @@ For example:
 
 You can then specify the last commit of the template the project has been updated to be consistent with, or accept the default of using the latest commit from the template.
 
+## Compute the diff
+
+With time, your boilerplate may end up being very different from the acutal cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running `cruft diff`. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to `git diff`.
+
+The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code should any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
+
 ## Why Create cruft?
 
 Since I first saw videos of [quickly](https://www.youtube.com/watch?v=9EctXzH2dss) being used to automate Ubuntu application creation, I've had a love/hate relationship with these kinds of tools.
