@@ -231,3 +231,19 @@ def update(
         strict=strict,
     ):
         raise typer.Exit(1)
+
+
+@app.command(
+    short_help="Show the diff between the project and the current cruft template.",
+    help=_get_help_string(_commands.diff),
+)
+def diff(
+    project_dir: Path = typer.Option(
+        Path("."), "--project-dir", "-p", help="Path to the project directory.", show_default=False
+    ),
+    exit_code: bool = typer.Option(
+        False, "--exit-code", "-e", help="Exit with status 1 on non-empty diff.", show_default=False
+    ),
+) -> None:
+    if not _commands.diff(project_dir=project_dir, exit_code=exit_code):
+        raise typer.Exit(1)
