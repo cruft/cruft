@@ -62,7 +62,7 @@ def resolve_template_url(url: str) -> str:
 
 def get_cookiecutter_repo(
     template_git_url: str, cookiecutter_template_dir: Path, checkout: Optional[str] = None
-):
+) -> Repo:
     try:
         repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
     except GitCommandError as error:
@@ -99,7 +99,7 @@ def generate_cookiecutter_context(
     default_config: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
     no_input: bool = False,
-):
+) -> CookiecutterContext:
     _validate_cookiecutter(cookiecutter_template_dir)
 
     context_file = cookiecutter_template_dir / "cookiecutter.json"
@@ -126,7 +126,7 @@ def generate_cookiecutter_context(
 #######################
 
 
-def get_cruft_file(project_dir_path: Path, exists: bool = True):
+def get_cruft_file(project_dir_path: Path, exists: bool = True) -> Path:
     cruft_file = project_dir_path / ".cruft.json"
     if not exists and cruft_file.is_file():
         raise CruftAlreadyPresent(cruft_file)
@@ -135,7 +135,7 @@ def get_cruft_file(project_dir_path: Path, exists: bool = True):
     return cruft_file
 
 
-def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, strict: bool):
+def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, strict: bool) -> bool:
     return (
         # If the latest commit exactly matches the current commit
         latest_commit == current_commit
