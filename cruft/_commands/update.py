@@ -2,15 +2,13 @@ import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import click
 import typer
 
 from . import utils
 from .utils import example
-
-CruftState = Dict[str, Any]
 
 
 @example(skip_apply_ask=False)
@@ -62,6 +60,7 @@ def update(
         _ = utils.generate.cookiecutter_template(
             output_dir=current_template_dir,
             repo=repo,
+            cruft_state=cruft_state,
             project_dir=project_dir,
             cookiecutter_input=cookiecutter_input,
             checkout=cruft_state["commit"],
@@ -69,6 +68,7 @@ def update(
         new_context = utils.generate.cookiecutter_template(
             output_dir=new_template_dir,
             repo=repo,
+            cruft_state=cruft_state,
             project_dir=project_dir,
             cookiecutter_input=cookiecutter_input,
             checkout=last_commit,

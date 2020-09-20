@@ -36,7 +36,11 @@ def diff(
 
         # We generate the template for the revision expected by the project
         utils.generate.cookiecutter_template(
-            output_dir=remote_template_dir, repo=repo, project_dir=project_dir, checkout=checkout
+            output_dir=remote_template_dir,
+            repo=repo,
+            cruft_state=cruft_state,
+            project_dir=project_dir,
+            checkout=checkout,
         )
 
         # Then we create a new tree with each file in the template that also exist

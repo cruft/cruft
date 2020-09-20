@@ -1,10 +1,14 @@
 import json
 from functools import partial
 from pathlib import Path
+from typing import Any, Dict
 
 from git import Repo
 
 from cruft.exceptions import CruftAlreadyPresent, NoCruftFound
+
+CruftState = Dict[str, Any]
+
 
 #######################
 # Cruft related utils #

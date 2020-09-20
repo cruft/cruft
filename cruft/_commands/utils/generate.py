@@ -1,35 +1,31 @@
-import json
 import os
 from pathlib import Path
 from shutil import move, rmtree
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Optional, Set
+from typing import Optional, Set
 
 from cookiecutter.generate import generate_files
 from git import Repo
 
 from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
-from .cruft import get_cruft_file
+from .cruft import CruftState
 
 try:
     import toml  # type: ignore
 except ImportError:  # pragma: no cover
     toml = None  # type: ignore
 
-CruftState = Dict[str, Any]
-
 
 def cookiecutter_template(
     output_dir: Path,
     repo: Repo,
+    cruft_state: CruftState,
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
     checkout: Optional[str] = None,
 ) -> CookiecutterContext:
     """Generate a clean cookiecutter template in output_dir."""
     pyproject_file = project_dir / "pyproject.toml"
-    cruft_file = get_cruft_file(project_dir)
-    cruft_state = json.loads(cruft_file.read_text())
     commit = checkout or repo.remotes.origin.refs["HEAD"]
 
     repo.head.reset(commit=commit, working_tree=True)
