@@ -250,6 +250,14 @@ def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir)
     assert result.stdout != ""
 
 
+def test_diff_checkout(cruft_runner, cookiecutter_dir):
+    result = cruft_runner(
+        ["diff", "--project-dir", str(cookiecutter_dir), "--checkout", "updated", "--exit-code"]
+    )
+    assert result.exit_code == 1
+    assert result.stdout != ""
+
+
 @pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
 def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)

@@ -244,6 +244,12 @@ def diff(
     exit_code: bool = typer.Option(
         False, "--exit-code", "-e", help="Exit with status 1 on non-empty diff.", show_default=False
     ),
+    checkout: Optional[str] = typer.Option(
+        None,
+        "--checkout",
+        "-c",
+        help=("The git reference to check against. Supports branches, tags and commit hashes."),
+    ),
 ) -> None:
-    if not _commands.diff(project_dir=project_dir, exit_code=exit_code):
+    if not _commands.diff(project_dir=project_dir, exit_code=exit_code, checkout=checkout):
         raise typer.Exit(1)

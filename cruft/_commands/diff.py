@@ -3,17 +3,20 @@ import shutil
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Optional
 
 import typer
 
 from . import utils
 
 
-def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
+def diff(
+    project_dir: Path = Path("."), exit_code: bool = False, checkout: Optional[str] = None
+) -> bool:
     """Show the diff between the project and the linked Cookiecutter template"""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
-    checkout = cruft_state.get("commit")
+    checkout = checkout or cruft_state.get("commit")
 
     has_diff = False
     with TemporaryDirectory() as tmpdir_:
@@ -27,7 +30,9 @@ def diff(project_dir: Path = Path("."), exit_code: bool = False) -> bool:
         local_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Let's clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir)
+        repo = utils.cookiecutter.get_cookiecutter_repo(
+            cruft_state["template"], repo_dir, checkout=checkout
+        )
 
         # We generate the template for the revision expected by the project
         utils.generate.cookiecutter_template(

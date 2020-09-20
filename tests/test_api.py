@@ -216,3 +216,24 @@ def test_diff_no_diff(exit_code, capfd, mocker, tmpdir):
 
     assert stdout == ""
     assert stderr == ""
+
+
+def test_diff_checkout(capfd, tmpdir):
+    project_dir = cruft.create(
+        "https://github.com/samj1912/cookiecutter-test",
+        Path(tmpdir),
+        directory="dir",
+        checkout="master",
+    )
+
+    assert cruft.diff(project_dir, exit_code=True, checkout="updated") is False
+
+    captured = capfd.readouterr()
+    stdout = captured.out
+    stderr = captured.err
+
+    assert stderr == ""
+    assert "--- a/README.md" in stdout
+    assert "+++ b/README.md" in stdout
+    assert "-Updated again" in stdout
+    assert "+Updated" in stdout
