@@ -21,12 +21,12 @@ def test_invalid_cookiecutter_repo(tmpdir):
 
 def test_invalid_cookiecutter_reference(tmpdir):
     with pytest.raises(exceptions.InvalidCookiecutterRepository):
-        cruft.create("https://github.com/samj1912/cookiecutter-test", Path(tmpdir), checkout="DNE")
+        cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir), checkout="DNE")
 
 
 def test_no_cookiecutter_dir(tmpdir):
     with pytest.raises(exceptions.UnableToFindCookiecutterTemplate):
-        cruft.create("https://github.com/samj1912/cookiecutter-test", Path(tmpdir))
+        cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir))
 
 
 def test_create_examples(tmpdir):
@@ -76,7 +76,7 @@ def test_update_and_check_real_repo(tmpdir):
 def test_relative_repo_check(tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
-    Repo.clone_from("https://github.com/samj1912/cookiecutter-test", str(temp_dir / "cc"))
+    Repo.clone_from("https://github.com/cruft/cookiecutter-test", str(temp_dir / "cc"))
     project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
     assert cruft.check(project_dir)
 
@@ -103,7 +103,7 @@ def test_link_examples(project_dir, tmpdir):
 
 def test_directory_and_checkout(tmpdir):
     output_path = cruft.create(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         output_dir=Path(tmpdir),
         directory="dir",
         checkout="initial",
@@ -117,7 +117,7 @@ def test_directory_and_checkout(tmpdir):
     cruft_file.unlink()
     assert not cruft_file.exists()
     assert cruft.link(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         project_dir=output_path,
         directory="dir",
         checkout="updated",

@@ -20,7 +20,7 @@ def cruft_runner():
 @pytest.fixture
 def cookiecutter_dir(tmpdir):
     yield Path(
-        cruft.create("https://github.com/samj1912/cookiecutter-test", Path(tmpdir), directory="dir")
+        cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir")
     )
 
 
@@ -28,7 +28,7 @@ def cookiecutter_dir(tmpdir):
 def cookiecutter_dir_updated(tmpdir):
     yield Path(
         cruft.create(
-            "https://github.com/samj1912/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
             directory="dir",
             checkout="updated",
@@ -42,7 +42,7 @@ def test_create(cruft_runner, tmpdir):
             "create",
             "--output-dir",
             str(tmpdir),
-            "https://github.com/samj1912/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             "--directory",
             "dir",
             "-y",
@@ -58,7 +58,7 @@ def test_create_interactive(cruft_runner, tmpdir):
             "create",
             "--output-dir",
             str(tmpdir),
-            "https://github.com/samj1912/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             "--directory",
             "dir",
         ],
@@ -97,7 +97,7 @@ def test_link(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         [
             "link",
-            "https://github.com/samj1912/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             "--project-dir",
             str(cookiecutter_dir),
             "-y",
@@ -116,7 +116,7 @@ def test_link_interactive(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         [
             "link",
-            "https://github.com/samj1912/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             "--project-dir",
             str(cookiecutter_dir),
             "--directory",
