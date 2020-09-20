@@ -144,11 +144,7 @@ def test_diff_has_diff(
     mocker.patch.object(sys.stdout, "isatty", return_value=isatty)
 
     project_dir = cruft.create(
-        # FIXME change this to samj1912 repo when it is merged.
-        "https://github.com/gilbsgilbs/cookiecutter-test",
-        Path(tmpdir),
-        directory="dir",
-        checkout="diff",
+        "https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir", checkout="diff"
     )
     (project_dir / "file0").write_text("new content 0\n")
     (project_dir / "dir0/file1").write_text("new content 1\n")
@@ -201,11 +197,7 @@ index 1fc03a9..be6a56b 100644
 @pytest.mark.parametrize("exit_code", [(False,), (True,)])
 def test_diff_no_diff(exit_code, capfd, mocker, tmpdir):
     project_dir = cruft.create(
-        # FIXME change this to samj1912 repo when it is merged.
-        "https://github.com/gilbsgilbs/cookiecutter-test",
-        Path(tmpdir),
-        directory="dir",
-        checkout="diff",
+        "https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir", checkout="diff"
     )
 
     assert cruft.diff(project_dir, exit_code=exit_code) is True
