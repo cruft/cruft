@@ -32,6 +32,9 @@ except ImportError:  # pragma: no cover
         return decorator
 
 
+CookiecutterContext = Dict[str, Any]
+
+
 #################################
 # Cookiecutter helper functions #
 #################################
