@@ -30,7 +30,6 @@ def cookiecutter_template(
 
     repo.head.reset(commit=commit, working_tree=True)
 
-    output_dir.mkdir(parents=True, exist_ok=True)
     context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
 
     # Get all paths that we are supposed to skip before generating the diff and applying updates
@@ -67,6 +66,7 @@ def _generate_output(
     # arbitrary directory. It insists on creating the initial project directory.
     # Therefore we have to move the directory content to the expected output_dir.
     # See https://github.com/cookiecutter/cookiecutter/pull/907
+    output_dir.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
 
