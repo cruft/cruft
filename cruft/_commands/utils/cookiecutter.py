@@ -1,5 +1,3 @@
-import json
-from functools import partial, wraps
 from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -9,27 +7,9 @@ from cookiecutter.generate import generate_context
 from cookiecutter.prompt import prompt_for_config
 from git import GitCommandError, Repo
 
-from cruft.exceptions import (
-    CruftAlreadyPresent,
-    InvalidCookiecutterRepository,
-    NoCruftFound,
-    UnableToFindCookiecutterTemplate,
-)
+from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
 
-try:
-    from examples import example
-except ImportError:  # pragma: no cover
-    # In case examples is not available,
-    # we introduce a no-op decorator.
-    def example(*_args, **_kwargs):
-        def decorator(f):
-            @wraps(f)
-            def wrapper(*args, **kwargs):
-                return f(*args, **kwargs)
-
-            return wrapper
-
-        return decorator
+CookiecutterContext = Dict[str, Any]
 
 
 #################################
@@ -59,7 +39,7 @@ def resolve_template_url(url: str) -> str:
 
 def get_cookiecutter_repo(
     template_git_url: str, cookiecutter_template_dir: Path, checkout: Optional[str] = None
-):
+) -> Repo:
     try:
         repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
     except GitCommandError as error:
@@ -96,7 +76,7 @@ def generate_cookiecutter_context(
     default_config: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
     no_input: bool = False,
-):
+) -> CookiecutterContext:
     _validate_cookiecutter(cookiecutter_template_dir)
 
     context_file = cookiecutter_template_dir / "cookiecutter.json"
@@ -116,31 +96,3 @@ def generate_cookiecutter_context(
     context["cookiecutter"]["_template"] = template_git_url
 
     return context
-
-
-#######################
-# Cruft related utils #
-#######################
-
-
-def get_cruft_file(project_dir_path: Path, exists: bool = True):
-    cruft_file = project_dir_path / ".cruft.json"
-    if not exists and cruft_file.is_file():
-        raise CruftAlreadyPresent(cruft_file)
-    if exists and not cruft_file.is_file():
-        raise NoCruftFound(project_dir_path.resolve())
-    return cruft_file
-
-
-def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, strict: bool):
-    return (
-        # If the latest commit exactly matches the current commit
-        latest_commit == current_commit
-        # Or if there have been no changes to the cookiecutter
-        or not repo.index.diff(current_commit)
-        # or if the strict flag is off, we allow for newer commits to count as up to date
-        or (repo.is_ancestor(latest_commit, current_commit) and not strict)
-    )
-
-
-json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", ": "))

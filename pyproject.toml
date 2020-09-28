@@ -34,6 +34,7 @@ pep8-naming = "^0.8.2"
 portray = "^1.3.0"
 examples = "^1.0.2"
 pytest-xdist = "^1.34.0"
+pytest-mock = "^3.3.1"
 
 [tool.poetry.scripts]
 cruft = "cruft._cli:app"

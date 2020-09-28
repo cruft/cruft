@@ -8,7 +8,7 @@ from typer.testing import CliRunner
 
 import cruft
 from cruft._cli import app
-from cruft._commands.utils import get_cruft_file
+from cruft._commands import utils
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def test_check_stale(cruft_runner, cookiecutter_dir):
 
 
 def test_link(cruft_runner, cookiecutter_dir):
-    get_cruft_file(cookiecutter_dir).unlink()
+    utils.cruft.get_cruft_file(cookiecutter_dir).unlink()
     result = cruft_runner(
         [
             "link",
@@ -110,7 +110,7 @@ def test_link(cruft_runner, cookiecutter_dir):
 
 
 def test_link_interactive(cruft_runner, cookiecutter_dir):
-    cruft_file = get_cruft_file(cookiecutter_dir)
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
     commit = json.loads(cruft_file.read_text())["commit"]
     cruft_file.unlink()
     result = cruft_runner(
@@ -240,3 +240,26 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
     assert "cruft has been updated" in result.stdout
+
+
+@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
+def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
+    (cookiecutter_dir / "README.md").write_text("changed content\n")
+    result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout != ""
+
+
+def test_diff_checkout(cruft_runner, cookiecutter_dir):
+    result = cruft_runner(
+        ["diff", "--project-dir", str(cookiecutter_dir), "--checkout", "updated", "--exit-code"]
+    )
+    assert result.exit_code == 1
+    assert result.stdout != ""
+
+
+@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
+def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
+    result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout == ""
