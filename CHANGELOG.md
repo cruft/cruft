@@ -16,6 +16,9 @@ OR
 
 Changelog
 =========
+## 2.5.0 - 1 October 2020
+- [Fixed issue #58](https://github.com/cruft/cruft/issues/58): Add a diff command that compares the current project to the upstream cookiecutter
+
 ## 2.4.0 - 18 September 2020
 - [Fixed issue #52](https://github.com/cruft/cruft/issues/52): Clarify error message when specified commit is missing from repo
 - [Fixed issue #55](https://github.com/cruft/cruft/issues/55): Add support for ssh connections to template repository
