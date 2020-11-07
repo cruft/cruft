@@ -16,6 +16,11 @@ OR
 
 Changelog
 =========
+## 2.6.0 - 7 November 2020
+- [Fixed issue #53](https://github.com/cruft/cruft/issues/53): Update fails on moved files, without clear error messages
+- [Fixed issue #67](https://github.com/cruft/cruft/issues/67): Update fails on new files
+- [Fixed issue #71](https://github.com/cruft/cruft/issues/71): Fix the order for cruft diff
+
 ## 2.5.0 - 1 October 2020
 - [Fixed issue #58](https://github.com/cruft/cruft/issues/58): Add a diff command that compares the current project to the upstream cookiecutter
 
