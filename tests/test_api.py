@@ -159,19 +159,19 @@ def test_diff_has_diff(
     assert stderr == ""
 
     expected_output = """diff --git a{tmpdir}/dir0/file1 b{tmpdir}/dir0/file1
-index ac3e272..eaae237 100644
+index eaae237..ac3e272 100644
 --- a{tmpdir}/dir0/file1
 +++ b{tmpdir}/dir0/file1
 @@ -1 +1 @@
--content1
-+new content 1
+-new content 1
++content1
 diff --git a{tmpdir}/file0 b{tmpdir}/file0
-index 1fc03a9..be6a56b 100644
+index be6a56b..1fc03a9 100644
 --- a{tmpdir}/file0
 +++ b{tmpdir}/file0
 @@ -1 +1 @@
--content0
-+new content 0
+-new content 0
++content0
 """
     expected_output_regex = re.escape(expected_output)
     expected_output_regex = expected_output_regex.replace(r"\{tmpdir\}", r"([^\n]*)")
@@ -227,5 +227,5 @@ def test_diff_checkout(capfd, tmpdir):
     assert stderr == ""
     assert "--- a/README.md" in stdout
     assert "+++ b/README.md" in stdout
-    assert "-Updated again" in stdout
-    assert "+Updated" in stdout
+    assert "+Updated again" in stdout
+    assert "-Updated" in stdout

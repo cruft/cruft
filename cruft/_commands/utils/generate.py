@@ -23,8 +23,12 @@ def cookiecutter_template(
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
     checkout: Optional[str] = None,
+    deleted_paths: Set[Path] = None,
+    update_deleted_paths: bool = False,
 ) -> CookiecutterContext:
     """Generate a clean cookiecutter template in output_dir."""
+    if deleted_paths is None:
+        deleted_paths = set()
     pyproject_file = project_dir / "pyproject.toml"
     commit = checkout or repo.remotes.origin.refs["HEAD"]
 
@@ -37,7 +41,8 @@ def cookiecutter_template(
     # We also get the list of paths that were deleted from the project
     # directory but were present in the template that the project is linked against
     # This is to avoid introducing changes that won't apply cleanly to the current project.
-    deleted_paths = _get_deleted_files(output_dir, project_dir)
+    if update_deleted_paths:
+        deleted_paths.update(_get_deleted_files(output_dir, project_dir))
     # We now remove skipped and deleted paths from the project
     _remove_paths(output_dir, skip_paths | deleted_paths)
 

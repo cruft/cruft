@@ -222,6 +222,25 @@ def test_update_strict(cruft_runner, cookiecutter_dir_updated):
     assert "cruft has been updated" in result.stdout
 
 
+def test_update_when_new_file(cruft_runner, cookiecutter_dir):
+    result = cruft_runner(
+        ["update", "--project-dir", str(cookiecutter_dir), "-c", "new-file"], input="y\n"
+    )
+    assert result.exit_code == 0
+    assert (cookiecutter_dir / "new-file").exists()
+    assert "cruft has been updated" in result.stdout
+
+
+def test_update_when_file_moved(cruft_runner, cookiecutter_dir):
+    result = cruft_runner(
+        ["update", "--project-dir", str(cookiecutter_dir), "-c", "file-moved"], input="y\n"
+    )
+    assert result.exit_code == 0
+    assert (cookiecutter_dir / "NEW-README.md").exists()
+    assert not (cookiecutter_dir / "README.md").exists()
+    assert "cruft has been updated" in result.stdout
+
+
 def test_update_interactive_view_no_changes(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", str(cookiecutter_dir), "-c", "no-changes"], input="v\ny\n"

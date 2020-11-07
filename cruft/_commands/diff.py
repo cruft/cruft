@@ -41,6 +41,7 @@ def diff(
             cruft_state=cruft_state,
             project_dir=project_dir,
             checkout=checkout,
+            update_deleted_paths=True,
         )
 
         # Then we create a new tree with each file in the template that also exist
@@ -49,7 +50,6 @@ def diff(
             relative_path = path.relative_to(remote_template_dir)
             local_path = project_dir / relative_path
             destination = local_template_dir / relative_path
-
             if path.is_file():
                 shutil.copy(str(local_path), str(destination))
             else:
@@ -57,7 +57,7 @@ def diff(
                 destination.chmod(local_path.stat().st_mode)
 
         # Finally we can compute and print the diff.
-        diff = utils.diff.get_diff(remote_template_dir, local_template_dir)
+        diff = utils.diff.get_diff(local_template_dir, remote_template_dir)
 
         if diff.strip():
             has_diff = True
@@ -78,6 +78,6 @@ def diff(
                 # to git diff so that they can benefit from coloration and paging.
                 # Ouputing absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
-                utils.diff.display_diff(remote_template_dir, local_template_dir)
+                utils.diff.display_diff(local_template_dir, remote_template_dir)
 
     return not (has_diff and exit_code)

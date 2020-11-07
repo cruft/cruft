@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
 from tempfile import TemporaryDirectory
-from typing import Optional
+from typing import Optional, Set
 
 import click
 import typer
@@ -42,7 +42,7 @@ def update(
         repo_dir = tmpdir / "repo"
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
-
+        deleted_paths: Set[Path] = set()
         # Clone the template
         repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
         last_commit = repo.head.object.hexsha
@@ -64,6 +64,8 @@ def update(
             project_dir=project_dir,
             cookiecutter_input=cookiecutter_input,
             checkout=cruft_state["commit"],
+            deleted_paths=deleted_paths,
+            update_deleted_paths=True,
         )
         new_context = utils.generate.cookiecutter_template(
             output_dir=new_template_dir,
@@ -72,6 +74,7 @@ def update(
             project_dir=project_dir,
             cookiecutter_input=cookiecutter_input,
             checkout=last_commit,
+            deleted_paths=deleted_paths,
         )
 
         # Given the two versions of the cookiecutter outputs based

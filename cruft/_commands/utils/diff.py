@@ -20,9 +20,15 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
     # +++ b/tmp/tmpmp34g21y/local/.coveragerc
     # We don't want this as we may need to apply the diff later on.
-    diff = diff.replace("a" + str(repo0), "a")
-    diff = diff.replace("b" + str(repo1), "b")
-
+    diff = diff.replace("a" + str(repo0), "a").replace("b" + str(repo1), "b")
+    # This replacement is needed for renamed/moved files to be recognized properly
+    # Renamed files in the diff don't have the "a" or "b" prefix and instead look like
+    # /tmp/tmpmp34g21y/remote/.coveragerc
+    # If we replace repo paths which are like /tmp/tmpmp34g21y/remote
+    # we would end up with /.coveragerc which doesn't work.
+    # We also need to replace the trailing slash. As a result, we only do
+    # this after the above replacement is made as the trailing slash is needed there.
+    diff = diff.replace(str(repo0) + "/", "").replace(str(repo1) + "/", "")
     return diff
 
 
