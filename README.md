@@ -111,7 +111,7 @@ You can then specify the last commit of the template the project has been update
 
 ## Compute the diff
 
-With time, your boilerplate may end up being very different from the acutal cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running `cruft diff`. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to `git diff`.
+With time, your boilerplate may end up being very different from the actual cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running `cruft diff`. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to `git diff`.
 
 The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code should any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
 
