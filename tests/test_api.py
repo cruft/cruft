@@ -213,7 +213,7 @@ index be6a56b..1fc03a9 100644
         # of the "cruft diff" command) or if the user requested an exit code, we must make
         # sure the absolute path to the temporary directory does not appear in the diff
         # because the user might want to process the output.
-        # Conversely, when the output is suposed to be displayed to the user directly (e.g.
+        # Conversely, when the output is supposed to be displayed to the user directly (e.g.
         # when running "cruft diff" command directly in a terminal), absolute path to the
         # actual files on disk may be displayed because git diff command is called directly
         # without reprocessing by cruft. This delegates diff coloring and paging to git which

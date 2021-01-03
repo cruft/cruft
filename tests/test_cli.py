@@ -181,7 +181,7 @@ def test_update_with_conflicts_with_git(cruft_runner, cookiecutter_dir):
     assert result.exit_code == 0
     assert set(cookiecutter_dir.glob("**/*.rej"))
     assert "Project directory may have *.rej files" in result.stdout
-    assert "Retrying again with a different update stratergy." in result.stdout
+    assert "Retrying again with a different update strategy." in result.stdout
 
 
 def test_update_interactive_cancelled(cruft_runner, cookiecutter_dir):
