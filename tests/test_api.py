@@ -257,3 +257,41 @@ def test_diff_checkout(capfd, tmpdir):
     assert "+++ b/README.md" in stdout
     assert "+Updated again" in stdout
     assert "-Updated" in stdout
+
+
+def test_diff_git_subdir(capfd, tmpdir):
+    tmpdir.chdir()
+    temp_dir = Path(tmpdir)
+    Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
+    # project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
+    # assert cruft.check(project_dir)
+
+    # Create something deeper in the git tree
+    project_dir = cruft.create(
+        "https://github.com/samj1912/cookiecutter-test",
+        Path(f"tmpdir/foo/bar"),
+        directory="dir",
+        checkout="master",
+    )
+    # not added & committed
+    assert not cruft.update(project_dir)
+    # Add & commit the changes so that the repo is clean
+    run(
+        ["git", "add", "."],
+        cwd=temp_dir,
+    )
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=temp_dir,
+    )
+
+    assert cruft.update(project_dir, checkout="updated")
