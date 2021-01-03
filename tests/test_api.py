@@ -269,17 +269,14 @@ def test_diff_git_subdir(capfd, tmpdir):
     # Create something deeper in the git tree
     project_dir = cruft.create(
         "https://github.com/samj1912/cookiecutter-test",
-        Path(f"tmpdir/foo/bar"),
+        Path("tmpdir/foo/bar"),
         directory="dir",
         checkout="master",
     )
     # not added & committed
     assert not cruft.update(project_dir)
     # Add & commit the changes so that the repo is clean
-    run(
-        ["git", "add", "."],
-        cwd=temp_dir,
-    )
+    run(["git", "add", "."], cwd=temp_dir)
     run(
         [
             "git",

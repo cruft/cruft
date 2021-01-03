@@ -124,8 +124,14 @@ def _is_project_repo_clean(directory: Path):
 
 def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
     try:
+        offset = _get_offset(expanded_dir_path)
+
+        git_apply = ["git", "apply", "-3"]
+        if offset:
+            git_apply.extend(["--directory", offset])
+
         run(
-            ["git", "apply", "--reject"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -145,8 +151,14 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
 
 def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
     try:
+        offset = _get_offset(expanded_dir_path)
+
+        git_apply = ["git", "apply", "-3"]
+        if offset:
+            git_apply.extend(["--directory", offset])
+
         run(
-            ["git", "apply", "-3"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -161,6 +173,17 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
                 fg=typer.colors.YELLOW,
             )
             _apply_patch_with_rejections(diff, expanded_dir_path)
+
+
+def _get_offset(expanded_dir_path: Path):
+    offset = run(
+        ["git", "rev-parse", "--show-prefix"],
+        stderr=PIPE,
+        stdout=PIPE,
+        check=True,
+        cwd=expanded_dir_path,
+    ).stdout.decode().strip()
+    return offset
 
 
 def _apply_patch(diff: str, expanded_dir_path: Path):
