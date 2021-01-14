@@ -86,6 +86,7 @@ def update(
             # Update the cruft state and dump the new state
             # to the cruft file
             cruft_state["commit"] = last_commit
+            cruft_state["checkout"] = checkout
             cruft_state["context"] = new_context
             cruft_file.write_text(utils.cruft.json_dumps(cruft_state))
             typer.secho(
