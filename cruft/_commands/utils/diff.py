@@ -20,7 +20,11 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
     # +++ b/tmp/tmpmp34g21y/local/.coveragerc
     # We don't want this as we may need to apply the diff later on.
-    diff = diff.replace("a" + str(repo0), "a").replace("b" + str(repo1), "b")
+    # Note that diff headers contain repo0 and repo1 with both "a" and "b"
+    # prefixes: headers for new files have a/repo1, headers for deleted files
+    # have b/repo0.
+    for repo in [repo0, repo1]:
+        diff = diff.replace("a" + str(repo), "a").replace("b" + str(repo), "b")
     # This replacement is needed for renamed/moved files to be recognized properly
     # Renamed files in the diff don't have the "a" or "b" prefix and instead look like
     # /tmp/tmpmp34g21y/remote/.coveragerc
