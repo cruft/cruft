@@ -30,19 +30,19 @@ def diff(
         local_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Let's clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], repo_dir, checkout=checkout
-        )
+        ) as repo:
 
-        # We generate the template for the revision expected by the project
-        utils.generate.cookiecutter_template(
-            output_dir=remote_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            checkout=checkout,
-            update_deleted_paths=True,
-        )
+            # We generate the template for the revision expected by the project
+            utils.generate.cookiecutter_template(
+                output_dir=remote_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                checkout=checkout,
+                update_deleted_paths=True,
+            )
 
         # Then we create a new tree with each file in the template that also exist
         # locally.

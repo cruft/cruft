@@ -24,10 +24,10 @@ def link(
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
     with TemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             template_git_url, cookiecutter_template_dir, checkout
-        )
-        last_commit = repo.head.object.hexsha
+        ) as repo:
+            last_commit = repo.head.object.hexsha
 
         if directory:
             cookiecutter_template_dir = cookiecutter_template_dir / directory

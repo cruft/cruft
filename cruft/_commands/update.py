@@ -44,38 +44,38 @@ def update(
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
         # Clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
-        last_commit = repo.head.object.hexsha
+        with utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout) as repo:
+            last_commit = repo.head.object.hexsha
 
-        # Bail early if the repo is already up to date
-        if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
-            typer.secho(
-                "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+            # Bail early if the repo is already up to date
+            if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
+                typer.secho(
+                    "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+                )
+                return True
+
+            # Generate clean outputs via the cookiecutter
+            # from the current cruft state commit of the cookiectter and the updated
+            # cookiecutter.
+            _ = utils.generate.cookiecutter_template(
+                output_dir=current_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                cookiecutter_input=cookiecutter_input,
+                checkout=cruft_state["commit"],
+                deleted_paths=deleted_paths,
+                update_deleted_paths=True,
             )
-            return True
-
-        # Generate clean outputs via the cookiecutter
-        # from the current cruft state commit of the cookiectter and the updated
-        # cookiecutter.
-        _ = utils.generate.cookiecutter_template(
-            output_dir=current_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=cruft_state["commit"],
-            deleted_paths=deleted_paths,
-            update_deleted_paths=True,
-        )
-        new_context = utils.generate.cookiecutter_template(
-            output_dir=new_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=last_commit,
-            deleted_paths=deleted_paths,
-        )
+            new_context = utils.generate.cookiecutter_template(
+                output_dir=new_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                cookiecutter_input=cookiecutter_input,
+                checkout=last_commit,
+                deleted_paths=deleted_paths,
+            )
 
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and

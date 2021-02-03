@@ -24,22 +24,22 @@ def create(
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
     with TemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             template_git_url, cookiecutter_template_dir, checkout
-        )
-        last_commit = repo.head.object.hexsha
+        ) as repo:
+            last_commit = repo.head.object.hexsha
 
-        if directory:
-            cookiecutter_template_dir = cookiecutter_template_dir / directory
+            if directory:
+                cookiecutter_template_dir = cookiecutter_template_dir / directory
 
-        context = utils.cookiecutter.generate_cookiecutter_context(
-            template_git_url,
-            cookiecutter_template_dir,
-            config_file,
-            default_config,
-            extra_context,
-            no_input,
-        )
+            context = utils.cookiecutter.generate_cookiecutter_context(
+                template_git_url,
+                cookiecutter_template_dir,
+                config_file,
+                default_config,
+                extra_context,
+                no_input,
+            )
 
         project_dir = Path(
             generate_files(
