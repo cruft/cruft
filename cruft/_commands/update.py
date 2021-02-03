@@ -144,8 +144,6 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
 
 
 def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
-    # DEBUG
-    print('expanded_dir_path: ', expanded_dir_path)
     try:
         run(
             ["git", "apply", "-3"],
