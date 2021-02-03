@@ -43,11 +43,12 @@ def update(
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
+        deleted_paths.add(Path('.git'))
         # Clone the template
         with utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
 
-            # Bail early if the repo is already up to date
+            # Bail early if the repo is already up to date.
             if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
                     "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
@@ -143,10 +144,12 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
 
 
 def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
+    # DEBUG
+    print('expanded_dir_path: ', expanded_dir_path)
     try:
         run(
             ["git", "apply", "-3"],
-            input=diff.encode(),
+            input=diff.encode(encoding='utf-8'),
             stderr=PIPE,
             stdout=PIPE,
             check=True,
@@ -210,5 +213,5 @@ def _apply_project_updates(
             skip_update = True
 
     if not skip_update and diff.strip():
-        _apply_patch(diff, project_dir)
+        _apply_patch(diff, project_dir.resolve())
     return True

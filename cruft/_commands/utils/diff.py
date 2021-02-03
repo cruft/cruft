@@ -17,7 +17,7 @@ def get_diff(repo0: Path, repo1: Path) -> str:
         cwd=repo0_str,
         stdout=PIPE,
         stderr=PIPE,
-    ).stdout.decode()
+    ).stdout.decode(encoding="utf-8", errors="ignore")
 
     # By default, git diff --no-index will output full paths like so:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
