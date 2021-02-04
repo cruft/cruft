@@ -1,5 +1,5 @@
-import os
 import errno
+import os
 import stat
 from pathlib import Path
 from shutil import move, rmtree
@@ -134,3 +134,5 @@ def _remove_paths(root: Path, paths_to_remove: Set[Path]):
             except PermissionError:
                 path.chmod(stat.S_IWRITE)
                 path.unlink()
+            except Exception as exc:
+                raise exc

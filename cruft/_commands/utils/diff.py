@@ -1,4 +1,5 @@
 from pathlib import Path
+from re import sub
 from subprocess import PIPE, run  # nosec
 from typing import List
 
@@ -29,12 +30,15 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     # NIX OPs have a/folder/file
     # WIN OPS have a/c:/folder/file
     for repo in [repo0_str, repo1_str]:
-        if repo[0] == '/':
-            # NIX case
-            diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
-        else:
-            # WIN case
-            diff = diff.replace("a/" + repo, "a").replace("b/" + repo, "b")
+        # Make repo look like a NIX absolute path.
+        repo = sub("\/[a-z]:", "", repo)
+        diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
+        # if repo[0] == '/':
+        #     # NIX case
+        #     diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
+        # else:
+        #     # WIN case
+        #     diff = diff.replace("a/" + repo, "a").replace("b/" + repo, "b")
 
 
     # This replacement is needed for renamed/moved files to be recognized properly
