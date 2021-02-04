@@ -10,9 +10,9 @@ on:
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
+        description: 'Minimal test'
         # Default value if no value is explicitly provided
-        default: 'World'
+        default: 'Some tag'
         # Input has to be provided for the workflow to run
         required: true
 
@@ -20,8 +20,10 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: [3.6, 3.7, 3.8]
+#        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [windows-latest]
+#        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8]
         exclude:
           # excludes <py38 on Windows
           - python-version: 3.6
