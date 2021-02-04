@@ -2,12 +2,10 @@ name: Run tests
 on:
   workflow_dispatch:
     inputs:
-    logLevel:
-      description: 'Log level'     
-      required: true
-      default: 'warning'
-    tags:
-      description: 'Test scenario tags'
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
   push:
     branches:
       # - master

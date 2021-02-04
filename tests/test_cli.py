@@ -210,7 +210,7 @@ def test_update_interactive_view(cruft_runner, cookiecutter_dir):
 
 def test_update_not_strict(cruft_runner, cookiecutter_dir_updated):
     result = cruft_runner(
-        ["update", "--project-dir", str(cookiecutter_dir_updated), "--not-strict"]
+        ["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
     )
     assert result.exit_code == 0
     assert "Nothing to do, project's cruft is already up to date" in result.stdout
