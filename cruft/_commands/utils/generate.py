@@ -113,21 +113,23 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
     os.chdir(cwd)
     return deleted_paths
 
-def _handleRemoveReadonly(func, path, exc):
+
+def _handle_remove_readonly(func, path, exc):
     excvalue = exc[1]
     if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
-        os.chmod(path, stat.S_IRWXU| stat.S_IRWXG| stat.S_IRWXO) # 0777
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
         # os.chmod(path, stat.S_IWRITE) # WINDOWS only
         func(path)
     else:
-        raise IOError('Could not delete file or directory.')
+        raise IOError("Could not delete file or directory.")
+
 
 def _remove_paths(root: Path, paths_to_remove: Set[Path]):
     # There is some redundancy here in chmoding dirs and/or files differently.
     for path_to_remove in paths_to_remove:
         path = root / path_to_remove
         if path.is_dir():
-            rmtree(path, ignore_errors=False, onerror=_handleRemoveReadonly)
+            rmtree(path, ignore_errors=False, onerror=_handle_remove_readonly)
         elif path.is_file():
             try:
                 path.unlink()

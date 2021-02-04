@@ -44,7 +44,9 @@ def update(
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
         # Clone the template
-        with utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout) as repo:
+        with utils.cookiecutter.get_cookiecutter_repo(
+            cruft_state["template"], repo_dir, checkout
+        ) as repo:
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date.
@@ -146,7 +148,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
     try:
         run(
             ["git", "apply", "-3"],
-            input=diff.encode(encoding='utf-8'),
+            input=diff.encode(encoding="utf-8"),
             stderr=PIPE,
             stdout=PIPE,
             check=True,
