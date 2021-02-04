@@ -43,7 +43,6 @@ def update(
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
-        deleted_paths.add(Path('.git'))
         # Clone the template
         with utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
