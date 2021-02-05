@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
+from time import sleep
 
 import typer
 
@@ -35,4 +36,6 @@ def check(
                 "Run `cruft update` to clean this mess up.",
                 fg=typer.colors.RED,
             )
+            # Emergency teardown before closing the tempdir context.
+            sleep(1)
         return False
