@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional
 from time import sleep
+from typing import Optional
 
 import typer
 
