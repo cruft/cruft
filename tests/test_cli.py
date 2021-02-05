@@ -80,7 +80,9 @@ def test_check_strict(cruft_runner, cookiecutter_dir_updated):
 
 
 def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
-    result = cruft_runner(["check", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"])
+    result = cruft_runner(
+        ["check", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
+    )
     assert result.exit_code == 0
 
 
@@ -142,7 +144,9 @@ def test_update_unclean(cruft_runner, cookiecutter_dir):
 
 
 def test_update(cruft_runner, cookiecutter_dir):
-    result = cruft_runner(["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"])
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"]
+    )
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
 
@@ -150,7 +154,9 @@ def test_update(cruft_runner, cookiecutter_dir):
 def test_update_with_conflicts(cruft_runner, cookiecutter_dir):
     with (cookiecutter_dir / "README.md").open("w") as f:
         f.write("conflicts")
-    result = cruft_runner(["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"])
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"]
+    )
     assert "cruft has been updated" in result.stdout
     assert "Project directory may have *.rej files" in result.stdout
     assert result.exit_code == 0
@@ -176,7 +182,9 @@ def test_update_with_conflicts_with_git(cruft_runner, cookiecutter_dir):
         ],
         cwd=cookiecutter_dir,
     )
-    result = cruft_runner(["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"])
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"]
+    )
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
     assert set(cookiecutter_dir.glob("**/*.rej"))
@@ -271,7 +279,14 @@ def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir)
 
 def test_diff_checkout(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
-        ["diff", "--project-dir", cookiecutter_dir.as_posix(), "--checkout", "updated", "--exit-code"]
+        [
+            "diff",
+            "--project-dir",
+            cookiecutter_dir.as_posix(),
+            "--checkout",
+            "updated",
+            "--exit-code",
+        ]
     )
     assert result.exit_code == 1
     assert result.stdout != ""
