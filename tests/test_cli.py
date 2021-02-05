@@ -41,7 +41,7 @@ def test_create(cruft_runner, tmpdir):
         [
             "create",
             "--output-dir",
-            tmpdir.as_posix(),
+            str(tmpdir),
             "https://github.com/cruft/cookiecutter-test",
             "--directory",
             "dir",
@@ -57,7 +57,7 @@ def test_create_interactive(cruft_runner, tmpdir):
         [
             "create",
             "--output-dir",
-            tmpdir.as_posix(),
+            str(tmpdir),
             "https://github.com/cruft/cookiecutter-test",
             "--directory",
             "dir",
