@@ -20,6 +20,7 @@ def update(
     skip_update: bool = False,
     checkout: Optional[str] = None,
     strict: bool = True,
+    sub_dir: str = "."
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -81,7 +82,7 @@ def update(
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
         if _apply_project_updates(
-            current_template_dir, new_template_dir, project_dir, skip_update, skip_apply_ask
+            current_template_dir, new_template_dir, project_dir, skip_update, skip_apply_ask, sub_dir
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
@@ -121,10 +122,10 @@ def _is_project_repo_clean(directory: Path):
     return True
 
 
-def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
+def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path, sub_dir: str):
     try:
         run(
-            ["git", "apply", "--reject"],
+            ["git", "apply", "--reject", f"--directory={sub_dir}"],
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -142,10 +143,10 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
 
 
-def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
+def _apply_three_way_patch(diff: str, expanded_dir_path: Path, sub_dir: str):
     try:
         run(
-            ["git", "apply", "-3"],
+            ["git", "apply", "-3", f"--directory={sub_dir}"],
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -162,7 +163,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
             _apply_patch_with_rejections(diff, expanded_dir_path)
 
 
-def _apply_patch(diff: str, expanded_dir_path: Path):
+def _apply_patch(diff: str, expanded_dir_path: Path, sub_dir: str):
     # Git 3 way merge is the our best bet
     # at applying patches. But it only works
     # with git repos. If the repo is not a git dir
@@ -170,9 +171,9 @@ def _apply_patch(diff: str, expanded_dir_path: Path):
     # diffs cleanly where applicable otherwise creates
     # *.rej files where there are conflicts
     if _is_git_repo(expanded_dir_path):
-        _apply_three_way_patch(diff, expanded_dir_path)
+        _apply_three_way_patch(diff, expanded_dir_path, sub_dir)
     else:
-        _apply_patch_with_rejections(diff, expanded_dir_path)
+        _apply_patch_with_rejections(diff, expanded_dir_path, sub_dir)
 
 
 def _apply_project_updates(
@@ -181,6 +182,7 @@ def _apply_project_updates(
     project_dir: Path,
     skip_update: bool,
     skip_apply_ask: bool,
+    sub_dir: str
 ) -> bool:
     diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
@@ -210,5 +212,5 @@ def _apply_project_updates(
             skip_update = True
 
     if not skip_update and diff.strip():
-        _apply_patch(diff, project_dir)
+        _apply_patch(diff, project_dir, sub_dir)
     return True
