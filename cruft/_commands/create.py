@@ -1,11 +1,11 @@
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Any, Dict, Optional
 
 from cookiecutter.generate import generate_files
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/")
@@ -22,7 +22,7 @@ def create(
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
-    with TemporaryDirectory() as cookiecutter_template_dir_str:
+    with AltTemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         with utils.cookiecutter.get_cookiecutter_repo(
             template_git_url, cookiecutter_template_dir, checkout

@@ -2,6 +2,7 @@ import json
 from functools import partial
 from pathlib import Path
 from subprocess import run  # nosec
+from textwrap import dedent
 
 import pytest
 from typer.testing import CliRunner
@@ -32,6 +33,19 @@ def cookiecutter_dir_updated(tmpdir):
             Path(tmpdir),
             directory="dir",
             checkout="updated",
+        )
+    )
+
+
+@pytest.fixture
+def cookiecutter_dir_hooked_git(tmpdir):
+    yield Path(
+        cruft.create(
+            # See pull request!
+            "https://github.com/juhuebner/cookiecutter-test",
+            Path(tmpdir),
+            directory="dir",
+            checkout="with-git-from-hook",
         )
     )
 
@@ -297,3 +311,28 @@ def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
     assert result.exit_code == expected_exit_code
     assert result.stdout == ""
+
+
+@pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
+def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_dir_hooked_git):
+    cookiecutter_dir = cookiecutter_dir_hooked_git
+    print("cookiecutter_dir", cookiecutter_dir)
+    # The two points below could as well be nicely stored within
+    # a cookiecutter-test branch.
+    # Write a skip section into pyproject.toml
+    # This file is not (yet) in the test branch and is thus not diffed to the template.
+    skip_section = """
+        [tool.cruft]
+        skip = [".git"]
+        """
+    with (cookiecutter_dir / "pyproject.toml").open("w") as f:
+        f.write(dedent(skip_section))
+    # Alter the git repo.
+    run(["git", "config", "--global", "user.email", "user@test.com"], cwd=cookiecutter_dir)
+    run(["git", "config", "--global", "user.name", "testm"], cwd=cookiecutter_dir)
+    run(["git", "add", "--all"], cwd=cookiecutter_dir)
+    run(["git", "commit", "-m", "2nd commit"], cwd=cookiecutter_dir)
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"])
+    print(result.stdout)
+    assert result.exit_code == expected_exit_code
+    assert ".git" not in result.stdout

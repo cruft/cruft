@@ -21,9 +21,9 @@ jobs:
     strategy:
       matrix:
 #        os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 #        python-version: [3.6, 3.7, 3.8]
-        python-version: [3.8]
+#        python-version: [3.8]
         exclude:
           # excludes <py38 on Windows
           - python-version: 3.6
@@ -73,5 +73,5 @@ jobs:
       run: |
         bash scripts/test.sh
     - name: Upload coverage to Codecov
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+      if: matrix.os == 'windows-latest' && matrix.python-version == '3.8'
       uses: codecov/codecov-action@v1

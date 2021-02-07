@@ -2,12 +2,12 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Optional
 
 import typer
 
 from . import utils
+from .utils.iohelper import AltTemporaryDirectory
 
 
 def diff(
@@ -19,7 +19,7 @@ def diff(
     checkout = checkout or cruft_state.get("commit")
 
     has_diff = False
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
         remote_template_dir = tmpdir / "remote"

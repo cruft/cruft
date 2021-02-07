@@ -1,9 +1,7 @@
-import errno
 import os
 import stat
 from pathlib import Path
 from shutil import move, rmtree
-from tempfile import TemporaryDirectory
 from typing import Optional, Set
 
 from cookiecutter.generate import generate_files
@@ -11,6 +9,7 @@ from git import Repo
 
 from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
 from .cruft import CruftState
+from .iohelper import AltTemporaryDirectory
 
 try:
     import toml  # type: ignore
@@ -74,7 +73,7 @@ def _generate_output(
     # Therefore we have to move the directory content to the expected output_dir.
     # See https://github.com/cookiecutter/cookiecutter/pull/907
     output_dir.mkdir(parents=True, exist_ok=True)
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
 
         # Kindly ask cookiecutter to generate the template
@@ -114,27 +113,32 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
     return deleted_paths
 
 
-def _handle_remove_readonly(func, path, exc):
-    excvalue = exc[1]
-    if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
-        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
-        # os.chmod(path, stat.S_IWRITE) # WINDOWS only
-        func(path)
-    else:
-        raise IOError("Could not delete file or directory.")
+def _remove_readonly(func, path, _):  # pragma: no cov_4_nix
+    "Clear the readonly bit and reattempt the removal"
+    os.chmod(path, stat.S_IWRITE)  # WINDOWS
+    func(path)
+
+
+def _remove_single_path(path: Path):
+    if path.is_dir():
+        try:
+            rmtree(path, ignore_errors=False, onerror=_remove_readonly)
+        except Exception:  # pragma: no cover
+            raise Exception("Failed to remove directory.")
+        # rmtree(path)
+    elif path.is_file():
+        # path.unlink()
+        try:
+            path.unlink()
+        except PermissionError:  # pragma: no cov_4_nix
+            path.chmod(stat.S_IWRITE)
+            path.unlink()
+        except Exception as exc:  # pragma: no cover
+            raise Exception("Failed to remove file.") from exc
 
 
 def _remove_paths(root: Path, paths_to_remove: Set[Path]):
     # There is some redundancy here in chmoding dirs and/or files differently.
     for path_to_remove in paths_to_remove:
         path = root / path_to_remove
-        if path.is_dir():
-            rmtree(path, ignore_errors=False, onerror=_handle_remove_readonly)
-        elif path.is_file():
-            try:
-                path.unlink()
-            except PermissionError:
-                path.chmod(stat.S_IWRITE)
-                path.unlink()
-            except Exception as exc:
-                raise exc
+        _remove_single_path(path)

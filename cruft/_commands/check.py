@@ -1,13 +1,12 @@
 import json
 from pathlib import Path
-from tempfile import TemporaryDirectory
-from time import sleep
 from typing import Optional
 
 import typer
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example()
@@ -18,7 +17,7 @@ def check(
     used to generate this project."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
-    with TemporaryDirectory() as cookiecutter_template_dir:
+    with AltTemporaryDirectory() as cookiecutter_template_dir:
         with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], Path(cookiecutter_template_dir), checkout
         ) as repo:
@@ -36,6 +35,5 @@ def check(
                 "Run `cruft update` to clean this mess up.",
                 fg=typer.colors.RED,
             )
-            # Emergency teardown before closing the tempdir context.
-            sleep(1)
+
         return False

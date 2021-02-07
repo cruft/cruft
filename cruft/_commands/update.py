@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from tempfile import TemporaryDirectory
 from typing import Optional, Set
 
 import click
@@ -9,6 +8,7 @@ import typer
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example(skip_apply_ask=False)
@@ -36,7 +36,7 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"

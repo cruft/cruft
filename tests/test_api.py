@@ -4,7 +4,6 @@ import re
 import sys
 from pathlib import Path
 from subprocess import run
-from time import sleep
 
 import pytest
 from examples import verify_and_test_examples
@@ -112,12 +111,8 @@ def test_directory_and_checkout(tmpdir):
     cruft_file = utils.cruft.get_cruft_file(output_path)
     assert cruft_file.exists()
     assert cruft.check(output_path, checkout="initial")
-    # Added a quick teardown.
-    sleep(1)
     assert not cruft.check(output_path, checkout="updated")
-    sleep(1)
     assert cruft.update(output_path, checkout="updated")
-    sleep(1)
     assert cruft.check(output_path, checkout="updated")
     cruft_file.unlink()
     assert not cruft_file.exists()
@@ -127,13 +122,10 @@ def test_directory_and_checkout(tmpdir):
         directory="dir",
         checkout="updated",
     )
-    sleep(1)
     assert cruft.check(output_path, checkout="updated")
     # Add checks for strictness where master is an older
     # version than updated
-    sleep(1)
     assert not cruft.check(output_path, strict=True)
-    sleep(1)
     assert cruft.check(output_path, strict=False)
 
 
