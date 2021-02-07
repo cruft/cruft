@@ -160,7 +160,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path, sub_dir: str):
                 "Failed to apply the update. Retrying again with a different update stratergy.",
                 fg=typer.colors.YELLOW,
             )
-            _apply_patch_with_rejections(diff, expanded_dir_path)
+            _apply_patch_with_rejections(diff, expanded_dir_path, sub_dir)
 
 
 def _apply_patch(diff: str, expanded_dir_path: Path, sub_dir: str):
