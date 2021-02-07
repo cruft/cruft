@@ -16,6 +16,9 @@ OR
 
 Changelog
 =========
+## 2.6.1 - 1 February 2021
+- [Fixed issue #82](https://github.com/cruft/cruft/issues/82): error: git diff header lacks filename information when removing 1 leading pathname component
+
 ## 2.6.0 - 7 November 2020
 - [Fixed issue #53](https://github.com/cruft/cruft/issues/53): Update fails on moved files, without clear error messages
 - [Fixed issue #67](https://github.com/cruft/cruft/issues/67): Update fails on new files
