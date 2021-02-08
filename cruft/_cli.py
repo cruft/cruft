@@ -203,9 +203,9 @@ def update(
         help="Skip the template updates but update the cruft state",
         show_default=False,
     ),
-    sub_dir: Optional[str] = typer.Option(
+    directory: Optional[str] = typer.Option(
         None,
-        "--subdir",
+        "--directory",
         help=("Specify the path to the project folder if it is not the root of the repository."),
     ),
     checkout: Optional[str] = typer.Option(
@@ -234,7 +234,7 @@ def update(
         skip_update=skip_update,
         checkout=checkout,
         strict=strict,
-        sub_dir=sub_dir
+        directory=directory
     ):
         raise typer.Exit(1)
 
