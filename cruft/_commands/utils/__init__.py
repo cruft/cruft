@@ -1,6 +1,6 @@
 from functools import wraps
 
-from . import cookiecutter, cruft, diff, generate
+from . import cookiecutter, cruft, diff, generate, iohelper
 
 try:
     from examples import example
@@ -18,4 +18,4 @@ except ImportError:  # pragma: no cover
         return decorator
 
 
-__all__ = ["cookiecutter", "cruft", "diff", "example", "generate"]
+__all__ = ["cookiecutter", "cruft", "diff", "example", "generate", "iohelper"]
