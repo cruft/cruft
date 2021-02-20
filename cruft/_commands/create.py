@@ -57,6 +57,7 @@ def create(
                 {
                     "template": template_git_url,
                     "commit": last_commit,
+                    "checkout": checkout,
                     "context": context,
                     "directory": directory,
                 }
