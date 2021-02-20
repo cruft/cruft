@@ -4,7 +4,7 @@ from typing import List
 
 
 def _git_diff(*args: str) -> List[str]:
-    return ["git", "diff", "--no-index", "--relative", *args]
+    return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
 
 
 def get_diff(repo0: Path, repo1: Path) -> str:
