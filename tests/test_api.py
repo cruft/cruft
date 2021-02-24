@@ -73,6 +73,18 @@ def test_update_and_check_real_repo(tmpdir):
     assert cruft.update(repo_dir, skip_apply_ask=True)
 
 
+def test_update_allows_untracked_files_option(tmpdir):
+    tmpdir.chdir()
+    Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    with open(os.path.join(tmpdir, "untracked.txt"), "w") as new_file:
+        new_file.write("hello, world!\n")
+    repo_dir = Path(tmpdir)
+    # update should fail since repo is now unclean (has a tracked file)
+    assert not cruft.update(repo_dir)
+    # update should work if allow_untracked_files is True
+    assert cruft.update(repo_dir, allow_untracked_files=True)
+
+
 def test_relative_repo_check(tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
