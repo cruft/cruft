@@ -43,6 +43,34 @@ def test_check_examples(tmpdir, project_dir):
     verify_and_test_examples(cruft.check)
 
 
+@pytest.mark.parametrize("value", ["master", None])
+def test_create_stores_checkout_value(value, tmpdir):
+    tmpdir.chdir()
+
+    cruft.create(
+        "https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), checkout=value
+    )
+
+    assert (
+        json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["checkout"] == value
+    )
+
+
+@pytest.mark.parametrize("value", ["master", None])
+def test_update_stores_checkout_value(value, tmpdir):
+    tmpdir.chdir()
+    cruft.create(
+        "https://github.com/timothycrosley/cookiecutter-python",
+        Path(tmpdir),
+        checkout="ea8f733f85e7089df338d41ace199d3f4d397e29",
+    )
+    project_dir = tmpdir / "python_project_name"
+
+    cruft.update(Path(project_dir), checkout=value)
+
+    assert json.load((project_dir / ".cruft.json").open("r"))["checkout"] == value
+
+
 def test_update_and_check_real_repo(tmpdir):
     tmpdir.chdir()
     repo = Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))

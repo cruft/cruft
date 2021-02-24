@@ -16,6 +16,10 @@ OR
 
 Changelog
 =========
+## 2.7.0 - 22 February 2021
+- [Fixed issue #76](https://github.com/cruft/cruft/issues/76): diff.noprefix=yes breaks tests
+- [Fixed issue #92](https://github.com/cruft/cruft/issues/92): Store checkout value in cruft state
+
 ## 2.6.1 - 1 February 2021
 - [Fixed issue #82](https://github.com/cruft/cruft/issues/82): error: git diff header lacks filename information when removing 1 leading pathname component
 

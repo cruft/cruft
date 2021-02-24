@@ -1,5 +1,4 @@
 import json
-from functools import partial
 from pathlib import Path
 from typing import Any, Dict
 
@@ -35,4 +34,6 @@ def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, stri
     )
 
 
-json_dumps = partial(json.dumps, ensure_ascii=False, indent=4, separators=(",", ": "))
+def json_dumps(cruft_state: Dict[str, Any]) -> str:
+    text = json.dumps(cruft_state, ensure_ascii=False, indent=2, separators=(",", ": "))
+    return text + "\n"
