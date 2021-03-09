@@ -177,17 +177,21 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
 
 def _get_offset(expanded_dir_path: Path):
     try:
-        offset = run(
-            ["git", "rev-parse", "--show-prefix"],
-            stderr=PIPE,
-            stdout=PIPE,
-            check=True,
-            cwd=expanded_dir_path,
-        ).stdout.decode().strip()
+        offset = (
+            run(
+                ["git", "rev-parse", "--show-prefix"],
+                stderr=PIPE,
+                stdout=PIPE,
+                check=True,
+                cwd=expanded_dir_path,
+            )
+            .stdout.decode()
+            .strip()
+        )
         return offset
     except CalledProcessError as error:
-        if 'not a git repository' in error.stderr.decode():
-            return ''
+        if "not a git repository" in error.stderr.decode():
+            return ""
         else:
             raise error
 
