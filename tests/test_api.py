@@ -77,7 +77,7 @@ def test_update_and_check_real_repo(tmpdir):
     repo.head.reset(commit="86a6e6beda8095690414ff7652c15b7ae36e6128", working_tree=True)
     with open(os.path.join(tmpdir, ".cruft.json")) as cruft_file:
         cruft_state = json.load(cruft_file)
-        cruft_state["skip"] = ["cruft/__init__.py", "tests"]
+        cruft_state["skip"] = ["cruft/__init__.py", "tests/*"]
     with open(os.path.join(tmpdir, ".cruft.json"), "w") as cruft_file:
         json.dump(cruft_state, cruft_file)
     repo_dir = Path(tmpdir)
