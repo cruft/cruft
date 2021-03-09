@@ -213,7 +213,7 @@ index be6a56b..1fc03a9 100644
         # of the "cruft diff" command) or if the user requested an exit code, we must make
         # sure the absolute path to the temporary directory does not appear in the diff
         # because the user might want to process the output.
-        # Conversely, when the output is suposed to be displayed to the user directly (e.g.
+        # Conversely, when the output is supposed to be displayed to the user directly (e.g.
         # when running "cruft diff" command directly in a terminal), absolute path to the
         # actual files on disk may be displayed because git diff command is called directly
         # without reprocessing by cruft. This delegates diff coloring and paging to git which
@@ -257,3 +257,38 @@ def test_diff_checkout(capfd, tmpdir):
     assert "+++ b/README.md" in stdout
     assert "+Updated again" in stdout
     assert "-Updated" in stdout
+
+
+def test_diff_git_subdir(capfd, tmpdir):
+    tmpdir.chdir()
+    temp_dir = Path(tmpdir)
+    Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
+    # project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
+    # assert cruft.check(project_dir)
+
+    # Create something deeper in the git tree
+    project_dir = cruft.create(
+        "https://github.com/samj1912/cookiecutter-test",
+        Path("tmpdir/foo/bar"),
+        directory="dir",
+        checkout="master",
+    )
+    # not added & committed
+    assert not cruft.update(project_dir)
+    # Add & commit the changes so that the repo is clean
+    run(["git", "add", "."], cwd=temp_dir)
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=temp_dir,
+    )
+
+    assert cruft.update(project_dir, checkout="updated")
