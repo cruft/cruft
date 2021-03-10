@@ -16,6 +16,10 @@ OR
 
 Changelog
 =========
+## 2.8.0 - 9 March 2021
+- [Fixed issue #68](https://github.com/cruft/cruft/issues/68): Add support for cruft create/update in a sub directory in an existing repository
+- [Fixed issue #91](https://github.com/cruft/cruft/issues/91): Support Updating When Repo has Untracked Files
+
 ## 2.7.0 - 22 February 2021
 - [Fixed issue #76](https://github.com/cruft/cruft/issues/76): diff.noprefix=yes breaks tests
 - [Fixed issue #92](https://github.com/cruft/cruft/issues/92): Store checkout value in cruft state

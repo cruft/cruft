@@ -20,13 +20,14 @@ def update(
     skip_update: bool = False,
     checkout: Optional[str] = None,
     strict: bool = True,
+    allow_untracked_files: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
-    if not _is_project_repo_clean(project_dir):
+    if not _is_project_repo_clean(project_dir, allow_untracked_files):
         typer.secho(
             "Cruft cannot apply updates on an unclean git project."
             " Please make sure your git working tree is clean before proceeding.",
@@ -81,7 +82,12 @@ def update(
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
         if _apply_project_updates(
-            current_template_dir, new_template_dir, project_dir, skip_update, skip_apply_ask
+            current_template_dir,
+            new_template_dir,
+            project_dir,
+            skip_update,
+            skip_apply_ask,
+            allow_untracked_files,
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
@@ -113,19 +119,34 @@ def _is_git_repo(directory: Path):
     return False
 
 
-def _is_project_repo_clean(directory: Path):
+def _has_untracked_file(status_line: str):
+    return status_line.strip().startswith("??")
+
+
+def _is_project_repo_clean(directory: Path, allow_untracked_files: bool):
     if not _is_git_repo(directory):
         return True
-    output = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
-    if output.stdout.strip():
+    git_status = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
+    status_lines = git_status.stdout.decode("utf-8").split("\n")
+    # remove empty string from trailing newline
+    status_lines = [line for line in status_lines if line]
+    if allow_untracked_files:
+        status_lines = [line for line in status_lines if not _has_untracked_file(line)]
+    if status_lines:
         return False
     return True
 
 
 def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
+    offset = _get_offset(expanded_dir_path)
+
+    git_apply = ["git", "apply", "--reject"]
+    if offset:
+        git_apply.extend(["--directory", offset])
+
     try:
         run(
-            ["git", "apply", "--reject"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -143,10 +164,16 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
 
 
-def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
+def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
+    offset = _get_offset(expanded_dir_path)
+
+    git_apply = ["git", "apply", "-3"]
+    if offset:
+        git_apply.extend(["--directory", offset])
+
     try:
         run(
-            ["git", "apply", "-3"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -155,15 +182,36 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
         )
     except CalledProcessError as error:
         typer.secho(error.stderr.decode(), err=True)
-        if _is_project_repo_clean(expanded_dir_path):
+        if _is_project_repo_clean(expanded_dir_path, allow_untracked_files):
             typer.secho(
-                "Failed to apply the update. Retrying again with a different update stratergy.",
+                "Failed to apply the update. Retrying again with a different update strategy.",
                 fg=typer.colors.YELLOW,
             )
             _apply_patch_with_rejections(diff, expanded_dir_path)
 
 
-def _apply_patch(diff: str, expanded_dir_path: Path):
+def _get_offset(expanded_dir_path: Path):
+    try:
+        offset = (
+            run(
+                ["git", "rev-parse", "--show-prefix"],
+                stderr=PIPE,
+                stdout=PIPE,
+                check=True,
+                cwd=expanded_dir_path,
+            )
+            .stdout.decode()
+            .strip()
+        )
+        return offset
+    except CalledProcessError as error:
+        if "not a git repository" in error.stderr.decode():
+            return ""
+        else:
+            raise error
+
+
+def _apply_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
     # Git 3 way merge is the our best bet
     # at applying patches. But it only works
     # with git repos. If the repo is not a git dir
@@ -171,7 +219,7 @@ def _apply_patch(diff: str, expanded_dir_path: Path):
     # diffs cleanly where applicable otherwise creates
     # *.rej files where there are conflicts
     if _is_git_repo(expanded_dir_path):
-        _apply_three_way_patch(diff, expanded_dir_path)
+        _apply_three_way_patch(diff, expanded_dir_path, allow_untracked_files)
     else:
         _apply_patch_with_rejections(diff, expanded_dir_path)
 
@@ -182,6 +230,7 @@ def _apply_project_updates(
     project_dir: Path,
     skip_update: bool,
     skip_apply_ask: bool,
+    allow_untracked_files: bool,
 ) -> bool:
     diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
@@ -211,5 +260,5 @@ def _apply_project_updates(
             skip_update = True
 
     if not skip_update and diff.strip():
-        _apply_patch(diff, project_dir)
+        _apply_patch(diff, project_dir, allow_untracked_files)
     return True
