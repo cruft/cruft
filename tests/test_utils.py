@@ -68,3 +68,16 @@ def test_remove_paths_with_glob_pattern(tmp_path: Path):
     utils.generate._remove_paths(repo0, {"tests/*"})
     assert not (repo0 / "tests" / "test0.py").exists()
     assert not (repo0 / "tests" / "test1.py").exists()
+
+
+def test_remove_paths_folder(tmp_path: Path):
+    repo0 = tmp_path / "repo0"
+    (repo0 / "tests").mkdir(parents=True)
+
+    (repo0 / "file").touch()
+    (repo0 / "tests" / "test0.py").touch()
+    (repo0 / "tests" / "test1.py").touch()
+
+    utils.generate._remove_paths(repo0, {"tests", "file"})
+    assert not (repo0 / "tests").exists()
+    assert not (repo0 / "file").exists()
