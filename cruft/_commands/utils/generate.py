@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from shutil import move, rmtree
 from tempfile import TemporaryDirectory
-from typing import Optional, Set
+from typing import Optional, Set, Union
 
 from cookiecutter.generate import generate_files
 from git import Repo
@@ -112,10 +112,10 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
     return deleted_paths
 
 
-def _remove_paths(root: Path, paths_to_remove: Set[Path]):
+def _remove_paths(root: Path, paths_to_remove: Union[Set[Path], Set[str]]):
     for path_to_remove in paths_to_remove:
-        path = root / path_to_remove
-        if path.is_dir():
-            rmtree(path)
-        elif path.is_file():
-            path.unlink()
+        for path in root.glob(str(path_to_remove)):
+            if path.is_dir():
+                rmtree(path)
+            elif path.is_file():
+                path.unlink()

@@ -91,6 +91,16 @@ and update the `.cruft.json` file for you.
 
         [tool.cruft]
         skip = ["cruft/__init__.py", "tests"]
+    
+    Note that it is possible to use glob patterns for selecting the files to skip:
+        {
+            "skip": [
+                "**/__init__.py",
+                "tests/*"
+            ],
+            ...
+        }
+
 
 
 ## Checking a Project
