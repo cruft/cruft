@@ -115,7 +115,7 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
 def _remove_paths(root: Path, paths_to_remove: Union[Set[Path], Set[str]]):
     for path_to_remove in paths_to_remove:
         for path in root.glob(str(path_to_remove)):
-            if path.is_dir():
-                rmtree(path)
-            elif path.is_file():
+            if path.is_file() or path.is_symlink():
                 path.unlink()
+            elif path.is_dir():
+                rmtree(path)
