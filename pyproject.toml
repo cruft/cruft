@@ -11,7 +11,7 @@ python = "^3.6"
 cookiecutter = "^1.6"
 gitpython = "^3.0"
 toml = { version = "^0.10", optional = true }
-typer = "^0.3.1"
+typer = "^0.3.2"
 click = "^7.1.2"
 examples = {version = "^1.0.2", optional = true}
 
@@ -25,13 +25,13 @@ bandit = "^1.6"
 safety = "^1.8"
 isort = "^5.3"
 flake8-bugbear = "^19.8"
-black = {version = "^18.3-alpha.0", allow-prereleases = true}
-mypy = "^0.730.0"
+black = {version = "^20.8b1", allow-prereleases = true}
+mypy = "^0.812.0"
 ipython = "^7.7"
 pytest = "^5.0"
 pytest-cov = "^2.7"
 pep8-naming = "^0.8.2"
-portray = "^1.3.0"
+portray = "^1.6.0"
 examples = "^1.0.2"
 pytest-xdist = "^1.34.0"
 pytest-mock = "^3.3.1"

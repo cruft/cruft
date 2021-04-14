@@ -43,7 +43,7 @@ def test_check_examples(tmpdir, project_dir):
     verify_and_test_examples(cruft.check)
 
 
-@pytest.mark.parametrize("value", ["master", None])
+@pytest.mark.parametrize("value", ["main", None])
 def test_create_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
 
@@ -56,7 +56,7 @@ def test_create_stores_checkout_value(value, tmpdir):
     )
 
 
-@pytest.mark.parametrize("value", ["master", None])
+@pytest.mark.parametrize("value", ["main", None])
 def test_update_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
     cruft.create(
@@ -163,7 +163,7 @@ def test_directory_and_checkout(tmpdir):
         checkout="updated",
     )
     assert cruft.check(output_path, checkout="updated")
-    # Add checks for strictness where master is an older
+    # Add checks for strictness where main is an older
     # version than updated
     assert not cruft.check(output_path, strict=True)
     assert cruft.check(output_path, strict=False)
