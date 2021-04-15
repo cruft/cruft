@@ -11,7 +11,7 @@ from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
 from .cruft import CruftState
 
 try:
-    import toml  # type: ignore
+    import toml
 except ImportError:  # pragma: no cover
     toml = None  # type: ignore
 
