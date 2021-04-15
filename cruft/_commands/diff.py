@@ -46,11 +46,16 @@ def diff(
 
         # Then we create a new tree with each file in the template that also exist
         # locally.
-        for path in sorted(remote_template_dir.glob("**/*")):
-            relative_path = path.relative_to(remote_template_dir)
+        paths_to_copy = _paths_to_copy(remote_template_dir)
+        #         glob_paths = [
+        #             p.relative_to(remote_template_dir)
+        #             for p in sorted(remote_template_dir.glob("**/*"))
+        #         ]
+        #         assert paths_to_copy == glob_paths
+        for relative_path in paths_to_copy:
             local_path = project_dir / relative_path
             destination = local_template_dir / relative_path
-            if path.is_file():
+            if local_path.is_file():
                 shutil.copy(str(local_path), str(destination))
             else:
                 destination.mkdir(parents=True, exist_ok=True)
@@ -81,3 +86,20 @@ def diff(
                 utils.diff.display_diff(local_template_dir, remote_template_dir)
 
     return not (has_diff and exit_code)
+
+
+def _paths_to_copy(root, *source_paths):
+    paths_to_copy = []
+    if not source_paths:
+        source_paths = (root,)
+    for source_path in source_paths:
+        for path in source_path.iterdir():
+            if path.is_dir():
+                subpaths = _paths_to_copy(root, path)
+                if subpaths:
+                    paths_to_copy += subpaths
+                else:
+                    continue
+            relative_path = path.relative_to(root)
+            paths_to_copy.append(relative_path)
+    return sorted(paths_to_copy)
