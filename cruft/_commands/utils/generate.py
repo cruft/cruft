@@ -1,9 +1,9 @@
 import os
-from warnings import warn
 from pathlib import Path
 from shutil import move, rmtree
 from tempfile import TemporaryDirectory
 from typing import Optional, Set, Union
+from warnings import warn
 
 from cookiecutter.generate import generate_files
 from git import Repo
