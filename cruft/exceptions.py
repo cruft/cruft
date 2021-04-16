@@ -47,3 +47,15 @@ class InvalidCookiecutterRepository(CruftError):
         super().__init__(
             f"Unable to initialize the cookiecutter using {cookiecutter_repo}! {details.strip()}"
         )
+
+
+class ChangesetUnicodeError(CruftError):
+    """Raised when `cruft update` is unable to generate the change"""
+
+    def __init__(self):
+        super().__init__(
+            (
+                "Unable to interpret changes between current project and cookiecutter template as "
+                "unicode. Typically a result of hidden binary files in project folder."
+            )
+        )

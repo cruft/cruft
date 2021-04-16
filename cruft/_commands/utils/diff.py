@@ -2,6 +2,8 @@ from pathlib import Path
 from subprocess import PIPE, run  # nosec
 from typing import List
 
+from cruft import exceptions
+
 
 def _git_diff(*args: str) -> List[str]:
     return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
@@ -9,13 +11,15 @@ def _git_diff(*args: str) -> List[str]:
 
 def get_diff(repo0: Path, repo1: Path) -> str:
     """Compute the raw diff between two repositories."""
-    diff = run(
-        _git_diff("--no-ext-diff", "--no-color", str(repo0), str(repo1)),
-        cwd=str(repo0),
-        stdout=PIPE,
-        stderr=PIPE,
-    ).stdout.decode()
-
+    try:
+        diff = run(
+            _git_diff("--no-ext-diff", "--no-color", str(repo0), str(repo1)),
+            cwd=str(repo0),
+            stdout=PIPE,
+            stderr=PIPE,
+        ).stdout.decode()
+    except UnicodeDecodeError:
+        raise exceptions.ChangesetUnicodeError()
     # By default, git diff --no-index will output full paths like so:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
     # +++ b/tmp/tmpmp34g21y/local/.coveragerc
