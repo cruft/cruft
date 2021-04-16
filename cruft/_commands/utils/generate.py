@@ -100,7 +100,9 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
     elif pyproject_file.is_file():
-        warn("pyproject.toml is present in repo, but `toml` package is not installed. Cruft configuration may be ignored.")
+        warn(
+            "pyproject.toml is present in repo, but `toml` package is not installed. Cruft configuration may be ignored."
+        )
     return set(map(Path, skip_cruft))
 
 
