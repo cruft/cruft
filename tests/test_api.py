@@ -71,6 +71,21 @@ def test_update_stores_checkout_value(value, tmpdir):
     assert json.load((project_dir / ".cruft.json").open("r"))["checkout"] == value
 
 
+def test_fail_on_non_unicode_in_diff(tmpdir):
+    tmpdir.chdir()
+    project_dir = cruft.create(
+        "https://github.com/tdhopper/cookiecutter-test",
+        Path(tmpdir),
+        checkout="a0c6601138c7800ee9ec9ff005dfbfc15f2b15a4",
+        directory="dir",
+    )
+    with pytest.raises(exceptions.ChangesetUnicodeError):
+        cruft.update(
+            project_dir,
+            checkout="post-gen-git-init",
+        )
+
+
 def test_update_and_check_real_repo(tmpdir):
     tmpdir.chdir()
     repo = Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
