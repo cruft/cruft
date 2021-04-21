@@ -74,7 +74,7 @@ def test_update_stores_checkout_value(value, tmpdir):
 def test_fail_on_non_unicode_in_diff(tmpdir):
     tmpdir.chdir()
     project_dir = cruft.create(
-        "https://github.com/tdhopper/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         Path(tmpdir),
         checkout="a0c6601138c7800ee9ec9ff005dfbfc15f2b15a4",
         directory="dir",
