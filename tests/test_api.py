@@ -82,7 +82,7 @@ def test_fail_on_non_unicode_in_diff(tmpdir):
     with pytest.raises(exceptions.ChangesetUnicodeError):
         cruft.update(
             project_dir,
-            checkout="post-gen-git-init",
+            checkout="initialize-as-git-in-hook",
         )
 
 
