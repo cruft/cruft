@@ -71,21 +71,6 @@ def test_update_stores_checkout_value(value, tmpdir):
     assert json.load((project_dir / ".cruft.json").open("r"))["checkout"] == value
 
 
-def test_fail_on_non_unicode_in_diff(tmpdir):
-    tmpdir.chdir()
-    project_dir = cruft.create(
-        "https://github.com/cruft/cookiecutter-test",
-        Path(tmpdir),
-        checkout="a0c6601138c7800ee9ec9ff005dfbfc15f2b15a4",
-        directory="dir",
-    )
-    with pytest.raises(exceptions.ChangesetUnicodeError):
-        cruft.update(
-            project_dir,
-            checkout="initialize-as-git-in-hook",
-        )
-
-
 def test_update_and_check_real_repo(tmpdir):
     tmpdir.chdir()
     repo = Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
@@ -290,12 +275,10 @@ def test_diff_git_subdir(capfd, tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
     Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
-    # project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
-    # assert cruft.check(project_dir)
 
     # Create something deeper in the git tree
     project_dir = cruft.create(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         Path("tmpdir/foo/bar"),
         directory="dir",
         checkout="master",

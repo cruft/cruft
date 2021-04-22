@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pytest
+
+from cruft import exceptions
 from cruft._commands import utils
 
 
@@ -29,6 +32,14 @@ def test_get_diff_with_delete(tmp_path: Path):
     diff = utils.diff.get_diff(repo0, repo1)
 
     assert diff.startswith("diff --git a/file b/file")
+
+
+def test_get_diff_with_unicode(project_dir):
+    with pytest.raises(exceptions.ChangesetUnicodeError):
+        utils.diff.get_diff(
+            Path(project_dir, "tests", "testdata", "unicode-data").absolute(),
+            Path(project_dir, "tests", "testdata", "non-unicode-data").absolute(),
+        )
 
 
 def test_remove_paths_with_pathlib(tmp_path: Path):
