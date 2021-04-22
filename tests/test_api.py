@@ -275,12 +275,10 @@ def test_diff_git_subdir(capfd, tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
     Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
-    # project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
-    # assert cruft.check(project_dir)
 
     # Create something deeper in the git tree
     project_dir = cruft.create(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         Path("tmpdir/foo/bar"),
         directory="dir",
         checkout="master",

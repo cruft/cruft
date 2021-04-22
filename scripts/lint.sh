@@ -10,4 +10,3 @@ poetry run flake8 cruft/ tests/
 # but tornade 6.1 is the latest.
 poetry run safety check -i 39462
 poetry run bandit -r cruft/
-poetry run cruft check
