@@ -4,7 +4,6 @@ import pytest
 
 from cruft import exceptions
 from cruft._commands import utils
-from cruft._commands.utils.cruft import CruftState
 
 
 def test_get_diff_with_add(tmp_path: Path):
