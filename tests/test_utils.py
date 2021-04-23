@@ -4,6 +4,7 @@ import pytest
 
 from cruft import exceptions
 from cruft._commands import utils
+from cruft._commands.utils.cruft import CruftState
 
 
 def test_get_diff_with_add(tmp_path: Path):
@@ -92,3 +93,9 @@ def test_remove_paths_folder(tmp_path: Path):
     utils.generate._remove_paths(repo0, {"tests", "file"})
     assert not (repo0 / "tests").exists()
     assert not (repo0 / "file").exists()
+
+
+def test_warn_if_cant_read_pyproject_toml(monkeypatch):
+    monkeypatch.setattr(utils.generate, "toml", None)
+    with pytest.warns(UserWarning, match="`toml` package is not installed"):
+        utils.generate._get_skip_paths({}, Path(__file__))
