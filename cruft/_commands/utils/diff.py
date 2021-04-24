@@ -4,17 +4,19 @@ from typing import List
 
 
 def _git_diff(*args: str) -> List[str]:
-    return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
+    cmd = ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
+    return cmd
 
 
 def get_diff(repo0: Path, repo1: Path) -> str:
     """Compute the raw diff between two repositories."""
-    diff = run(
+    diff_result = run(
         _git_diff("--no-ext-diff", "--no-color", str(repo0), str(repo1)),
         cwd=str(repo0),
         stdout=PIPE,
         stderr=PIPE,
-    ).stdout.decode()
+    )
+    diff = diff_result.stdout.decode()
 
     # By default, git diff --no-index will output full paths like so:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
