@@ -322,3 +322,115 @@ def test_diff_git_subdir(capfd, tmpdir):
     )
 
     assert cruft.update(project_dir, checkout="updated")
+
+
+@pytest.mark.parametrize("is_reverse_diff", (True, False))
+@pytest.mark.parametrize("use_exit_code", (True, False))
+@pytest.mark.parametrize("commit_changes", (True, False))
+@pytest.mark.parametrize("include_paths", (("dir0/file1", "dir2/file6"), ()))
+def test_reverse_diff(is_reverse_diff, use_exit_code, commit_changes, include_paths, capfd, tmpdir):
+    """Test reverse diff and its differences from the regular one."""
+
+    branch = "diff"
+    # Set up a test project from a template
+    project_dir = cruft.create(
+        "https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir", checkout=branch
+    )
+
+    # Make this a repo and commit its initial state.
+    repo = Repo.init(project_dir)
+    repo.git.add(all=True)
+    repo.index.commit("Initial commit.")
+
+    unchanged_file = "file0"
+    updated_file = "dir0/file1"
+    updated_and_ignored_file = "dir0/file2"
+    deleted_file = "dir1/file3"
+    new_file = "file4"
+    new_and_ignored_file = "file5"
+    new_directory = "dir2"
+    new_directory_file = "file6"
+    new_and_ignored_directory = "dir3"
+    new_and_ignored_directory_file = "file7"
+
+    (project_dir / updated_file).write_text("I have been updated.\n")
+    (project_dir / updated_and_ignored_file).write_text("I have been updated.\n")
+    (project_dir / deleted_file).unlink()
+    (project_dir / new_file).write_text("I am new.")
+    (project_dir / new_and_ignored_file).write_text("I am new and ignored.")
+    (project_dir / new_directory).mkdir()
+    (project_dir / new_directory / new_directory_file).write_text("I am new.")
+    (project_dir / new_and_ignored_directory).mkdir()
+    (project_dir / new_and_ignored_directory / new_and_ignored_directory_file).write_text(
+        "I am new and in an ignored directory."
+    )
+
+    gitignore_content = "\n".join(
+        f"/{path}"
+        for path in [
+            updated_and_ignored_file,
+            new_and_ignored_file,
+            new_and_ignored_directory,
+        ]
+    )
+    (project_dir / ".gitignore").write_text(gitignore_content)
+
+    # Results should be the same regardless of whether the project repo is dirty.
+    if commit_changes:
+        repo.git.add(all=True)
+        repo.index.commit("Make changes to project.")
+
+    # Sanity-check repo dirtiness
+    assert repo.is_dirty() == (not commit_changes)
+
+    exit_code = cruft._commands.diff(
+        project_dir,
+        include_paths=[Path(path) for path in include_paths],
+        checkout=branch,
+        exit_code=use_exit_code,
+        reverse=is_reverse_diff,
+    )
+    captured = capfd.readouterr()
+    stdout = captured.out
+    stderr = captured.err
+
+    # Check exit code
+    assert exit_code == (not use_exit_code)
+
+    # Check stderr
+    assert stderr == ""
+
+    # Check file changes reported are as expected.
+    diff = stdout
+
+    # File in both the template and repo that hasn't changed; shouldn't be in the diff.
+    assert unchanged_file not in diff
+
+    # Updated file that is in both the template and repo should always be in the diff.
+    assert (updated_file in diff) == ((updated_file in include_paths) if include_paths else True)
+
+    # Updated file that is ignored should be in both diffs.
+    # Gitignore doesn't work on files that are already tracked.
+    assert (updated_and_ignored_file in diff) == (
+        (updated_and_ignored_file in include_paths) if include_paths else True
+    )
+
+    #  cruft._commands.utils.generate.cookiecutter_template already
+    # filters out files that have been deleted in the project
+    # before any comparison.
+    assert deleted_file not in diff
+
+    # New file in the project dir but not the template should be in the reverse diff only.
+    assert (new_file in diff) == (
+        is_reverse_diff and ((new_file in include_paths) if include_paths else True)
+    )
+
+    # New file that is ignored should be in neither diff.
+    assert "I am new and ignored" not in diff
+
+    # New directory that is in the project but not the template should be in reverse only.
+    assert (new_directory in diff) == is_reverse_diff
+    assert (new_directory_file in diff) == is_reverse_diff
+
+    # New directory that is ignored should be in neither diff.
+    assert "I am new and in an ignored directory." not in diff

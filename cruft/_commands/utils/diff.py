@@ -31,14 +31,16 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     repo0_str = repo0.resolve().as_posix()
     repo1_str = repo1.resolve().as_posix()
     try:
-        diff = run(
+        diff_result = run(
             _git_diff("--no-ext-diff", "--no-color", repo0_str, repo1_str),
             cwd=repo0_str,
             stdout=PIPE,
             stderr=PIPE,
-        ).stdout.decode()
+        )
+        diff = diff_result.stdout.decode()
     except UnicodeDecodeError:
         raise exceptions.ChangesetUnicodeError()
+
     # By default, git diff --no-index will output full paths like so:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
     # +++ b/tmp/tmpmp34g21y/local/.coveragerc

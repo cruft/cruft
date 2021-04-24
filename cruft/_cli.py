@@ -271,6 +271,15 @@ def diff(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
+    reverse: bool = typer.Option(
+        False,
+        "--reverse",
+        "-r",
+        help="Show changes in your project that aren't in the template.",
+        show_default=False,
+    ),
 ) -> None:
-    if not _commands.diff(project_dir=project_dir, exit_code=exit_code, checkout=checkout):
+    if not _commands.diff(
+        project_dir=project_dir, exit_code=exit_code, checkout=checkout, reverse=reverse
+    ):
         raise typer.Exit(1)
