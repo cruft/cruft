@@ -1,7 +1,7 @@
 """This module defines CLI interactions when using `cruft`."""
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 import typer
 
@@ -100,6 +100,12 @@ def create(
         show_default=False,
         help="Overwrite the contents of the output directory if it already exists",
     ),
+    skip: Optional[List[str]] = typer.Option(
+        None,
+        "--skip",
+        show_default=False,
+        help="Default files/pattern to skip on update"
+    )
 ) -> None:
     _commands.create(
         template_git_url,
@@ -111,6 +117,7 @@ def create(
         directory=directory,
         checkout=checkout,
         overwrite_if_exists=overwrite_if_exists,
+        skip=skip
     )
 
 

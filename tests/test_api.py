@@ -42,9 +42,18 @@ def test_check_examples(tmpdir, project_dir):
     os.chdir(project_dir)
     verify_and_test_examples(cruft.check)
 
+def test_create_stores_checkout_value(tmpdir):
+    tmpdir.chdir()
+    skips = ["setup.cfg"]
+    cruft.create(
+        "https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), skip=skips
+    )
 
-@pytest.mark.parametrize("value", ["main", None])
-def test_create_stores_checkout_value(value, tmpdir):
+    assert (
+        json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["skip"] == skips
+    )
+
+def test_create_with_skip(value, tmpdir):
     tmpdir.chdir()
 
     cruft.create(
