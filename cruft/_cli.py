@@ -101,11 +101,8 @@ def create(
         help="Overwrite the contents of the output directory if it already exists",
     ),
     skip: Optional[List[str]] = typer.Option(
-        None,
-        "--skip",
-        show_default=False,
-        help="Default files/pattern to skip on update"
-    )
+        None, "--skip", show_default=False, help="Default files/pattern to skip on update"
+    ),
 ) -> None:
     _commands.create(
         template_git_url,
@@ -117,7 +114,7 @@ def create(
         directory=directory,
         checkout=checkout,
         overwrite_if_exists=overwrite_if_exists,
-        skip=skip
+        skip=skip,
     )
 
 

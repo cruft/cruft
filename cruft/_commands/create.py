@@ -19,7 +19,7 @@ def create(
     directory: Optional[str] = None,
     checkout: Optional[str] = None,
     overwrite_if_exists: bool = False,
-    skip: Optional[List[str]] = None
+    skip: Optional[List[str]] = None,
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
@@ -64,8 +64,6 @@ def create(
 
         # After generating the project - save the cruft state
         # into the cruft file.
-        (project_dir / ".cruft.json").write_text(
-            utils.cruft.json_dumps(cruft_content)
-        )
+        (project_dir / ".cruft.json").write_text(utils.cruft.json_dumps(cruft_content))
 
         return project_dir
