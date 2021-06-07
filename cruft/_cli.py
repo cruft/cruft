@@ -1,7 +1,7 @@
 """This module defines CLI interactions when using `cruft`."""
 import json
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 import typer
 
