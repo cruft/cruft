@@ -1,6 +1,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from cookiecutter.generate import generate_files
 
@@ -19,6 +19,7 @@ def create(
     directory: Optional[str] = None,
     checkout: Optional[str] = None,
     overwrite_if_exists: bool = False,
+    skip: Optional[List[str]] = None,
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
@@ -50,18 +51,19 @@ def create(
             )
         )
 
+        cruft_content = {
+            "template": template_git_url,
+            "commit": last_commit,
+            "checkout": checkout,
+            "context": context,
+            "directory": directory,
+        }
+
+        if skip:
+            cruft_content["skip"] = skip
+
         # After generating the project - save the cruft state
         # into the cruft file.
-        (project_dir / ".cruft.json").write_text(
-            utils.cruft.json_dumps(
-                {
-                    "template": template_git_url,
-                    "commit": last_commit,
-                    "checkout": checkout,
-                    "context": context,
-                    "directory": directory,
-                }
-            )
-        )
+        (project_dir / ".cruft.json").write_text(utils.cruft.json_dumps(cruft_content))
 
         return project_dir
