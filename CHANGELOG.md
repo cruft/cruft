@@ -16,6 +16,13 @@ OR
 
 Changelog
 =========
+
+## 2.9.0 - 30 June 2021
+- [Fixed issue #64](https://github.com/cruft/cruft/issues/64): Feature request: support globs for skipped files
+- [Fixed issue #101](https://github.com/cruft/cruft/issues/101): Update error if symlink is present in project
+- [Fixed issue #81](https://github.com/cruft/cruft/issues/81): cruft update leads to UnicodeDecodeError
+- [Fixed issue #115](https://github.com/cruft/cruft/issues/115): Warn when pyproject.toml exists but cannot be read
+
 ## 2.8.0 - 9 March 2021
 - [Fixed issue #68](https://github.com/cruft/cruft/issues/68): Add support for cruft create/update in a sub directory in an existing repository
 - [Fixed issue #91](https://github.com/cruft/cruft/issues/91): Support Updating When Repo has Untracked Files
