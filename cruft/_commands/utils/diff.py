@@ -3,6 +3,8 @@ from re import sub
 from subprocess import PIPE, run  # nosec
 from typing import List
 
+from cruft import exceptions
+
 
 def _git_diff(*args: str) -> List[str]:
     return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
@@ -53,5 +55,5 @@ def get_diff(repo0: Path, repo1: Path) -> str:
 
 
 def display_diff(repo0: Path, repo1: Path):
-    """Display the diff between two repositories."""
+    """Displays the diff between two repositories."""
     run(_git_diff(repo0.as_posix(), repo1.as_posix()))

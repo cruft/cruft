@@ -3,6 +3,7 @@ import stat
 from pathlib import Path
 from shutil import move, rmtree
 from typing import Optional, Set
+from warnings import warn
 
 from cookiecutter.generate import generate_files
 from git import Repo
@@ -99,6 +100,11 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
     if toml and pyproject_file.is_file():
         pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
+    elif pyproject_file.is_file():
+        warn(
+            "pyproject.toml is present in repo, but `toml` package is not installed. "
+            "Cruft configuration may be ignored."
+        )
     return set(map(Path, skip_cruft))
 
 

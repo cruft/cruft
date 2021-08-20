@@ -140,9 +140,15 @@ def _is_project_repo_clean(directory: Path, allow_untracked_files: bool):
 
 
 def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
+    offset = _get_offset(expanded_dir_path)
+
+    git_apply = ["git", "apply", "--reject"]
+    if offset:
+        git_apply.extend(["--directory", offset])
+
     try:
         run(
-            ["git", "apply", "--reject"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -161,9 +167,15 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
 
 
 def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
+    offset = _get_offset(expanded_dir_path)
+
+    git_apply = ["git", "apply", "-3"]
+    if offset:
+        git_apply.extend(["--directory", offset])
+
     try:
         run(
-            ["git", "apply", "-3"],
+            git_apply,
             input=diff.encode(),
             stderr=PIPE,
             stdout=PIPE,
@@ -174,10 +186,31 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_f
         typer.secho(error.stderr.decode(), err=True)
         if _is_project_repo_clean(expanded_dir_path, allow_untracked_files):
             typer.secho(
-                "Failed to apply the update. Retrying again with a different update stratergy.",
+                "Failed to apply the update. Retrying again with a different update strategy.",
                 fg=typer.colors.YELLOW,
             )
             _apply_patch_with_rejections(diff, expanded_dir_path)
+
+
+def _get_offset(expanded_dir_path: Path):
+    try:
+        offset = (
+            run(
+                ["git", "rev-parse", "--show-prefix"],
+                stderr=PIPE,
+                stdout=PIPE,
+                check=True,
+                cwd=expanded_dir_path,
+            )
+            .stdout.decode()
+            .strip()
+        )
+        return offset
+    except CalledProcessError as error:
+        if "not a git repository" in error.stderr.decode():
+            return ""
+        else:
+            raise error
 
 
 def _apply_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):

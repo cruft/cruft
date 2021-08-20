@@ -43,7 +43,15 @@ def test_check_examples(tmpdir, project_dir):
     verify_and_test_examples(cruft.check)
 
 
-@pytest.mark.parametrize("value", ["master", None])
+def test_create_with_skips(tmpdir):
+    tmpdir.chdir()
+    skips = ["setup.cfg"]
+    cruft.create("https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), skip=skips)
+
+    assert json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["skip"] == skips
+
+
+@pytest.mark.parametrize("value", ["main", None])
 def test_create_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
 
@@ -56,7 +64,7 @@ def test_create_stores_checkout_value(value, tmpdir):
     )
 
 
-@pytest.mark.parametrize("value", ["master", None])
+@pytest.mark.parametrize("value", ["main", None])
 def test_update_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
     cruft.create(
@@ -99,6 +107,18 @@ def test_update_and_check_real_repo(tmpdir):
         cwd=repo_dir,
     )
     assert cruft.update(repo_dir, skip_apply_ask=True)
+
+
+def test_update_allows_untracked_files_option(tmpdir):
+    tmpdir.chdir()
+    Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    with open(os.path.join(tmpdir, "untracked.txt"), "w") as new_file:
+        new_file.write("hello, world!\n")
+    repo_dir = Path(tmpdir)
+    # update should fail since repo is now unclean (has a tracked file)
+    assert not cruft.update(repo_dir)
+    # update should work if allow_untracked_files is True
+    assert cruft.update(repo_dir, allow_untracked_files=True)
 
 
 def test_relative_repo_check(tmpdir):
@@ -151,7 +171,7 @@ def test_directory_and_checkout(tmpdir):
         checkout="updated",
     )
     assert cruft.check(output_path, checkout="updated")
-    # Add checks for strictness where master is an older
+    # Add checks for strictness where main is an older
     # version than updated
     assert not cruft.check(output_path, strict=True)
     assert cruft.check(output_path, strict=False)
@@ -213,7 +233,7 @@ index be6a56b..1fc03a9 100644
         # of the "cruft diff" command) or if the user requested an exit code, we must make
         # sure the absolute path to the temporary directory does not appear in the diff
         # because the user might want to process the output.
-        # Conversely, when the output is suposed to be displayed to the user directly (e.g.
+        # Conversely, when the output is supposed to be displayed to the user directly (e.g.
         # when running "cruft diff" command directly in a terminal), absolute path to the
         # actual files on disk may be displayed because git diff command is called directly
         # without reprocessing by cruft. This delegates diff coloring and paging to git which
@@ -257,3 +277,36 @@ def test_diff_checkout(capfd, tmpdir):
     assert "+++ b/README.md" in stdout
     assert "+Updated again" in stdout
     assert "-Updated" in stdout
+
+
+def test_diff_git_subdir(capfd, tmpdir):
+    tmpdir.chdir()
+    temp_dir = Path(tmpdir)
+    Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
+
+    # Create something deeper in the git tree
+    project_dir = cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        Path("tmpdir/foo/bar"),
+        directory="dir",
+        checkout="master",
+    )
+    # not added & committed
+    assert not cruft.update(project_dir)
+    # Add & commit the changes so that the repo is clean
+    run(["git", "add", "."], cwd=temp_dir)
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=temp_dir,
+    )
+
+    assert cruft.update(project_dir, checkout="updated")

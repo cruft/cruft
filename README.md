@@ -74,8 +74,7 @@ If there are any updates, cruft will have you review them before applying. If yo
 and update the `.cruft.json` file for you.
 
 !!! tip
-    Sometimes certain files just aren't good fits for updating. Such as test cases or `__init__` files. You can tell cruft to always skip updating these files on a project by project basis by added them
-    to a skip section within your .cruft.json file:
+    Sometimes certain files just aren't good fits for updating. Such as test cases or `__init__` files. You can tell cruft to always skip updating these files on a project by generating project with `--skip cruft/__init__.py --skip tests` arguments or manually adding them to a skip section within your `.cruft.json` file:
 
         {
             "template": "https://github.com/timothycrosley/cookiecutter-python",
@@ -91,6 +90,16 @@ and update the `.cruft.json` file for you.
 
         [tool.cruft]
         skip = ["cruft/__init__.py", "tests"]
+    
+    Note that it is possible to use glob patterns for selecting the files to skip:
+        {
+            "skip": [
+                "**/__init__.py",
+                "tests/*"
+            ],
+            ...
+        }
+
 
 
 ## Checking a Project
