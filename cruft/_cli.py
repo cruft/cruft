@@ -221,6 +221,14 @@ def update(
             " commit is an ancestor of the project commit."
         ),
     ),
+    allow_untracked_files: bool = typer.Option(
+        False,
+        "--allow-untracked-files",
+        help=(
+                "Allow the project's cruft to be updated if there are untracked files in the git"
+                " repository (but no other changes)"
+        ),
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -229,6 +237,7 @@ def update(
         skip_update=skip_update,
         checkout=checkout,
         strict=strict,
+        allow_untracked_files=allow_untracked_files,
     ):
         raise typer.Exit(1)
 

@@ -2,12 +2,12 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Optional
 
 import typer
 
 from . import utils
+from .utils.iohelper import AltTemporaryDirectory
 
 
 def diff(
@@ -19,7 +19,7 @@ def diff(
     checkout = checkout or cruft_state.get("commit")
 
     has_diff = False
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
         remote_template_dir = tmpdir / "remote"
@@ -30,19 +30,19 @@ def diff(
         local_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Let's clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], repo_dir, checkout=checkout
-        )
+        ) as repo:
 
-        # We generate the template for the revision expected by the project
-        utils.generate.cookiecutter_template(
-            output_dir=remote_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            checkout=checkout,
-            update_deleted_paths=True,
-        )
+            # We generate the template for the revision expected by the project
+            utils.generate.cookiecutter_template(
+                output_dir=remote_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                checkout=checkout,
+                update_deleted_paths=True,
+            )
 
         # Then we create a new tree with each file in the template that also exist
         # locally.

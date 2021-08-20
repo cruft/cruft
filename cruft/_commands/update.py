@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from tempfile import TemporaryDirectory
 from typing import Optional, Set
 
 import click
@@ -9,6 +8,7 @@ import typer
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example(skip_apply_ask=False)
@@ -20,13 +20,14 @@ def update(
     skip_update: bool = False,
     checkout: Optional[str] = None,
     strict: bool = True,
+    allow_untracked_files: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
-    if not _is_project_repo_clean(project_dir):
+    if not _is_project_repo_clean(project_dir, allow_untracked_files):
         typer.secho(
             "Cruft cannot apply updates on an unclean git project."
             " Please make sure your git working tree is clean before proceeding.",
@@ -36,7 +37,7 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
@@ -44,48 +45,56 @@ def update(
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
         # Clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
-        last_commit = repo.head.object.hexsha
+        with utils.cookiecutter.get_cookiecutter_repo(
+            cruft_state["template"], repo_dir, checkout
+        ) as repo:
+            last_commit = repo.head.object.hexsha
 
-        # Bail early if the repo is already up to date
-        if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
-            typer.secho(
-                "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+            # Bail early if the repo is already up to date.
+            if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
+                typer.secho(
+                    "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+                )
+                return True
+
+            # Generate clean outputs via the cookiecutter
+            # from the current cruft state commit of the cookiectter and the updated
+            # cookiecutter.
+            _ = utils.generate.cookiecutter_template(
+                output_dir=current_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                cookiecutter_input=cookiecutter_input,
+                checkout=cruft_state["commit"],
+                deleted_paths=deleted_paths,
+                update_deleted_paths=True,
             )
-            return True
-
-        # Generate clean outputs via the cookiecutter
-        # from the current cruft state commit of the cookiectter and the updated
-        # cookiecutter.
-        _ = utils.generate.cookiecutter_template(
-            output_dir=current_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=cruft_state["commit"],
-            deleted_paths=deleted_paths,
-            update_deleted_paths=True,
-        )
-        new_context = utils.generate.cookiecutter_template(
-            output_dir=new_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=last_commit,
-            deleted_paths=deleted_paths,
-        )
+            new_context = utils.generate.cookiecutter_template(
+                output_dir=new_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                cookiecutter_input=cookiecutter_input,
+                checkout=last_commit,
+                deleted_paths=deleted_paths,
+            )
 
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
         if _apply_project_updates(
-            current_template_dir, new_template_dir, project_dir, skip_update, skip_apply_ask
+            current_template_dir,
+            new_template_dir,
+            project_dir,
+            skip_update,
+            skip_apply_ask,
+            allow_untracked_files,
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
             cruft_state["commit"] = last_commit
+            cruft_state["checkout"] = checkout
             cruft_state["context"] = new_context
             cruft_file.write_text(utils.cruft.json_dumps(cruft_state))
             typer.secho(
@@ -112,11 +121,20 @@ def _is_git_repo(directory: Path):
     return False
 
 
-def _is_project_repo_clean(directory: Path):
+def _has_untracked_file(status_line: str):
+    return status_line.strip().startswith("??")
+
+
+def _is_project_repo_clean(directory: Path, allow_untracked_files: bool):
     if not _is_git_repo(directory):
         return True
-    output = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
-    if output.stdout.strip():
+    git_status = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
+    status_lines = git_status.stdout.decode("utf-8").split("\n")
+    # remove empty string from trailing newline
+    status_lines = [line for line in status_lines if line]
+    if allow_untracked_files:
+        status_lines = [line for line in status_lines if not _has_untracked_file(line)]
+    if status_lines:
         return False
     return True
 
@@ -142,7 +160,7 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
 
 
-def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
+def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
     try:
         run(
             ["git", "apply", "-3"],
@@ -154,7 +172,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
         )
     except CalledProcessError as error:
         typer.secho(error.stderr.decode(), err=True)
-        if _is_project_repo_clean(expanded_dir_path):
+        if _is_project_repo_clean(expanded_dir_path, allow_untracked_files):
             typer.secho(
                 "Failed to apply the update. Retrying again with a different update stratergy.",
                 fg=typer.colors.YELLOW,
@@ -162,7 +180,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path):
             _apply_patch_with_rejections(diff, expanded_dir_path)
 
 
-def _apply_patch(diff: str, expanded_dir_path: Path):
+def _apply_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
     # Git 3 way merge is the our best bet
     # at applying patches. But it only works
     # with git repos. If the repo is not a git dir
@@ -170,7 +188,7 @@ def _apply_patch(diff: str, expanded_dir_path: Path):
     # diffs cleanly where applicable otherwise creates
     # *.rej files where there are conflicts
     if _is_git_repo(expanded_dir_path):
-        _apply_three_way_patch(diff, expanded_dir_path)
+        _apply_three_way_patch(diff, expanded_dir_path, allow_untracked_files)
     else:
         _apply_patch_with_rejections(diff, expanded_dir_path)
 
@@ -181,6 +199,7 @@ def _apply_project_updates(
     project_dir: Path,
     skip_update: bool,
     skip_apply_ask: bool,
+    allow_untracked_files: bool,
 ) -> bool:
     diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
@@ -210,5 +229,5 @@ def _apply_project_updates(
             skip_update = True
 
     if not skip_update and diff.strip():
-        _apply_patch(diff, project_dir)
+        _apply_patch(diff, project_dir, allow_untracked_files)
     return True
