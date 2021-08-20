@@ -113,9 +113,6 @@ typing-extensions = ">=3.7.4"
 colorama = ["colorama (>=0.4.3)"]
 d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
-[package.extras]
-d = ["aiohttp (>=3.3.2)"]
-
 [[package]]
 name = "certifi"
 version = "2020.12.5"
