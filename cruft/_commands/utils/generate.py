@@ -46,7 +46,7 @@ def cookiecutter_template(
     if update_deleted_paths:
         deleted_paths.update(_get_deleted_files(output_dir, project_dir))
     # We now remove skipped and deleted paths from the project
-    _remove_paths(output_dir, skip_paths | deleted_paths)
+    _remove_paths(output_dir, skip_paths | deleted_paths)  # type: ignore
 
     return context
 
@@ -120,7 +120,7 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
 
 
 def _remove_readonly(func, path, _):  # pragma: no cov_4_nix
-    "Clear the readonly bit and reattempt the removal"
+    """Clear the readonly bit and reattempt the removal."""
     os.chmod(path, stat.S_IWRITE)  # WINDOWS
     func(path)
 
