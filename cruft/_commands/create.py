@@ -1,6 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Optional
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from cookiecutter.generate import generate_files
 
