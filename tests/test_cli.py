@@ -173,7 +173,7 @@ def test_update_allow_untracked_files(cruft_runner, cookiecutter_dir):
         ],
         cwd=cookiecutter_dir,
     )
-    run(["touch", "new_file.txt"], cwd=cookiecutter_dir)
+    (cookiecutter_dir / "new_file.txt").touch()
     result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y"])
     assert "Cruft cannot apply updates on an unclean git project." in result.stdout
     assert result.exit_code == 1
