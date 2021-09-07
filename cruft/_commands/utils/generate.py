@@ -2,7 +2,7 @@ import os
 import stat
 from pathlib import Path
 from shutil import move, rmtree
-from typing import Optional, Set
+from typing import Optional, Set, Union
 from warnings import warn
 
 from cookiecutter.generate import generate_files
@@ -143,8 +143,16 @@ def _remove_single_path(path: Path):
             raise Exception("Failed to remove file.") from exc
 
 
-def _remove_paths(root: Path, paths_to_remove: Set[Path]):
+def _remove_paths(root: Path, paths_to_remove: Set[Union[Path, str]]):
     # There is some redundancy here in chmoding dirs and/or files differently.
+    abs_paths_to_remove = []
     for path_to_remove in paths_to_remove:
-        path = root / path_to_remove
+        if isinstance(path_to_remove, Path):
+            abs_paths_to_remove.append(root / path_to_remove)
+        elif isinstance(path_to_remove, str):  # assumes the string is a glob-pattern
+            abs_paths_to_remove += list(root.glob(path_to_remove))
+        else:
+            warn(f"{path_to_remove} is not a Path object or a string glob-pattern")
+
+    for path in abs_paths_to_remove:
         _remove_single_path(path)
