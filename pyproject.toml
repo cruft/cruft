@@ -57,4 +57,3 @@ line-length = 100
 
 [tool.isort]
 profile = "hug"
-

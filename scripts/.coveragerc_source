@@ -1,6 +1,0 @@
-[report]
-omit =
-    *tests*
-    *__main__.py
-exclude_lines =
-    pragma: no cover
