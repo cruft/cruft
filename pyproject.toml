@@ -4,15 +4,15 @@ version = "2.9.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
 authors = ["Timothy Crosley <timothy.crosley@gmail.com>", "Sambhav Kothari <sambhavs.email@gmail.com>"]
 license = "MIT"
-readme = "README.md"
+	readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6"
 cookiecutter = "^1.6"
 gitpython = "^3.0"
 toml = { version = "^0.10", optional = true }
-typer = "^0.3.2"
-click = "^7.1.2"
+typer = "^0.4.0"
+click = ">= 7.1.2, <9.0.0"
 examples = {version = "^1.0.2", optional = true}
 
 [tool.poetry.extras]
