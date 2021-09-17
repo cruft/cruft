@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cruft"
-version = "2.9.0-alpha.3"
+version = "2.9.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
 authors = ["Timothy Crosley <timothy.crosley@gmail.com>", "Sambhav Kothari <sambhavs.email@gmail.com>"]
 license = "MIT"
