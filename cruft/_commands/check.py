@@ -19,21 +19,19 @@ def check(
     cruft_state = json.loads(cruft_file.read_text())
     with AltTemporaryDirectory() as cookiecutter_template_dir:
         with utils.cookiecutter.get_cookiecutter_repo(
-            cruft_state["template"], Path(cookiecutter_template_dir), checkout
+            cruft_state["template"], Path(cookiecutter_template_dir), checkout,
+            filter="blob:none", no_checkout=True,
         ) as repo:
             last_commit = repo.head.object.hexsha
             if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
-                    "SUCCESS: Good work! Project's cruft is up to date and "
-                    "as clean as possible :).",
+                    "SUCCESS: Good work! Project's cruft is up to date and as clean as possible :).",
                     fg=typer.colors.GREEN,
                 )
                 return True
 
-            typer.secho(
-                "FAILURE: Project's cruft is out of date! "
-                "Run `cruft update` to clean this mess up.",
-                fg=typer.colors.RED,
-            )
-
+        typer.secho(
+            "FAILURE: Project's cruft is out of date! Run `cruft update` to clean this mess up.",
+            fg=typer.colors.RED,
+        )
         return False
