@@ -11,8 +11,8 @@ python = "^3.6"
 cookiecutter = "^1.6"
 gitpython = "^3.0"
 toml = { version = "^0.10", optional = true }
-typer = "^0.3.2"
-click = "^7.1.2"
+typer = "^0.4.0"
+click = ">= 7.1.2, <9.0.0"
 examples = {version = "^1.0.2", optional = true}
 
 [tool.poetry.extras]
