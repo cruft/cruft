@@ -296,7 +296,14 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert "cruft has been updated" in result.stdout
 
 
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [
+        ([], 0),
+        (["--exit-code"], 1),
+        (["-e"], 1),
+    ],
+)
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     (cookiecutter_dir / "README.md").write_text("changed content\n")
     result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
@@ -317,3 +324,21 @@ def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
     assert result.exit_code == expected_exit_code
     assert result.stdout == ""
+
+
+@pytest.mark.parametrize(
+    "args,expected_exit_code,expect_stdout",
+    [
+        (["-r"], 0, True),
+        (["-re"], 1, True),
+        (["-r", "newfile"], 0, True),
+        (["-re", "newfile"], 1, True),
+        (["-re", "README.md"], 0, False),
+        (["-r", "README.md"], 0, False),
+    ],
+)
+def test_reverse_diff(args, expected_exit_code, expect_stdout, cruft_runner, cookiecutter_dir):
+    (cookiecutter_dir / "newfile").write_text("new content\n")
+    result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
+    assert result.exit_code == expected_exit_code
+    assert (result.stdout == "") != expect_stdout

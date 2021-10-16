@@ -13,7 +13,7 @@ from . import utils
 
 def diff(
     project_dir: Path = Path("."),
-    include_paths: Iterable[Path] = (),
+    include_paths: Optional[Iterable[Path]] = None,
     exit_code: bool = False,
     checkout: Optional[str] = None,
     reverse: bool = False,
@@ -78,6 +78,7 @@ def diff(
         path_source = project_dir if reverse else remote_template_dir
 
         paths_to_copy, _ = _filter_files(path_source, include_paths=include_paths)
+
         for path_to_copy in paths_to_copy:
             relative_path = path_to_copy.relative_to(path_source)
             local_path = project_dir / relative_path
@@ -122,7 +123,7 @@ def diff(
 def _filter_files(
     root: Path,
     start_path: Optional[Path] = None,
-    include_paths: Iterable[Path] = (),
+    include_paths: Optional[Iterable[Path]] = None,
     gitignore_repo_path: Optional[Path] = None,
 ) -> Tuple[List[Path], List[Path]]:
     """Recursively classify paths by their include and gitignore status."""
@@ -146,19 +147,24 @@ def _filter_files(
     paths_to_ignore: List[Path] = []
 
     for path in start_path.iterdir():
-        if include_paths and not (
-            path in include_paths
-            or (
-                path
-                in [
-                    parent_path
-                    for include_path in include_paths
-                    for parent_path in include_path.parents
-                ]
-            )
-        ):
-            paths_to_ignore.append(path)
-            continue
+        if include_paths:
+            if not (
+                # Explicitly included
+                (path in include_paths)
+                # Parent of an included path
+                or (
+                    path
+                    in [
+                        parent_path
+                        for include_path in include_paths
+                        for parent_path in include_path.parents
+                    ]
+                )
+                # Descendant of an included path
+                or (set(include_paths).intersection(path.parents))
+            ):
+                paths_to_ignore.append(path)
+                continue
 
         if gitignore_repo_path and repo:
             # Get the path relative to the root and construct its equivalent under the repo

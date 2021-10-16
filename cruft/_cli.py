@@ -1,7 +1,7 @@
 """This module defines CLI interactions when using `cruft`."""
 import json
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 
@@ -263,11 +263,18 @@ def diff(
         False,
         "--reverse",
         "-r",
-        help="Show changes in your project that aren't in the template.",
+        help="Show changes in your project that aren't in the template. Respects .gitignore",
         show_default=False,
+    ),
+    paths: Optional[List[Path]] = typer.Argument(
+        None, help="Paths to include in the diff. By default the whole project is compared."
     ),
 ) -> None:
     if not _commands.diff(
-        project_dir=project_dir, exit_code=exit_code, checkout=checkout, reverse=reverse
+        project_dir=project_dir,
+        exit_code=exit_code,
+        checkout=checkout,
+        reverse=reverse,
+        include_paths=paths,
     ):
         raise typer.Exit(1)
