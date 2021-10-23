@@ -13,7 +13,7 @@ from .cruft import CruftState
 from .iohelper import AltTemporaryDirectory
 
 try:
-    import toml  # type: ignore
+    import toml
 except ImportError:  # pragma: no cover
     toml = None  # type: ignore
 

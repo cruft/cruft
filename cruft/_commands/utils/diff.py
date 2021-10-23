@@ -33,16 +33,11 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     # have b/repo0.
     # NIX OPs have a/folder/file
     # WIN OPS have a/c:/folder/file
+    # More info on git-diff can be found here: http://git-scm.com/docs/git-diff
     for repo in [repo0_str, repo1_str]:
         # Make repo look like a NIX absolute path.
         repo = sub("/[a-z]:", "", repo)
         diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
-        # if repo[0] == '/':
-        #     # NIX case
-        #     diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
-        # else:
-        #     # WIN case
-        #     diff = diff.replace("a/" + repo, "a").replace("b/" + repo, "b")
 
     # This replacement is needed for renamed/moved files to be recognized properly
     # Renamed files in the diff don't have the "a" or "b" prefix and instead look like
