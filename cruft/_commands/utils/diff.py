@@ -6,7 +6,8 @@ from cruft import exceptions
 
 
 def _git_diff(*args: str) -> List[str]:
-    return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", *args]
+    # https://git-scm.com/docs/git-diff#Documentation/git-diff.txt---binary support for binary patch
+    return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", "--binary", *args]
 
 
 def get_diff(repo0: Path, repo1: Path) -> str:

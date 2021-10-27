@@ -17,6 +17,10 @@ OR
 Changelog
 =========
 
+## 2.9.1 - 27 Oct 2021
+- [Fixed issue #131](https://github.com/cruft/cruft/issues/131): Feature request: support binary files patching
+
+
 ## 2.9.0 - 30 June 2021
 - [Fixed issue #64](https://github.com/cruft/cruft/issues/64): Feature request: support globs for skipped files
 - [Fixed issue #101](https://github.com/cruft/cruft/issues/101): Update error if symlink is present in project
