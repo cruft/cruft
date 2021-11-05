@@ -16,6 +16,10 @@ else
     XTRA_COV+=("pragma: no cov_4_nix")
 fi
 
+if [[ $* == *--ci* ]]; then
+  shift
+fi
+
 # Iterate the string array using for loop. The quotes ensure iteration
 # over multiple words string. It's important that .coverage ends with an empty last line.
 for val in "${XTRA_COV[@]}"; do
