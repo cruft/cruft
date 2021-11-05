@@ -29,7 +29,8 @@ def check(
 
             if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
-                    "SUCCESS: Good work! Project's cruft is up to date and as clean as possible :).",
+                    "SUCCESS: Good work! Project's cruft is up to date "
+                    "and as clean as possible :).",
                     fg=typer.colors.GREEN,
                 )
                 return True
