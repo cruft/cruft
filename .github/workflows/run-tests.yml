@@ -53,7 +53,7 @@ jobs:
         poetry install
     - name: Run Checks
       run: |
-        bash scripts/test.sh
+        bash scripts/test.sh --ci
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
       uses: codecov/codecov-action@v1

@@ -9,8 +9,9 @@ declare -a XTRA_COV=()
 declare XTRA_OPT=""
 
 if [[ $OSTYPE =~ ^msys|^WIN ]]; then
-    # XTRA_OPT="-x --count 10"
-    XTRA_OPT="--count 5"
+    if [[ $* == *--ci* ]]; then
+      XTRA_OPT="--count 5"
+    fi
 else
     XTRA_COV+=("pragma: no cov_4_nix")
 fi
