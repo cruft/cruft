@@ -10,7 +10,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
     runs-on: ${{ matrix.os }}
     steps:
@@ -37,6 +37,15 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-pip-${{ hashFiles('**/poetry.lock') }}
         restore-keys: |
           ${{ runner.os }}-${{ matrix.python-version }}-poetry-pip-
+    - uses: actions/cache@v2
+      if: startsWith(runner.os, 'Windows')
+      with:
+        path: |
+          $env:LocalAppdata/pypoetry/cache/virtualenvs
+          $env:LocalAppdata/pypoetry/cache/
+        key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-pip-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.python-version }}-poetry-pip-
     - name: Install dependencies
       run: |
         python -m pip install poetry
@@ -44,7 +53,7 @@ jobs:
         poetry install
     - name: Run Checks
       run: |
-        bash scripts/test.sh
+        bash scripts/test.sh --ci
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
       uses: codecov/codecov-action@v1
