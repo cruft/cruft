@@ -17,9 +17,12 @@ OR
 Changelog
 =========
 
-## 2.9.1 - 27 Oct 2021
+## 2.10.0 - 7 Nov 2021
+- [Fixed issue #41](https://github.com/cruft/cruft/issues/41): Add windows support
+- [Fixed issue #112](https://github.com/cruft/cruft/issues/112): Add support for generating the project with always skipped files on update
+- [Fixed issue #123](https://github.com/cruft/cruft/issues/123): Feature request: Faster implementation for cruft check
+- [Fixed issue #124](https://github.com/cruft/cruft/issues/124): cruft 2.9.0 on Pypi requires click <= 8.0.0
 - [Fixed issue #131](https://github.com/cruft/cruft/issues/131): Feature request: support binary files patching
-
 
 ## 2.9.0 - 30 June 2021
 - [Fixed issue #64](https://github.com/cruft/cruft/issues/64): Feature request: support globs for skipped files

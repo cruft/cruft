@@ -1,0 +1,26 @@
+---
+name: Test PyPI publish
+
+on:
+  release:
+    types: [prereleased]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install poetry
+        run: pip install poetry
+      - name: Bump version number
+        run: poetry version ${{ github.event.release.tag_name }}
+      - name: Build package
+        run: poetry build
+      - name: Publish package
+        run: poetry publish -r testpypi -u __token__ -p ${{ secrets.TEST_PYPI_PASSWORD }}
