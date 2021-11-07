@@ -32,4 +32,4 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       - name: Deploy docs
-        run: poetry run portray on_github_pages
+        run: poetry run portray on_github_pages -f
