@@ -17,6 +17,10 @@ OR
 Changelog
 =========
 
+
+## 2.10.1 - 31 Mar 2022
+- [Fixed issue #152](https://github.com/cruft/cruft/issues/152): Upgrade version of importlib-metadata
+
 ## 2.10.0 - 7 Nov 2021
 - [Fixed issue #41](https://github.com/cruft/cruft/issues/41): Add windows support
 - [Fixed issue #112](https://github.com/cruft/cruft/issues/112): Add support for generating the project with always skipped files on update
