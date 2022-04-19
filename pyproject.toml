@@ -28,7 +28,7 @@ isort = "^5.3"
 flake8-bugbear = "^19.8"
 black = {version = "^20.8b1", allow-prereleases = true}
 mypy = "^0.812.0"
-ipython = "^7.7"
+ipython = "^7.16.3"
 pytest = "^5.0"
 pytest-cov = "^2.7"
 pytest-repeat = "^0.9.1"
