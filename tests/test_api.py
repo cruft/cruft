@@ -223,7 +223,7 @@ index be6a56b..1fc03a9 100644
 """
     expected_output_regex = re.escape(expected_output)
     expected_output_regex = expected_output_regex.replace(r"\{tmpdir\}", r"([^\n]*)")
-    expected_output_regex = fr"^{expected_output_regex}$"
+    expected_output_regex = rf"^{expected_output_regex}$"
 
     match = re.search(expected_output_regex, stdout, re.MULTILINE)
     assert match is not None
