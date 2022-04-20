@@ -36,8 +36,7 @@ def cookiecutter_template(
 
     repo.head.reset(commit=commit, working_tree=True)
 
-    if repo.working_dir is None:
-        raise RuntimeError("Internal error: repo working_dir is undefined.")
+    assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
     context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
 
     # Get all paths that we are supposed to skip before generating the diff and applying updates
