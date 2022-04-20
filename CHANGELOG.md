@@ -18,7 +18,7 @@ Changelog
 =========
 
 
-## 2.10.1 - 31 Mar 2022
+## 2.10.2 - 20 Apr 2022
 - [Fixed issue #152](https://github.com/cruft/cruft/issues/152): Upgrade version of importlib-metadata
 
 ## 2.10.0 - 7 Nov 2021
