@@ -25,7 +25,7 @@ def cookiecutter_template(
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
     checkout: Optional[str] = None,
-    deleted_paths: Set[Path] = None,
+    deleted_paths: Optional[Set[Path]] = None,
     update_deleted_paths: bool = False,
 ) -> CookiecutterContext:
     """Generate a clean cookiecutter template in output_dir."""
@@ -36,6 +36,7 @@ def cookiecutter_template(
 
     repo.head.reset(commit=commit, working_tree=True)
 
+    assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
     context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
 
     # Get all paths that we are supposed to skip before generating the diff and applying updates
@@ -74,8 +75,7 @@ def _generate_output(
     # Therefore we have to move the directory content to the expected output_dir.
     # See https://github.com/cookiecutter/cookiecutter/pull/907
     output_dir.mkdir(parents=True, exist_ok=True)
-    with AltTemporaryDirectory() as tmpdir_:
-        tmpdir = Path(tmpdir_)
+    with AltTemporaryDirectory() as tmpdir:
 
         # Kindly ask cookiecutter to generate the template
         template_dir = generate_files(
