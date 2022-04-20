@@ -52,8 +52,8 @@ palette = {primary = "orange", accent = "cyan"}
 skip = ["cruft/__init__.py", "tests"]
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.8"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 100
