@@ -7,20 +7,30 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
         with:
           python-version: "3.7"
-      - name: Install poetry
-        run: pip install poetry
+          cache: "poetry"
+          cache-dependency-path: "**/poetry.lock"
+
+      - name: Install dependencies
+        run: poetry install
+
       - name: Bump version number
         run: poetry version ${{ github.event.release.tag_name }}
+
       - name: Build package
         run: poetry build
+
       - name: Publish package
         run: poetry publish -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
