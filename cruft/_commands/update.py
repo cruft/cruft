@@ -50,8 +50,10 @@ def update(
         ) as repo:
             last_commit = repo.head.object.hexsha
 
-            # Bail early if the repo is already up to date.
-            if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
+            # Bail early if the repo is already up to date and no inputs are asked
+            if not cookiecutter_input and utils.cruft.is_project_updated(
+                repo, cruft_state["commit"], last_commit, strict
+            ):
                 typer.secho(
                     "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
                 )

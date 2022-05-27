@@ -50,6 +50,18 @@ def cookiecutter_dir_hooked_git(tmpdir):
     )
 
 
+@pytest.fixture
+def cookiecutter_dir_input(tmpdir):
+    yield Path(
+        cruft.create(
+            "https://github.com/gmsantos/cookiecutter-test",
+            Path(tmpdir),
+            directory="dir",
+            checkout="input",
+        )
+    )
+
+
 def test_create(cruft_runner, tmpdir):
     result = cruft_runner(
         [
@@ -316,6 +328,15 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
     assert "cruft has been updated" in result.stdout
+
+
+def test_update_same_commit_but_ask_for_input(cruft_runner, cookiecutter_dir_input):
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input", "-y", "-i"],
+        input="\n\n",  # no input changes
+    )
+    assert "cruft has been updated" in result.stdout
+    assert result.exit_code == 0
 
 
 @pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
