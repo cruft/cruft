@@ -363,6 +363,18 @@ def test_update_new_inputs_added_to_template(cruft_runner, cookiecutter_dir_inpu
     assert result.exit_code == 0
 
 
+def test_update_refresh_private_variables_from_template(cruft_runner, cookiecutter_dir_input, capfd):
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input-updated", "-r"],
+        input="v\ny\n",
+    )
+    git_diff_captured = capfd.readouterr()
+    assert "-Private variable: 1.0" in git_diff_captured.out
+    assert "+Private variable: 2.0" in git_diff_captured.out
+    assert "cruft has been updated" in result.stdout
+    assert result.exit_code == 0
+
+
 @pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     (cookiecutter_dir / "README.md").write_text("changed content\n")

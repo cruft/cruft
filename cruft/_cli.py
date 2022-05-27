@@ -193,6 +193,13 @@ def update(
         help="Prompt for cookiecutter parameters for the latest template version",
         show_default=False,
     ),
+    refresh_private_variables: bool = typer.Option(
+        False,
+        "--refresh-private-variables",
+        "-r",
+        help="Refresh cookiecutter private variables for the latest template version",
+        show_default=False,
+    ),
     skip_apply_ask: bool = typer.Option(
         False,
         "--skip-apply-ask",
@@ -237,6 +244,7 @@ def update(
     if not _commands.update(
         project_dir=project_dir,
         cookiecutter_input=cookiecutter_input,
+        refresh_private_variables=refresh_private_variables,
         skip_apply_ask=skip_apply_ask,
         skip_update=skip_update,
         checkout=checkout,

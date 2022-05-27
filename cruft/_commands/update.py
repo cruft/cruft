@@ -16,6 +16,7 @@ from .utils.iohelper import AltTemporaryDirectory
 def update(
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
+    refresh_private_variables: bool = False,
     skip_apply_ask: bool = True,
     skip_update: bool = False,
     checkout: Optional[str] = None,
@@ -51,9 +52,9 @@ def update(
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date and no inputs are asked
-            if not cookiecutter_input and utils.cruft.is_project_updated(
-                repo, cruft_state["commit"], last_commit, strict
-            ):
+            if not (
+                cookiecutter_input or refresh_private_variables
+            ) and utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
                     "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
                 )
@@ -73,6 +74,11 @@ def update(
                 deleted_paths=deleted_paths,
                 update_deleted_paths=True,
             )
+            # Remove private variables from cruft_state to refresh their values
+            # from the cookiecutter template config
+            if refresh_private_variables:
+                _clean_cookiecutter_private_variables(cruft_state)
+
             new_context = utils.generate.cookiecutter_template(
                 output_dir=new_template_dir,
                 repo=repo,
@@ -105,6 +111,12 @@ def update(
                 fg=typer.colors.GREEN,
             )
         return True
+
+
+def _clean_cookiecutter_private_variables(cruft_state: dict):
+    for key in list(cruft_state["context"]["cookiecutter"].keys()):
+        if key != "_template" and key.startswith("_"):
+            del cruft_state["context"]["cookiecutter"][key]
 
 
 #################################################
