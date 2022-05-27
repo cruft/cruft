@@ -338,6 +338,30 @@ def test_update_same_commit_but_ask_for_input(cruft_runner, cookiecutter_dir_inp
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
 
+def test_update_with_input_changes(cruft_runner, cookiecutter_dir_input, capfd):
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input", "-i"],
+        input="test\nnew-input\nv\ny\n",
+    )
+    git_diff_captured = capfd.readouterr()
+    assert "-Input from cookiecutter: some-input" in git_diff_captured.out
+    assert "+Input from cookiecutter: new-input" in git_diff_captured.out
+    assert "cruft has been updated" in result.stdout
+    assert result.exit_code == 0
+
+
+def test_update_new_inputs_added_to_template(cruft_runner, cookiecutter_dir_input, capfd):
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input-updated", "-i"],
+        input="test\nsome-input\nnew-input-from-template\nv\ny\n",
+    )
+    git_diff_captured = capfd.readouterr()
+    assert "-Initial" in git_diff_captured.out
+    assert "+Updated" in git_diff_captured.out
+    assert "+New input added from template: new-input-from-template" in git_diff_captured.out
+    assert "cruft has been updated" in result.stdout
+    assert result.exit_code == 0
+
 
 @pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):

@@ -62,12 +62,13 @@ def update(
             # Generate clean outputs via the cookiecutter
             # from the current cruft state commit of the cookiectter and the updated
             # cookiecutter.
+            # For the current cruft state, we do not try to update the cookiecutter_input
+            # because we want to keep the current context input intact.
             _ = utils.generate.cookiecutter_template(
                 output_dir=current_template_dir,
                 repo=repo,
                 cruft_state=cruft_state,
                 project_dir=project_dir,
-                cookiecutter_input=cookiecutter_input,
                 checkout=cruft_state["commit"],
                 deleted_paths=deleted_paths,
                 update_deleted_paths=True,
