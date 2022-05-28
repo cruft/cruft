@@ -1,0 +1,41 @@
+name: Run tests
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use python
+          poetry install
+
+      - name: Run Checks
+        run: |
+          bash scripts/test.sh --ci
+
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
+        uses: codecov/codecov-action@v2
