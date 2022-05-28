@@ -338,6 +338,7 @@ def test_update_same_commit_but_ask_for_input(cruft_runner, cookiecutter_dir_inp
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
 
+
 def test_update_with_input_changes(cruft_runner, cookiecutter_dir_input, capfd):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input", "-i"],
@@ -363,7 +364,9 @@ def test_update_new_inputs_added_to_template(cruft_runner, cookiecutter_dir_inpu
     assert result.exit_code == 0
 
 
-def test_update_refresh_private_variables_from_template(cruft_runner, cookiecutter_dir_input, capfd):
+def test_update_refresh_private_variables_from_template(
+    cruft_runner, cookiecutter_dir_input, capfd
+):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input-updated", "-r"],
         input="v\ny\n",
