@@ -21,10 +21,11 @@ jobs:
         with:
           python-version: "3.7"
           cache: "poetry"
-          cache-dependency-path: "**/poetry.lock"
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry env use "3.7"
+          poetry install
 
       - name: Bump version number
         run: poetry version ${{ github.event.release.tag_name }}

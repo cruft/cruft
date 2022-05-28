@@ -26,10 +26,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: "poetry"
-          cache-dependency-path: "**/poetry.lock"
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry env use python
+          poetry install
 
       - name: Run Checks
         run: |
