@@ -18,6 +18,9 @@ Changelog
 =========
 
 
+## 2.11.0 - 15 June 2022
+- [Fixed issue #162](https://github.com/cruft/cruft/issues/162): Add support for cookiecutter v2
+
 ## 2.10.2 - 20 Apr 2022
 - [Fixed issue #152](https://github.com/cruft/cruft/issues/152): Upgrade version of importlib-metadata
 
