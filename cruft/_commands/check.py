@@ -17,6 +17,7 @@ def check(
     used to generate this project."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
+    checkout = checkout or cruft_state.get("checkout")
     with AltTemporaryDirectory() as cookiecutter_template_dir:
         with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"],

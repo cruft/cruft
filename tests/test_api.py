@@ -158,10 +158,13 @@ def test_directory_and_checkout(tmpdir):
     )
     cruft_file = utils.cruft.get_cruft_file(output_path)
     assert cruft_file.exists()
+    assert cruft.check(output_path)
     assert cruft.check(output_path, checkout="initial")
     assert not cruft.check(output_path, checkout="updated")
     assert cruft.update(output_path, checkout="updated")
+    assert cruft.check(output_path)
     assert cruft.check(output_path, checkout="updated")
+    assert not cruft.check(output_path, checkout="initial")
     cruft_file.unlink()
     assert not cruft_file.exists()
     assert cruft.link(
@@ -170,6 +173,7 @@ def test_directory_and_checkout(tmpdir):
         directory="dir",
         checkout="updated",
     )
+    # assert cruft.check(output_path)  # uncomment once PR #184 is merged
     assert cruft.check(output_path, checkout="updated")
     # Add checks for strictness where main is an older
     # version than updated

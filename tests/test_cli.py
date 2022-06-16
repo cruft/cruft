@@ -83,17 +83,32 @@ def test_create_interactive(cruft_runner, tmpdir):
 
 
 def test_check(cruft_runner, cookiecutter_dir):
+    """Local state is the latest state on default branch"""
     result = cruft_runner(["check", "--project-dir", cookiecutter_dir.as_posix()])
     assert result.exit_code == 0
 
 
 def test_check_strict(cruft_runner, cookiecutter_dir_updated):
+    """Local state is the latest state on the branch used at project creation"""
+    result = cruft_runner(["check", "--project-dir", cookiecutter_dir_updated.as_posix()])
+    assert result.exit_code == 0
+
+
+def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
+    """Local state is an ancestor of the branch used for project creation"""
+    config_path = cookiecutter_dir_updated / ".cruft.json"
+    with open(config_path) as cruft_file:
+        cruft_state = json.load(cruft_file)
+        cruft_state["checkout"] = None
+    with open(config_path, "w") as cruft_file:
+        json.dump(cruft_state, cruft_file)
+
+    # Check strict: fails
     result = cruft_runner(["check", "--project-dir", cookiecutter_dir_updated.as_posix()])
     assert result.exit_code == 1
     assert "failure" in result.stdout.lower()
 
-
-def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
+    # Check not strict: succeeds (main is an older version than updated)
     result = cruft_runner(
         ["check", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
     )
@@ -101,6 +116,7 @@ def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
 
 
 def test_check_stale(cruft_runner, cookiecutter_dir):
+    """Local state differs from the branch against which the check is run"""
     result = cruft_runner(
         ["check", "--project-dir", cookiecutter_dir.as_posix(), "--checkout", "updated"]
     )
