@@ -240,6 +240,12 @@ def update(
             " repository (but no other changes)"
         ),
     ),
+    extra_context: str = typer.Option(
+        "{}",
+        "--extra-context",
+        help="A JSON string describing any extra context to pass to cookiecutter.",
+        show_default=False,
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -250,6 +256,7 @@ def update(
         checkout=checkout,
         strict=strict,
         allow_untracked_files=allow_untracked_files,
+        extra_context=json.loads(extra_context),
     ):
         raise typer.Exit(1)
 

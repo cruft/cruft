@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from typing import Optional, Set
+from typing import Any, Dict, Optional, Set
 
 import click
 import typer
@@ -22,6 +22,7 @@ def update(
     checkout: Optional[str] = None,
     strict: bool = True,
     allow_untracked_files: bool = False,
+    extra_context: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -59,7 +60,7 @@ def update(
 
             # Bail early if the repo is already up to date and no inputs are asked
             if not (
-                cookiecutter_input or refresh_private_variables
+                extra_context or cookiecutter_input or refresh_private_variables
             ) and utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
                     "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
@@ -67,7 +68,7 @@ def update(
                 return True
 
             # Generate clean outputs via the cookiecutter
-            # from the current cruft state commit of the cookiectter and the updated
+            # from the current cruft state commit of the cookiecutter and the updated
             # cookiecutter.
             # For the current cruft state, we do not try to update the cookiecutter_input
             # because we want to keep the current context input intact.
@@ -84,6 +85,12 @@ def update(
             # from the cookiecutter template config
             if refresh_private_variables:
                 _clean_cookiecutter_private_variables(cruft_state)
+
+            # Add new input data from command line to cookiecutter context
+            if extra_context:
+                extra = cruft_state["context"]["cookiecutter"]
+                for k, v in extra_context.items():
+                    extra[k] = v
 
             new_context = utils.generate.cookiecutter_template(
                 output_dir=new_template_dir,
