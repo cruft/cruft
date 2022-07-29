@@ -17,6 +17,8 @@ OR
 Changelog
 =========
 
+## 2.11.1 - 29 July 2022
+- [Fixed issue #168](https://github.com/cruft/cruft/issues/168): Add support for typer v0.6+
 
 ## 2.11.0 - 15 June 2022
 - [Fixed issue #162](https://github.com/cruft/cruft/issues/162): Add support for cookiecutter v2
