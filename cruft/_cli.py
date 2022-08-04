@@ -233,6 +233,16 @@ def update(
             " repository (but no other changes)"
         ),
     ),
+    override_template_url: Optional[str] = typer.Option(
+        None,
+        "--override-template-url",
+        "-ot",
+        help=(
+            "Use this URL instead of the one in the .cruft.json file."
+            "This allows checking out in ci mode using a token for example."
+        ),
+        show_default=False,
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -242,6 +252,7 @@ def update(
         checkout=checkout,
         strict=strict,
         allow_untracked_files=allow_untracked_files,
+        override_template_url=override_template_url,
     ):
         raise typer.Exit(1)
 

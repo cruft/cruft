@@ -38,9 +38,6 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    # replace cruft_state template url with the one from env variable
-    cruft_state["template_url"] = override_template_url / cruft_state["template_url"]
-
     with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
@@ -50,7 +47,7 @@ def update(
         deleted_paths: Set[Path] = set()
         # Clone the template
         with utils.cookiecutter.get_cookiecutter_repo(
-            cruft_state["template"], repo_dir, checkout
+            override_template_url or cruft_state["template_url"], repo_dir, checkout
         ) as repo:
             last_commit = repo.head.object.hexsha
 
