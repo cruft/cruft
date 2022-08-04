@@ -21,6 +21,7 @@ def update(
     checkout: Optional[str] = None,
     strict: bool = True,
     allow_untracked_files: bool = False,
+    override_template_url: Optional[str] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -36,6 +37,9 @@ def update(
         return False
 
     cruft_state = json.loads(cruft_file.read_text())
+
+    # replace cruft_state template url with the one from env variable
+    cruft_state["template_url"] = override_template_url / cruft_state["template_url"]
 
     with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
