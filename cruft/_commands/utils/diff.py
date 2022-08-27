@@ -20,7 +20,7 @@ def _git_diff(*args: str) -> List[str]:
         "--relative",
         "--binary",
         f"--src-prefix={DIFF_SRC_PREFIX}/",
-        f"--src-prefix={DIFF_DST_PREFIX}/",
+        f"--dst-prefix={DIFF_DST_PREFIX}/",
         *args,
     ]
 
