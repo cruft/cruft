@@ -5,10 +5,24 @@ from typing import List
 
 from cruft import exceptions
 
+DIFF_SRC_PREFIX = "upstream-template-old"
+DIFF_DST_PREFIX = "upstream-template-new"
+
 
 def _git_diff(*args: str) -> List[str]:
     # https://git-scm.com/docs/git-diff#Documentation/git-diff.txt---binary support for binary patch
-    return ["git", "-c", "diff.noprefix=", "diff", "--no-index", "--relative", "--binary", *args]
+    return [
+        "git",
+        "-c",
+        "diff.noprefix=",
+        "diff",
+        "--no-index",
+        "--relative",
+        "--binary",
+        f"--src-prefix={DIFF_SRC_PREFIX}/",
+        f"--dst-prefix={DIFF_DST_PREFIX}/",
+        *args,
+    ]
 
 
 def get_diff(repo0: Path, repo1: Path) -> str:
@@ -38,7 +52,9 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     for repo in [repo0_str, repo1_str]:
         # Make repo look like a NIX absolute path.
         repo = sub("/[a-z]:", "", repo)
-        diff = diff.replace("a" + repo, "a").replace("b" + repo, "b")
+        diff = diff.replace(f"{DIFF_SRC_PREFIX}{repo}", DIFF_SRC_PREFIX).replace(
+            f"{DIFF_DST_PREFIX}{repo}", DIFF_DST_PREFIX
+        )
 
     # This replacement is needed for renamed/moved files to be recognized properly
     # Renamed files in the diff don't have the "a" or "b" prefix and instead look like
