@@ -52,8 +52,8 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     for repo in [repo0_str, repo1_str]:
         # Make repo look like a NIX absolute path.
         repo = sub("/[a-z]:", "", repo)
-        diff = diff.replace(f"{DIFF_SRC_PREFIX}{repo}", "a").replace(
-            f"{DIFF_DST_PREFIX}{repo}", "b"
+        diff = diff.replace(f"{DIFF_SRC_PREFIX}{repo}", DIFF_SRC_PREFIX).replace(
+            f"{DIFF_DST_PREFIX}{repo}", DIFF_DST_PREFIX
         )
 
     # This replacement is needed for renamed/moved files to be recognized properly
