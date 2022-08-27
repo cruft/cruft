@@ -5,8 +5,8 @@ from typing import List
 
 from cruft import exceptions
 
-DIFF_SRC_PREFIX = "CRUFT_TEMPLATE_SRC"
-DIFF_DST_PREFIX = "CRUFT_TEMPLATE_DST"
+DIFF_SRC_PREFIX = "upstream-template-old"
+DIFF_DST_PREFIX = "upstream-template-new"
 
 
 def _git_diff(*args: str) -> List[str]:
