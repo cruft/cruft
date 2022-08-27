@@ -17,7 +17,9 @@ def test_get_diff_with_add(tmp_path: Path):
 
     diff = utils.diff.get_diff(repo0, repo1)
 
-    assert diff.startswith("diff --git a/file b/file")
+    assert diff.startswith(
+        "diff --git CRUFT_TEMPLATE_SRC/file CRUFT_TEMPLATE_DST/file"
+    )
 
 
 def test_get_diff_with_delete(tmp_path: Path):
@@ -31,7 +33,9 @@ def test_get_diff_with_delete(tmp_path: Path):
 
     diff = utils.diff.get_diff(repo0, repo1)
 
-    assert diff.startswith("diff --git a/file b/file")
+    assert diff.startswith(
+        "diff --git CRUFT_TEMPLATE_SRC/file CRUFT_TEMPLATE_DST/file"
+    )
 
 
 def test_get_diff_with_unicode(project_dir):

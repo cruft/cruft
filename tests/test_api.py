@@ -273,8 +273,8 @@ def test_diff_checkout(capfd, tmpdir):
     stderr = captured.err
 
     assert stderr == ""
-    assert "--- a/README.md" in stdout
-    assert "+++ b/README.md" in stdout
+    assert "--- CRUFT_TEMPLATE_SRC/README.md" in stdout
+    assert "+++ CRUFT_TEMPLATE_DST/README.md" in stdout
     assert "+Updated again" in stdout
     assert "-Updated" in stdout
 
