@@ -17,6 +17,9 @@ OR
 Changelog
 =========
 
+## 2.11.1 - 28 August 2022
+- [Fixed issue #177](https://github.com/cruft/cruft/issues/177): cruft update can't apply diffs when git's diff.mnemonicprefix config is set
+
 ## 2.11.0 - 29 July 2022
 - [Fixed issue #168](https://github.com/cruft/cruft/issues/168): Add support for typer v0.6+
 - [Fixed issue #162](https://github.com/cruft/cruft/issues/162): Add support for cookiecutter v2
