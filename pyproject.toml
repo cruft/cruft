@@ -22,12 +22,12 @@ examples = ["examples"]
 
 [tool.poetry.dev-dependencies]
 vulture = "^1.0"
-bandit = "^1.6"
+bandit = "^1.7"
 safety = "^1.8"
 isort = "^5.3"
 flake8-bugbear = "^19.8"
 black = "^22.1"
-mypy = "^0.960.0"
+mypy = "^0.971"
 types-toml = "^0.10"
 ipython = "^7.16.3"
 mkdocs = "^1.2"
