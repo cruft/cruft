@@ -66,22 +66,14 @@ def test_create_stores_checkout_value(value, tmpdir):
 
 @pytest.mark.parametrize("value", ["main", None])
 def test_link_stores_checkout_value(value, tmpdir):
-    tmpdir.chdir()
-
-    # initialize project but delete the cruft file
-    output_path = cruft.create(
-        "https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), checkout=value
-    )
-    utils.cruft.get_cruft_file(output_path).unlink()
-
-    # re-create the cruft file with the 'link' command
+    project_dir = Path(tmpdir)
     cruft.link(
         "https://github.com/timothycrosley/cookiecutter-python",
-        project_dir=output_path,
+        project_dir=project_dir,
         checkout=value,
     )
 
-    assert json.load(utils.cruft.get_cruft_file(output_path).open("r"))["checkout"] == value
+    assert json.load(utils.cruft.get_cruft_file(project_dir).open("r"))["checkout"] == value
 
 
 @pytest.mark.parametrize("value", ["main", None])
