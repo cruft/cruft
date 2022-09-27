@@ -334,7 +334,15 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert "cruft has been updated" in result.stdout
 
 
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 1), (["-e"], 1)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+    ],
+)
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     (cookiecutter_dir / "README.md").write_text("changed content\n")
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
@@ -357,9 +365,35 @@ def test_diff_checkout(cruft_runner, cookiecutter_dir):
     assert result.stdout != ""
 
 
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 0), (["-e"], 0), (["-c", "no-changes"], 0)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+        "compare_to_identical",
+    ],
+)
 def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout == ""
+
+
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 0), (["-e"], 0)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+    ],
+)
+def test_diff_no_diff_other_branch(
+    args, expected_exit_code, cruft_runner, cookiecutter_dir_updated
+):
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir_updated.as_posix()] + args)
     assert result.exit_code == expected_exit_code
     assert result.stdout == ""
 
@@ -367,7 +401,6 @@ def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
 @pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
 def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_dir_hooked_git):
     cookiecutter_dir = cookiecutter_dir_hooked_git
-    print("cookiecutter_dir", cookiecutter_dir)
     # The two points below could as well be nicely stored within
     # a cookiecutter-test branch.
     # Write a skip section into pyproject.toml
@@ -383,7 +416,8 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     # run(["git", "config", "--global", "user.name", "testm"], cwd=cookiecutter_dir)
     run(["git", "add", "--all"], cwd=cookiecutter_dir)
     run(["git", "commit", "-m", "2nd commit"], cwd=cookiecutter_dir)
-    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"])
-    print(result.stdout)
+    result = cruft_runner(
+        ["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"] + args
+    )
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout

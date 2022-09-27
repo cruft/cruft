@@ -247,7 +247,7 @@ index be6a56b..1fc03a9 100644
 
 
 @pytest.mark.parametrize("exit_code", [(False,), (True,)])
-def test_diff_no_diff(exit_code, capfd, mocker, tmpdir):
+def test_diff_no_diff(exit_code, capfd, tmpdir):
     project_dir = cruft.create(
         "https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir", checkout="diff"
     )
@@ -283,7 +283,7 @@ def test_diff_checkout(capfd, tmpdir):
     assert "-Updated" in stdout
 
 
-def test_diff_git_subdir(capfd, tmpdir):
+def test_update_git_subdir(tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
     Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
