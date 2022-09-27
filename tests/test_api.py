@@ -64,7 +64,7 @@ def test_create_stores_checkout_value(value, tmpdir):
     )
 
 
-@pytest.mark.parametrize("value", ["main", None])
+@pytest.mark.parametrize("value", ["main"])
 def test_update_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
     cruft.create(

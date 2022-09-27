@@ -36,6 +36,16 @@ def update(
         return False
 
     cruft_state = json.loads(cruft_file.read_text())
+    if checkout and checkout != cruft_state.get("checkout"):
+        typer.secho(
+            (
+                "The default git reference for this project will be changed from"
+                f" {cruft_state.get('checkout')} to {checkout}."
+                " Note that this new default will apply to all other cruft commands."
+            ),
+            fg=typer.colors.YELLOW,
+        )
+    checkout = checkout or cruft_state.get("checkout")
 
     with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
@@ -58,7 +68,7 @@ def update(
                 return True
 
             # Generate clean outputs via the cookiecutter
-            # from the current cruft state commit of the cookiectter and the updated
+            # from the current cruft state commit of the cookiecutter and the updated
             # cookiecutter.
             _ = utils.generate.cookiecutter_template(
                 output_dir=current_template_dir,

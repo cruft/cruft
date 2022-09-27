@@ -212,6 +212,7 @@ def test_update(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"]
     )
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
 
@@ -270,6 +271,7 @@ def test_update_interactive_skip(cruft_runner, cookiecutter_dir):
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-c", "updated"], input="s\n"
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -278,20 +280,32 @@ def test_update_interactive_view(cruft_runner, cookiecutter_dir):
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-c", "updated"], input="v\ny\n"
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
 def test_update_not_strict(cruft_runner, cookiecutter_dir_updated):
     result = cruft_runner(
-        ["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir_updated.as_posix(),
+            "-c",
+            "master",
+            "--not-strict",
+        ]
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "Nothing to do, project's cruft is already up to date" in result.stdout
 
 
 def test_update_strict(cruft_runner, cookiecutter_dir_updated):
-    result = cruft_runner(["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "-y"])
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "-c", "master", "-y"]
+    )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -301,6 +315,7 @@ def test_update_when_new_file(cruft_runner, cookiecutter_dir):
     )
     assert result.exit_code == 0
     assert (cookiecutter_dir / "new-file").exists()
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -311,6 +326,7 @@ def test_update_when_file_moved(cruft_runner, cookiecutter_dir):
     assert result.exit_code == 0
     assert (cookiecutter_dir / "NEW-README.md").exists()
     assert not (cookiecutter_dir / "README.md").exists()
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -320,6 +336,7 @@ def test_update_interactive_view_no_changes(cruft_runner, cookiecutter_dir):
     )
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -331,6 +348,7 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     )
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
