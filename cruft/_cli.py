@@ -139,7 +139,7 @@ def link(
         False,
         "--no-input",
         "-y",
-        help="Do not prompt for parameters and only use cookiecutter.json file content",
+        help="Do not prompt for commit hash. Use latest commit of checked out reference instead.",
         show_default=False,
     ),
     config_file: Optional[Path] = typer.Option(
