@@ -16,7 +16,7 @@ def diff(
     """Show the diff between the project and the linked Cookiecutter template"""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
-    checkout = checkout or cruft_state.get("commit")
+    checkout = checkout or cruft_state.get("checkout")
 
     has_diff = False
     with AltTemporaryDirectory() as tmpdir_:
@@ -76,7 +76,7 @@ def diff(
             else:
                 # We're outputing the diff to a real user. We can delegate the job
                 # to git diff so that they can benefit from coloration and paging.
-                # Ouputing absolute paths is less of a concern although it would be
+                # Outputting absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
                 utils.diff.display_diff(local_template_dir, remote_template_dir)
 

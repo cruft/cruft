@@ -83,17 +83,32 @@ def test_create_interactive(cruft_runner, tmpdir):
 
 
 def test_check(cruft_runner, cookiecutter_dir):
+    """Local state is the latest state on default branch"""
     result = cruft_runner(["check", "--project-dir", cookiecutter_dir.as_posix()])
     assert result.exit_code == 0
 
 
 def test_check_strict(cruft_runner, cookiecutter_dir_updated):
+    """Local state is the latest state on the branch used at project creation"""
+    result = cruft_runner(["check", "--project-dir", cookiecutter_dir_updated.as_posix()])
+    assert result.exit_code == 0
+
+
+def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
+    """Local state is an ancestor of the branch used for project creation"""
+    config_path = cookiecutter_dir_updated / ".cruft.json"
+    with open(config_path) as cruft_file:
+        cruft_state = json.load(cruft_file)
+        cruft_state["checkout"] = None
+    with open(config_path, "w") as cruft_file:
+        json.dump(cruft_state, cruft_file)
+
+    # Check strict: fails
     result = cruft_runner(["check", "--project-dir", cookiecutter_dir_updated.as_posix()])
     assert result.exit_code == 1
     assert "failure" in result.stdout.lower()
 
-
-def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
+    # Check not strict: succeeds (main is an older version than updated)
     result = cruft_runner(
         ["check", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
     )
@@ -101,6 +116,7 @@ def test_check_not_strict(cruft_runner, cookiecutter_dir_updated):
 
 
 def test_check_stale(cruft_runner, cookiecutter_dir):
+    """Local state differs from the branch against which the check is run"""
     result = cruft_runner(
         ["check", "--project-dir", cookiecutter_dir.as_posix(), "--checkout", "updated"]
     )
@@ -196,6 +212,7 @@ def test_update(cruft_runner, cookiecutter_dir):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-y", "-c", "updated"]
     )
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
 
@@ -254,6 +271,7 @@ def test_update_interactive_skip(cruft_runner, cookiecutter_dir):
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-c", "updated"], input="s\n"
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -262,20 +280,32 @@ def test_update_interactive_view(cruft_runner, cookiecutter_dir):
         ["update", "--project-dir", cookiecutter_dir.as_posix(), "-c", "updated"], input="v\ny\n"
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
 def test_update_not_strict(cruft_runner, cookiecutter_dir_updated):
     result = cruft_runner(
-        ["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "--not-strict"]
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir_updated.as_posix(),
+            "-c",
+            "master",
+            "--not-strict",
+        ]
     )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "Nothing to do, project's cruft is already up to date" in result.stdout
 
 
 def test_update_strict(cruft_runner, cookiecutter_dir_updated):
-    result = cruft_runner(["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "-y"])
+    result = cruft_runner(
+        ["update", "--project-dir", cookiecutter_dir_updated.as_posix(), "-c", "master", "-y"]
+    )
     assert result.exit_code == 0
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -285,6 +315,7 @@ def test_update_when_new_file(cruft_runner, cookiecutter_dir):
     )
     assert result.exit_code == 0
     assert (cookiecutter_dir / "new-file").exists()
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -295,6 +326,7 @@ def test_update_when_file_moved(cruft_runner, cookiecutter_dir):
     assert result.exit_code == 0
     assert (cookiecutter_dir / "NEW-README.md").exists()
     assert not (cookiecutter_dir / "README.md").exists()
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -304,6 +336,7 @@ def test_update_interactive_view_no_changes(cruft_runner, cookiecutter_dir):
     )
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
@@ -315,10 +348,19 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     )
     assert result.exit_code == 0
     assert "There are no changes" in result.stdout
+    assert "The default git reference for this project will be changed" in result.stdout
     assert "cruft has been updated" in result.stdout
 
 
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 1), (["-e"], 1)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+    ],
+)
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     (cookiecutter_dir / "README.md").write_text("changed content\n")
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
@@ -341,9 +383,35 @@ def test_diff_checkout(cruft_runner, cookiecutter_dir):
     assert result.stdout != ""
 
 
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 0), (["-e"], 0), (["-c", "no-changes"], 0)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+        "compare_to_identical",
+    ],
+)
 def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout == ""
+
+
+@pytest.mark.parametrize(
+    "args,expected_exit_code",
+    [([], 0), (["--exit-code"], 0), (["-e"], 0)],
+    ids=[
+        "compare_to_self",
+        "compare_to_self_with_exit_code",
+        "compare_to_self_with_short_exit_code",
+    ],
+)
+def test_diff_no_diff_other_branch(
+    args, expected_exit_code, cruft_runner, cookiecutter_dir_updated
+):
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir_updated.as_posix()] + args)
     assert result.exit_code == expected_exit_code
     assert result.stdout == ""
 
@@ -351,7 +419,6 @@ def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
 @pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
 def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_dir_hooked_git):
     cookiecutter_dir = cookiecutter_dir_hooked_git
-    print("cookiecutter_dir", cookiecutter_dir)
     # The two points below could as well be nicely stored within
     # a cookiecutter-test branch.
     # Write a skip section into pyproject.toml
@@ -367,7 +434,8 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     # run(["git", "config", "--global", "user.name", "testm"], cwd=cookiecutter_dir)
     run(["git", "add", "--all"], cwd=cookiecutter_dir)
     run(["git", "commit", "-m", "2nd commit"], cwd=cookiecutter_dir)
-    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"])
-    print(result.stdout)
+    result = cruft_runner(
+        ["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"] + args
+    )
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout

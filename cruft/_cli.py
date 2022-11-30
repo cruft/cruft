@@ -91,7 +91,11 @@ def create(
         None,
         "--checkout",
         "-c",
-        help=("The git reference to check against. Supports branches, tags and commit hashes."),
+        help=(
+            "The git reference to use as template. Supports branches, tags and commit hashes."
+            " This reference will be persisted in the .cruft.json file"
+            " and used as default for all other cruft commands."
+        ),
     ),
     overwrite_if_exists: bool = typer.Option(
         False,
@@ -133,7 +137,7 @@ def link(
         None,
         "--checkout",
         "-c",
-        help=("The git reference to check against. Supports branches, tags and commit hashes."),
+        help=("The git reference to link to. Supports branches, tags and commit hashes."),
     ),
     no_input: bool = typer.Option(
         False,
@@ -211,7 +215,11 @@ def update(
         None,
         "--checkout",
         "-c",
-        help=("The git reference to check against. Supports branches, tags and commit hashes."),
+        help=(
+            "The git reference to update to. Supports branches, tags and commit hashes."
+            " If provided, this will overwrite the git reference in the .cruft.json file"
+            " and be used as the default git reference to use for all other cruft commands."
+        ),
     ),
     strict: bool = typer.Option(
         True,
