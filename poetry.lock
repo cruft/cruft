@@ -523,14 +523,14 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "5.1.0"
+version = "4.13.0"
 description = "Read metadata from Python packages"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "importlib_metadata-5.1.0-py3-none-any.whl", hash = "sha256:d84d17e21670ec07990e1044a99efe8d615d860fd176fc29ef5c306068fda313"},
-    {file = "importlib_metadata-5.1.0.tar.gz", hash = "sha256:d5059f9f1e8e41f80e9c56c2ee58811450c31984dfa625329ffd7c0dad88a73b"},
+    {file = "importlib_metadata-4.13.0-py3-none-any.whl", hash = "sha256:8a8a81bcf996e74fee46f0d16bd3eaa382a7eb20fd82445c3ad11f4090334116"},
+    {file = "importlib_metadata-4.13.0.tar.gz", hash = "sha256:dd0173e8f150d6815e098fd354f6414b0f079af4644ddfe90c71e2fc6174346d"},
 ]
 
 [package.dependencies]
@@ -1819,4 +1819,4 @@ pyproject = ["toml"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.7"
-content-hash = "f66daac333a4bc8a81998ec3ea6624a31d894f2ed77e77ac57f5c4af1707b90c"
+content-hash = "56e5e47d6c59fab493aa64bb55446bb1d21fd1eb296071159631d405478f8135"
