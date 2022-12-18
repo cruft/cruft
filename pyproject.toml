@@ -7,13 +7,13 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.7"
 cookiecutter = ">=1.7"
 gitpython = "^3.0"
 toml = { version = "^0.10", optional = true }
 typer = ">=0.4.0, <0.7"
 click = ">= 7.1.2, <9.0.0"
-examples = {version = "^1.0.2", optional = true}
+#examples = {version = "^1.0.2", optional = true}
 importlib-metadata = {version = ">=1.7.0", python = "<3.8"}
 
 [tool.poetry.extras]
@@ -21,12 +21,12 @@ pyproject = ["toml"]
 examples = ["examples"]
 
 [tool.poetry.dev-dependencies]
-vulture = "^1.0"
 bandit = "^1.6"
+black = ">=22.12.0"
+examples = { version = ">=1.0.2", python = ">=3.7.0,<4.0"}
 safety = "^1.8"
-isort = "^5.3"
+isort = ">=5.11.0"
 flake8-bugbear = "^19.8"
-black = "^22.1"
 mypy = "^0.971"
 types-toml = "^0.10"
 ipython = "^7.16.3"
@@ -37,8 +37,8 @@ pytest-repeat = "^0.9.1"
 pytest-xdist = "^2.5.0"
 pytest-mock = "^3.3.1"
 pep8-naming = "^0.8.2"
-portray = "^1.7.0"
-examples = "^1.0.2"
+portray = { version = ">=1.7.0", python = ">=3.7.0,<4.0"}
+vulture = "^1.0"
 
 [tool.poetry.scripts]
 cruft = "cruft._cli:app"
