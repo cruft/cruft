@@ -17,6 +17,12 @@ OR
 Changelog
 =========
 
+## 2.12.0 - 28 December 2022
+- Uncapped version requirements (including Python) for greater compatiblity
+- [Fixed issue #166](https://github.com/cruft/cruft/issues/166): Fixed compatiblity with latest version of cookiecutter
+- [Implemented #184](https://github.com/cruft/cruft/issues/184): Store checkout parameter when using link command
+- Improvements to update command
+
 ## 2.11.1 - 28 August 2022
 - [Fixed issue #177](https://github.com/cruft/cruft/issues/177): cruft update can't apply diffs when git's diff.mnemonicprefix config is set
 
