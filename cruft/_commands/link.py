@@ -55,6 +55,7 @@ def link(
                 {
                     "template": template_git_url,
                     "commit": use_commit,
+                    "checkout": checkout,
                     "context": context,
                     "directory": directory,
                 }
