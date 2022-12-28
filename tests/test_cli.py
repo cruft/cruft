@@ -109,7 +109,9 @@ def test_check_stale(cruft_runner, cookiecutter_dir):
 
 
 def test_link(cruft_runner, cookiecutter_dir):
-    utils.cruft.get_cruft_file(cookiecutter_dir).unlink()
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
+    cruft_config_from_create = json.loads(cruft_file.read_text())
+    cruft_file.unlink()
     result = cruft_runner(
         [
             "link",
@@ -124,10 +126,16 @@ def test_link(cruft_runner, cookiecutter_dir):
     assert result.stdout == ""
     assert result.exit_code == 0
 
+    # compare the 2 .cruft.json
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
+    cruft_config_from_link = json.loads(cruft_file.read_text())
+    assert cruft_config_from_create == cruft_config_from_link
+
 
 def test_link_interactive(cruft_runner, cookiecutter_dir):
     cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
-    commit = json.loads(cruft_file.read_text())["commit"]
+    cruft_config_from_create = json.loads(cruft_file.read_text())
+    commit = cruft_config_from_create["commit"]
     cruft_file.unlink()
     result = cruft_runner(
         [
@@ -142,6 +150,38 @@ def test_link_interactive(cruft_runner, cookiecutter_dir):
     )
     assert "Link to template at commit" in result.stdout
     assert result.exit_code == 0
+
+    # compare the 2 .cruft.json (except for the "project" key)
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
+    cruft_config_from_link = json.loads(cruft_file.read_text())
+    cruft_config_from_create["context"]["cookiecutter"].pop("project")
+    cruft_config_from_link["context"]["cookiecutter"].pop("project")
+    assert cruft_config_from_create == cruft_config_from_link
+
+
+def test_link_checkout(cruft_runner, cookiecutter_dir_updated):
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir_updated)
+    cruft_config_from_create = json.loads(cruft_file.read_text())
+    cruft_file.unlink()
+    result = cruft_runner(
+        [
+            "link",
+            "https://github.com/cruft/cookiecutter-test",
+            "--project-dir",
+            cookiecutter_dir_updated.as_posix(),
+            "-y",
+            "--directory",
+            "dir",
+            "--checkout",
+            "updated",
+        ]
+    )
+    assert result.exit_code == 0
+
+    # compare the 2 .cruft.json
+    cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir_updated)
+    cruft_config_from_link = json.loads(cruft_file.read_text())
+    assert cruft_config_from_create == cruft_config_from_link
 
 
 def test_update_noop(cruft_runner, cookiecutter_dir):
