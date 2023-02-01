@@ -271,13 +271,6 @@ def diff(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
-    project: bool = typer.Option(
-        False,
-        "--project",
-        "-p",
-        help="Show changes in your project that aren't in the template.",
-        show_default=True,
-    ),
     gitignore: bool = typer.Option(
         True,
         "--gitignore",
@@ -300,7 +293,6 @@ def diff(
         project_dir=project_dir,
         exit_code=exit_code,
         checkout=checkout,
-        in_project=project,
         include_paths=paths,
         respect_gitignore=gitignore,
         reverse=reverse,

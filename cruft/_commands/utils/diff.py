@@ -7,9 +7,12 @@ from cruft import exceptions
 
 DIFF_SRC_PREFIX = "upstream-template-old"
 DIFF_DST_PREFIX = "upstream-template-new"
+DIFF_PRJ_PREFIX = "project-directory-old"
 
 
-def _git_diff(*args: str) -> List[str]:
+def _git_diff(
+    *args: str, diff_src_prefix: str = DIFF_SRC_PREFIX, diff_dst_prefix: str = DIFF_DST_PREFIX
+) -> List[str]:
     # https://git-scm.com/docs/git-diff#Documentation/git-diff.txt---binary support for binary patch
     return [
         "git",
@@ -19,20 +22,27 @@ def _git_diff(*args: str) -> List[str]:
         "--no-index",
         "--relative",
         "--binary",
-        f"--src-prefix={DIFF_SRC_PREFIX}/",
-        f"--dst-prefix={DIFF_DST_PREFIX}/",
+        f"--src-prefix={diff_src_prefix}/",
+        f"--dst-prefix={diff_dst_prefix}/",
         *args,
     ]
 
 
-def get_diff(repo0: Path, repo1: Path) -> str:
+def get_diff(
+    repo0: Path,
+    repo1: Path,
+    diff_src_prefix: str = DIFF_SRC_PREFIX,
+    diff_dst_prefix: str = DIFF_DST_PREFIX,
+) -> str:
     """Compute the raw diff between two repositories."""
-    # Use Path methods in order to straighten out the differences between the the OSs.
+    # Use Path methods in order to straighten out the differences between the OSs.
     repo0_str = repo0.resolve().as_posix()
     repo1_str = repo1.resolve().as_posix()
     try:
         diff_result = run(
-            _git_diff("--no-ext-diff", "--no-color", repo0_str, repo1_str),
+            _git_diff("--no-ext-diff", "--no-color", repo0_str, repo1_str,
+                      diff_src_prefix=diff_src_prefix,
+                      diff_dst_prefix=diff_dst_prefix),
             cwd=repo0_str,
             stdout=PIPE,
             stderr=PIPE,
@@ -54,10 +64,9 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     for repo in [repo0_str, repo1_str]:
         # Make repo look like a NIX absolute path.
         repo = sub("/[a-z]:", "", repo)
-        diff = diff.replace(f"{DIFF_SRC_PREFIX}{repo}", DIFF_SRC_PREFIX).replace(
-            f"{DIFF_DST_PREFIX}{repo}", DIFF_DST_PREFIX
+        diff = diff.replace(f"{diff_src_prefix}{repo}", diff_src_prefix).replace(
+            f"{diff_dst_prefix}{repo}", diff_dst_prefix
         )
-
     # This replacement is needed for renamed/moved files to be recognized properly
     # Renamed files in the diff don't have the "a" or "b" prefix and instead look like
     # /tmp/tmpmp34g21y/remote/.coveragerc
@@ -70,6 +79,17 @@ def get_diff(repo0: Path, repo1: Path) -> str:
     return diff
 
 
-def display_diff(repo0: Path, repo1: Path):
+def display_diff(
+    repo0: Path,
+    repo1: Path,
+    diff_src_prefix: str = DIFF_SRC_PREFIX,
+    diff_dst_prefix: str = DIFF_DST_PREFIX,
+):
     """Displays the diff between two repositories."""
-    run(_git_diff(repo0.as_posix(), repo1.as_posix()))
+    args = _git_diff(
+        repo0.as_posix(),
+        repo1.as_posix(),
+        diff_src_prefix=diff_src_prefix,
+        diff_dst_prefix=diff_dst_prefix,
+    )
+    run(args)

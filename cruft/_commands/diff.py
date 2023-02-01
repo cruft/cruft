@@ -16,9 +16,8 @@ def diff(
     include_paths: Optional[Iterable[Path]] = None,
     exit_code: bool = False,
     checkout: Optional[str] = None,
-    in_project: bool = False,
-    respect_gitignore: Optional[bool] = None,
     reverse: Optional[bool] = None,
+    respect_gitignore: Optional[bool] = None,
 ):
     """Show the diff between the project and the linked Cookiecutter template"""
     # By default, if it's a reverse diff we respect the project dir's .gitignore when
@@ -26,7 +25,7 @@ def diff(
     # as we only compare files which are present in the template.
     # We also don't bother with the .gitignore check if explicit paths are passed.
     if respect_gitignore is None:
-        respect_gitignore = in_project and not include_paths
+        respect_gitignore = reverse and not include_paths
 
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
@@ -75,15 +74,22 @@ def diff(
         # For a reverse diff, all project files.
         # The .gitignore of the project dir is respected if respect_gitignore is True
         # and the project directory is a repo.
-        if in_project:
-            source_dir = project_dir
-        else:
-            source_dir = remote_template_dir
-        paths_to_copy, _ = _keep_and_ignore_paths(source_dir, include_paths=include_paths)
+        prefixes = {
+            "diff_src_prefix": utils.diff.DIFF_SRC_PREFIX,
+            "diff_dst_prefix": utils.diff.DIFF_DST_PREFIX,
+        }
+        if reverse:
+            prefixes = {
+                "diff_src_prefix": utils.diff.DIFF_PRJ_PREFIX,
+                "diff_dst_prefix": utils.diff.DIFF_DST_PREFIX,
+            }
 
-        # Then we create a new tree all entries of the source(project or template)
+        paths_to_copy, _ = _keep_and_ignore_paths(remote_template_dir, include_paths=include_paths)
+
+        # Then we create a new tree with each file in the template that also exist
+        # locally.
         for path in paths_to_copy:
-            relative_path = path.relative_to(source_dir)
+            relative_path = path.relative_to(remote_template_dir)
             local_path = project_dir / relative_path
             destination = local_template_dir / relative_path
             if path.is_file():
@@ -96,9 +102,10 @@ def diff(
         diff_direction = [local_template_dir, remote_template_dir]
         # Either but not both because that means diff_direction.reverse().reverse()
         # len({in_project, reverse} & {True, False}) == 2
-        if (in_project or reverse) and (in_project != reverse): 
+        if reverse:
             diff_direction.reverse()
-        diff = utils.diff.get_diff(*diff_direction)
+
+        diff = utils.diff.get_diff(*diff_direction, **prefixes)  # type: ignore
 
         if diff.strip():
             has_diff = True
@@ -119,7 +126,7 @@ def diff(
                 # to git diff so that they can benefit from coloration and paging.
                 # Ouputing absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
-                utils.diff.display_diff(local_template_dir, remote_template_dir)
+                utils.diff.display_diff(*diff_direction, **prefixes)  # type: ignore
 
     return not (has_diff and exit_code)
 
