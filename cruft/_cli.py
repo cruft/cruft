@@ -285,6 +285,13 @@ def diff(
         help="Respect .gitignore",
         show_default=True,
     ),
+    reverse: bool = typer.Option(
+        False,
+        "--reverse",
+        "-r",
+        help="Reverse the diff. Show changes in the template that aren't in your project.",
+        show_default=True,
+    ),
     paths: Optional[List[Path]] = typer.Argument(
         None, help="Paths to include in the diff. By default the whole project is compared."
     ),
@@ -296,5 +303,6 @@ def diff(
         in_project=project,
         include_paths=paths,
         respect_gitignore=gitignore,
+        reverse=reverse,
     ):
         raise typer.Exit(1)

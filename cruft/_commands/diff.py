@@ -18,6 +18,7 @@ def diff(
     checkout: Optional[str] = None,
     in_project: bool = False,
     respect_gitignore: Optional[bool] = None,
+    reverse: Optional[bool] = None,
 ):
     """Show the diff between the project and the linked Cookiecutter template"""
     # By default, if it's a reverse diff we respect the project dir's .gitignore when
@@ -93,7 +94,9 @@ def diff(
 
         # Finally we can compute and print the diff.
         diff_direction = [local_template_dir, remote_template_dir]
-        if in_project:
+        # Either but not both because that means diff_direction.reverse().reverse()
+        # len({in_project, reverse} & {True, False}) == 2
+        if (in_project or reverse) and (in_project != reverse): 
             diff_direction.reverse()
         diff = utils.diff.get_diff(*diff_direction)
 
