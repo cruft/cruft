@@ -370,7 +370,6 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert "cruft has been updated" in result.stdout
 
 
-<<<<<<< HEAD
 @pytest.mark.parametrize(
     "args,expected_exit_code",
     [
@@ -379,7 +378,6 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
         (["-e"], 1),
     ],
 )
-=======
 def test_update_same_commit_but_ask_for_input(cruft_runner, cookiecutter_dir_input):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input", "-y", "-i"],
