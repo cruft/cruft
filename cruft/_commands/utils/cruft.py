@@ -30,7 +30,9 @@ def is_project_updated(repo: Repo, current_commit: str, latest_commit: str, stri
         # Or if there have been no changes to the cookiecutter
         or not repo.index.diff(current_commit)
         # or if the strict flag is off, we allow for newer commits to count as up to date
-        or (repo.is_ancestor(latest_commit, current_commit) and not strict)
+        or (
+            repo.is_ancestor(repo.commit(latest_commit), repo.commit(current_commit)) and not strict
+        )
     )
 
 
