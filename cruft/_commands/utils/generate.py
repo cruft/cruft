@@ -82,7 +82,6 @@ def _generate_output(
     # See https://github.com/cookiecutter/cookiecutter/pull/907
     output_dir.mkdir(parents=True, exist_ok=True)
     with AltTemporaryDirectory() as tmpdir:
-
         # Kindly ask cookiecutter to generate the template
         template_dir = generate_files(
             repo_dir=inner_dir, context=new_context, overwrite_if_exists=True, output_dir=tmpdir

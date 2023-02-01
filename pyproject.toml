@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = ">=3.7,<4.0"
 cookiecutter = ">=1.7"
 gitpython = ">=3.0"
 toml = { version = ">=0.10", optional = true }

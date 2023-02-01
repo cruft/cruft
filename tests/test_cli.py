@@ -472,19 +472,42 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout
 
+
 @pytest.mark.parametrize(
     "args,expected_exit_code,expect_stdout",
     [
-        (["-r"], 0, True),
-        (["-re"], 1, True),
-        (["-r", "newfile"], 0, True),
-        (["-re", "newfile"], 1, True),
-        (["-re", "README.md"], 0, False),
-        (["-r", "README.md"], 0, False),
+        (["-p"], 0, True),
+        (["-pe"], 1, True),
+        (["-p", "newfile"], 0, True),
+        (["-pe", "newfile"], 1, True),
+        (["-pe", "README.md"], 0, False),
+        (["-p", "README.md"], 0, False),
     ],
 )
-def test_reverse_diff(args, expected_exit_code, expect_stdout, cruft_runner, cookiecutter_dir):
+def test_project_diff_not_repo(
+    args, expected_exit_code, expect_stdout, cruft_runner, cookiecutter_dir
+):
     (cookiecutter_dir / "newfile").write_text("new content\n")
     result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
     assert result.exit_code == expected_exit_code
-    assert (result.stdout == "") != expect_stdout
+    assert (result.stdout != "") == expect_stdout
+
+
+@pytest.mark.parametrize(
+    "args,expected_exit_code,expect_stdout",
+    [
+        (["-p"], 0, True),
+        (["-pe"], 1, True),
+        (["-p", "newfile"], 0, False),
+        (["-pe", "newfile"], 0, False),
+        (["-pe", "README.md"], 0, False),
+        (["-p", "README.md"], 0, False),
+    ],
+)
+def test_project_diff_repo(args, expected_exit_code, expect_stdout, cruft_runner, cookiecutter_dir):
+    run(["git", "init"], cwd=cookiecutter_dir)
+    (cookiecutter_dir / ".gitignore").write_text("newfile\n")
+    (cookiecutter_dir / "newfile").write_text("new content\n")
+    result = cruft_runner(["diff", "--project-dir", str(cookiecutter_dir)] + args)
+    assert result.exit_code == expected_exit_code
+    assert (result.stdout != "") == expect_stdout

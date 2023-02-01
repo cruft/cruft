@@ -324,12 +324,15 @@ def test_diff_git_subdir(capfd, tmpdir):
     assert cruft.update(project_dir, checkout="updated")
 
 
-@pytest.mark.parametrize("is_reverse_diff", (True, False))
+@pytest.mark.parametrize("is_project_diff", (True, False))
 @pytest.mark.parametrize("use_exit_code", (True, False))
 @pytest.mark.parametrize("commit_changes", (True, False))
+@pytest.mark.parametrize("respect_gitignore", (True, False))
 @pytest.mark.parametrize("include_paths", (("dir0/file1", "dir2/file6"), ()))
-def test_reverse_diff(is_reverse_diff, use_exit_code, commit_changes, include_paths, capfd, tmpdir):
-    """Test reverse diff and its differences from the regular one."""
+def test_project_diff(
+    is_project_diff, use_exit_code, commit_changes, respect_gitignore, include_paths, capfd, tmpdir
+):
+    """Test project diff and its differences from the regular one."""
 
     branch = "diff"
     # Set up a test project from a template
@@ -388,7 +391,8 @@ def test_reverse_diff(is_reverse_diff, use_exit_code, commit_changes, include_pa
         include_paths=[Path(path) for path in include_paths],
         checkout=branch,
         exit_code=use_exit_code,
-        reverse=is_reverse_diff,
+        in_project=is_project_diff,
+        respect_gitignore=respect_gitignore,
     )
     captured = capfd.readouterr()
     stdout = captured.out
@@ -418,19 +422,19 @@ def test_reverse_diff(is_reverse_diff, use_exit_code, commit_changes, include_pa
     #  cruft._commands.utils.generate.cookiecutter_template already
     # filters out files that have been deleted in the project
     # before any comparison.
-    assert deleted_file not in diff
+    assert deleted_file not in diff, f"{deleted_file} should not be in diff."
 
-    # New file in the project dir but not the template should be in the reverse diff only.
+    # New file in the project dir but not the template should be in the project diff only.
     assert (new_file in diff) == (
-        is_reverse_diff and ((new_file in include_paths) if include_paths else True)
+        is_project_diff and ((new_file in include_paths) if include_paths else True)
     )
 
     # New file that is ignored should be in neither diff.
     assert "I am new and ignored" not in diff
 
-    # New directory that is in the project but not the template should be in reverse only.
-    assert (new_directory in diff) == is_reverse_diff
-    assert (new_directory_file in diff) == is_reverse_diff
+    # New directory that is in the project but not the template should be in project only.
+    assert (new_directory in diff) == is_project_diff
+    assert (new_directory_file in diff) == is_project_diff
 
     # New directory that is ignored should be in neither diff.
     assert "I am new and in an ignored directory." not in diff

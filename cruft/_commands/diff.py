@@ -2,7 +2,6 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Iterable, List, Optional, Tuple
 
 import typer
@@ -17,7 +16,7 @@ def diff(
     include_paths: Optional[Iterable[Path]] = None,
     exit_code: bool = False,
     checkout: Optional[str] = None,
-    reverse: bool = False,
+    in_project: bool = False,
     respect_gitignore: Optional[bool] = None,
 ):
     """Show the diff between the project and the linked Cookiecutter template"""
@@ -26,7 +25,7 @@ def diff(
     # as we only compare files which are present in the template.
     # We also don't bother with the .gitignore check if explicit paths are passed.
     if respect_gitignore is None:
-        respect_gitignore = reverse and not include_paths
+        respect_gitignore = in_project and not include_paths
 
     cruft_file = utils.cruft.get_cruft_file(project_dir)
     cruft_state = json.loads(cruft_file.read_text())
@@ -59,11 +58,11 @@ def diff(
             # We delete files from this generated directory that would be ignored by the
             # project, if respect_gitignore is True and the project directory (not the
             # template) is a repo.
-            gitignore_repo_path = project_dir if respect_gitignore else None
-            _, paths_to_delete = _filter_files(
+            repo_path = project_dir if respect_gitignore else None
+            _, paths_to_delete = _keep_and_ignore_paths(
                 remote_template_dir,
                 include_paths=include_paths,
-                gitignore_repo_path=gitignore_repo_path,
+                repo_path=repo_path,
             )
             for path in paths_to_delete:
                 if path.is_file():
@@ -71,35 +70,36 @@ def diff(
                 else:
                     shutil.rmtree(path)
 
-        # Then we copy the files to compare from the project dir.
         # For a regular diff, files that are present in the template.
         # For a reverse diff, all project files.
-        # The .gitignore of the project dir is respected if respect_gitinore is True
+        # The .gitignore of the project dir is respected if respect_gitignore is True
         # and the project directory is a repo.
-        path_source = project_dir if reverse else remote_template_dir
+        if in_project:
+            source_dir = project_dir
+        else:
+            source_dir = remote_template_dir
+        paths_to_copy, _ = _keep_and_ignore_paths(source_dir, include_paths=include_paths)
 
-        paths_to_copy, _ = _filter_files(path_source, include_paths=include_paths)
-
-        for path_to_copy in paths_to_copy:
-            relative_path = path_to_copy.relative_to(path_source)
+        # Then we create a new tree all entries of the source(project or template)
+        for path in paths_to_copy:
+            relative_path = path.relative_to(source_dir)
             local_path = project_dir / relative_path
             destination = local_template_dir / relative_path
-
-            if local_path.is_file():
+            if path.is_file():
                 shutil.copy(str(local_path), str(destination))
             else:
                 destination.mkdir(parents=True, exist_ok=True)
                 destination.chmod(local_path.stat().st_mode)
 
         # Finally we can compute and print the diff.
-        diff_direction = (
-            (remote_template_dir, local_template_dir)
-            if reverse
-            else (local_template_dir, remote_template_dir)
-        )
+        diff_direction = [local_template_dir, remote_template_dir]
+        if in_project:
+            diff_direction.reverse()
         diff = utils.diff.get_diff(*diff_direction)
 
-        if diff:
+        if diff.strip():
+            has_diff = True
+
             if exit_code or not sys.stdout.isatty():
                 # The current shell doesn't run on a TTY or the "--exit-code" flag
                 # is set. This means we're probably not displaying the diff to an
@@ -116,25 +116,25 @@ def diff(
                 # to git diff so that they can benefit from coloration and paging.
                 # Ouputing absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
-                utils.diff.display_diff(*diff_direction)
+                utils.diff.display_diff(local_template_dir, remote_template_dir)
 
-    return not (bool(diff) and exit_code)
+    return not (has_diff and exit_code)
 
 
-def _filter_files(
+def _keep_and_ignore_paths(
     root: Path,
     start_path: Optional[Path] = None,
     include_paths: Optional[Iterable[Path]] = None,
-    gitignore_repo_path: Optional[Path] = None,
+    repo_path: Optional[Path] = None,
 ) -> Tuple[List[Path], List[Path]]:
     """Recursively classify paths by their include and gitignore status."""
 
     repo = None
-    if start_path is None and gitignore_repo_path is None:
-        gitignore_repo_path = root
-    if gitignore_repo_path is not None:
+    if start_path is None and repo_path is None:
+        repo_path = root
+    if repo_path is not None:
         try:
-            repo = Repo(gitignore_repo_path)
+            repo = Repo(repo_path)
         except InvalidGitRepositoryError:
             pass
 
@@ -142,7 +142,7 @@ def _filter_files(
         start_path = root
 
     # Make relative paths absolute
-    include_paths = tuple((root / path) for path in include_paths)
+    include_paths = tuple((root / path) for path in include_paths) if include_paths else ()
 
     paths_to_keep: List[Path] = []
     paths_to_ignore: List[Path] = []
@@ -167,13 +167,13 @@ def _filter_files(
                 paths_to_ignore.append(path)
                 continue
 
-        if gitignore_repo_path and repo:
+        if repo_path and repo:
             # Get the path relative to the root and construct its equivalent under the repo
             # with the .gitignore we're consulting. This path may not actually exist. The root
             # of our scan may be separate, e.g. in the case of a template we want to filter by
             # the project's git. But we still want to know if we *would* ignore the path.
             relative_path = path.relative_to(root)
-            path_to_check = gitignore_repo_path / relative_path
+            path_to_check = repo_path / relative_path
 
             # Check if the path would be ignored by the repo we're consulting.
             if _should_ignore(repo, path_to_check):
@@ -185,11 +185,11 @@ def _filter_files(
 
         if path.is_dir():
             # Recurse into the subdirectory.
-            subpaths_to_keep, subpaths_to_ignore = _filter_files(
+            subpaths_to_keep, subpaths_to_ignore = _keep_and_ignore_paths(
                 root,
                 start_path=path,
                 include_paths=include_paths,
-                gitignore_repo_path=gitignore_repo_path,
+                repo_path=repo_path,
             )
             paths_to_keep += subpaths_to_keep
             paths_to_ignore += subpaths_to_ignore

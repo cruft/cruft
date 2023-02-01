@@ -271,12 +271,19 @@ def diff(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
-    reverse: bool = typer.Option(
+    project: bool = typer.Option(
         False,
-        "--reverse",
-        "-r",
-        help="Show changes in your project that aren't in the template. Respects .gitignore",
-        show_default=False,
+        "--project",
+        "-p",
+        help="Show changes in your project that aren't in the template.",
+        show_default=True,
+    ),
+    gitignore: bool = typer.Option(
+        True,
+        "--gitignore",
+        "-g",
+        help="Respect .gitignore",
+        show_default=True,
     ),
     paths: Optional[List[Path]] = typer.Argument(
         None, help="Paths to include in the diff. By default the whole project is compared."
@@ -286,7 +293,8 @@ def diff(
         project_dir=project_dir,
         exit_code=exit_code,
         checkout=checkout,
-        reverse=reverse,
+        in_project=project,
         include_paths=paths,
+        respect_gitignore=gitignore,
     ):
         raise typer.Exit(1)
