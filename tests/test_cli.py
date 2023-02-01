@@ -370,14 +370,36 @@ def test_update_interactive_view_no_changes_when_deleted(cruft_runner, cookiecut
     assert "cruft has been updated" in result.stdout
 
 
-@pytest.mark.parametrize(
-    "args,expected_exit_code",
-    [
-        ([], 0),
-        (["--exit-code"], 1),
-        (["-e"], 1),
-    ],
-)
+@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
+def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
+    (cookiecutter_dir / "README.md").write_text("changed content\n")
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout != ""
+
+
+def test_diff_checkout(cruft_runner, cookiecutter_dir):
+    result = cruft_runner(
+        [
+            "diff",
+            "--project-dir",
+            cookiecutter_dir.as_posix(),
+            "--checkout",
+            "updated",
+            "--exit-code",
+        ]
+    )
+    assert result.exit_code == 1
+    assert result.stdout != ""
+
+
+@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
+def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
+    assert result.exit_code == expected_exit_code
+    assert result.stdout == ""
+
+
 def test_update_same_commit_but_ask_for_input(cruft_runner, cookiecutter_dir_input):
     result = cruft_runner(
         ["update", "--project-dir", cookiecutter_dir_input.as_posix(), "-c", "input", "-y", "-i"],
@@ -424,37 +446,6 @@ def test_update_refresh_private_variables_from_template(
     assert "+Private variable: 2.0" in git_diff_captured.out
     assert "cruft has been updated" in result.stdout
     assert result.exit_code == 0
-
-
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
->>>>>>> feat/reverse-diff
-def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
-    (cookiecutter_dir / "README.md").write_text("changed content\n")
-    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
-    assert result.exit_code == expected_exit_code
-    assert result.stdout != ""
-
-
-def test_diff_checkout(cruft_runner, cookiecutter_dir):
-    result = cruft_runner(
-        [
-            "diff",
-            "--project-dir",
-            cookiecutter_dir.as_posix(),
-            "--checkout",
-            "updated",
-            "--exit-code",
-        ]
-    )
-    assert result.exit_code == 1
-    assert result.stdout != ""
-
-
-@pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 0), (["-e"], 0)])
-def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
-    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix()] + args)
-    assert result.exit_code == expected_exit_code
-    assert result.stdout == ""
 
 
 @pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
