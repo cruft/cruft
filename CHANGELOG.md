@@ -16,6 +16,39 @@ OR
 
 Changelog
 =========
+
+## 2.12.0 - 28 December 2022
+- Uncapped version requirements (including Python) for greater compatiblity
+- [Fixed issue #166](https://github.com/cruft/cruft/issues/166): Fixed compatiblity with latest version of cookiecutter
+- [Implemented #184](https://github.com/cruft/cruft/issues/184): Store checkout parameter when using link command
+- Improvements to update command
+
+## 2.11.1 - 28 August 2022
+- [Fixed issue #177](https://github.com/cruft/cruft/issues/177): cruft update can't apply diffs when git's diff.mnemonicprefix config is set
+
+## 2.11.0 - 29 July 2022
+- [Fixed issue #168](https://github.com/cruft/cruft/issues/168): Add support for typer v0.6+
+- [Fixed issue #162](https://github.com/cruft/cruft/issues/162): Add support for cookiecutter v2
+
+## 2.10.2 - 20 Apr 2022
+- [Fixed issue #152](https://github.com/cruft/cruft/issues/152): Upgrade version of importlib-metadata
+
+## 2.10.1 - 8 Nov 2021
+- Fixed missing dependency on importlib-metadata
+
+## 2.10.0 - 7 Nov 2021
+- [Fixed issue #41](https://github.com/cruft/cruft/issues/41): Add windows support
+- [Fixed issue #112](https://github.com/cruft/cruft/issues/112): Add support for generating the project with always skipped files on update
+- [Fixed issue #123](https://github.com/cruft/cruft/issues/123): Feature request: Faster implementation for cruft check
+- [Fixed issue #124](https://github.com/cruft/cruft/issues/124): cruft 2.9.0 on Pypi requires click <= 8.0.0
+- [Fixed issue #131](https://github.com/cruft/cruft/issues/131): Feature request: support binary files patching
+
+## 2.9.0 - 30 June 2021
+- [Fixed issue #64](https://github.com/cruft/cruft/issues/64): Feature request: support globs for skipped files
+- [Fixed issue #101](https://github.com/cruft/cruft/issues/101): Update error if symlink is present in project
+- [Fixed issue #81](https://github.com/cruft/cruft/issues/81): cruft update leads to UnicodeDecodeError
+- [Fixed issue #115](https://github.com/cruft/cruft/issues/115): Warn when pyproject.toml exists but cannot be read
+
 ## 2.8.0 - 9 March 2021
 - [Fixed issue #68](https://github.com/cruft/cruft/issues/68): Add support for cruft create/update in a sub directory in an existing repository
 - [Fixed issue #91](https://github.com/cruft/cruft/issues/91): Support Updating When Repo has Untracked Files

@@ -43,6 +43,14 @@ def test_check_examples(tmpdir, project_dir):
     verify_and_test_examples(cruft.check)
 
 
+def test_create_with_skips(tmpdir):
+    tmpdir.chdir()
+    skips = ["setup.cfg"]
+    cruft.create("https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), skip=skips)
+
+    assert json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["skip"] == skips
+
+
 @pytest.mark.parametrize("value", ["main", None])
 def test_create_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
@@ -54,6 +62,18 @@ def test_create_stores_checkout_value(value, tmpdir):
     assert (
         json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["checkout"] == value
     )
+
+
+@pytest.mark.parametrize("value", ["main", None])
+def test_link_stores_checkout_value(value, tmpdir):
+    project_dir = Path(tmpdir)
+    cruft.link(
+        "https://github.com/timothycrosley/cookiecutter-python",
+        project_dir=project_dir,
+        checkout=value,
+    )
+
+    assert json.load(utils.cruft.get_cruft_file(project_dir).open("r"))["checkout"] == value
 
 
 @pytest.mark.parametrize("value", ["main", None])
@@ -198,24 +218,24 @@ def test_diff_has_diff(
 
     assert stderr == ""
 
-    expected_output = """diff --git a{tmpdir}/dir0/file1 b{tmpdir}/dir0/file1
+    expected_output = """diff --git upstream-template-old{tmpdir}/dir0/file1 upstream-template-new{tmpdir}/dir0/file1
 index eaae237..ac3e272 100644
---- a{tmpdir}/dir0/file1
-+++ b{tmpdir}/dir0/file1
+--- upstream-template-old{tmpdir}/dir0/file1
++++ upstream-template-new{tmpdir}/dir0/file1
 @@ -1 +1 @@
 -new content 1
 +content1
-diff --git a{tmpdir}/file0 b{tmpdir}/file0
+diff --git upstream-template-old{tmpdir}/file0 upstream-template-new{tmpdir}/file0
 index be6a56b..1fc03a9 100644
---- a{tmpdir}/file0
-+++ b{tmpdir}/file0
+--- upstream-template-old{tmpdir}/file0
++++ upstream-template-new{tmpdir}/file0
 @@ -1 +1 @@
 -new content 0
 +content0
 """
     expected_output_regex = re.escape(expected_output)
     expected_output_regex = expected_output_regex.replace(r"\{tmpdir\}", r"([^\n]*)")
-    expected_output_regex = fr"^{expected_output_regex}$"
+    expected_output_regex = rf"^{expected_output_regex}$"
 
     match = re.search(expected_output_regex, stdout, re.MULTILINE)
     assert match is not None
@@ -265,8 +285,8 @@ def test_diff_checkout(capfd, tmpdir):
     stderr = captured.err
 
     assert stderr == ""
-    assert "--- a/README.md" in stdout
-    assert "+++ b/README.md" in stdout
+    assert "--- upstream-template-old/README.md" in stdout
+    assert "+++ upstream-template-new/README.md" in stdout
     assert "+Updated again" in stdout
     assert "-Updated" in stdout
 
@@ -275,12 +295,10 @@ def test_diff_git_subdir(capfd, tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
     Repo.clone_from("https://github.com/cruft/cookiecutter-test", temp_dir)
-    # project_dir = cruft.create("./cc", output_dir=str(temp_dir / "output"), directory="dir")
-    # assert cruft.check(project_dir)
 
     # Create something deeper in the git tree
     project_dir = cruft.create(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         Path("tmpdir/foo/bar"),
         directory="dir",
         checkout="master",

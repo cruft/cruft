@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from tempfile import TemporaryDirectory
 from typing import Optional, Set
 
 import click
@@ -9,6 +8,7 @@ import typer
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example(skip_apply_ask=False)
@@ -16,6 +16,7 @@ from .utils import example
 def update(
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
+    refresh_private_variables: bool = False,
     skip_apply_ask: bool = True,
     skip_update: bool = False,
     checkout: Optional[str] = None,
@@ -37,7 +38,7 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    with TemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory() as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
@@ -45,38 +46,48 @@ def update(
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
         # Clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(cruft_state["template"], repo_dir, checkout)
-        last_commit = repo.head.object.hexsha
+        with utils.cookiecutter.get_cookiecutter_repo(
+            cruft_state["template"], repo_dir, checkout
+        ) as repo:
+            last_commit = repo.head.object.hexsha
 
-        # Bail early if the repo is already up to date
-        if utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
-            typer.secho(
-                "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+            # Bail early if the repo is already up to date and no inputs are asked
+            if not (
+                cookiecutter_input or refresh_private_variables
+            ) and utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
+                typer.secho(
+                    "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
+                )
+                return True
+
+            # Generate clean outputs via the cookiecutter
+            # from the current cruft state commit of the cookiectter and the updated
+            # cookiecutter.
+            # For the current cruft state, we do not try to update the cookiecutter_input
+            # because we want to keep the current context input intact.
+            _ = utils.generate.cookiecutter_template(
+                output_dir=current_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                checkout=cruft_state["commit"],
+                deleted_paths=deleted_paths,
+                update_deleted_paths=True,
             )
-            return True
+            # Remove private variables from cruft_state to refresh their values
+            # from the cookiecutter template config
+            if refresh_private_variables:
+                _clean_cookiecutter_private_variables(cruft_state)
 
-        # Generate clean outputs via the cookiecutter
-        # from the current cruft state commit of the cookiectter and the updated
-        # cookiecutter.
-        _ = utils.generate.cookiecutter_template(
-            output_dir=current_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=cruft_state["commit"],
-            deleted_paths=deleted_paths,
-            update_deleted_paths=True,
-        )
-        new_context = utils.generate.cookiecutter_template(
-            output_dir=new_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            cookiecutter_input=cookiecutter_input,
-            checkout=last_commit,
-            deleted_paths=deleted_paths,
-        )
+            new_context = utils.generate.cookiecutter_template(
+                output_dir=new_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                cookiecutter_input=cookiecutter_input,
+                checkout=last_commit,
+                deleted_paths=deleted_paths,
+            )
 
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and
@@ -100,6 +111,12 @@ def update(
                 fg=typer.colors.GREEN,
             )
         return True
+
+
+def _clean_cookiecutter_private_variables(cruft_state: dict):
+    for key in list(cruft_state["context"]["cookiecutter"].keys()):
+        if key != "_template" and key.startswith("_"):
+            del cruft_state["context"]["cookiecutter"][key]
 
 
 #################################################

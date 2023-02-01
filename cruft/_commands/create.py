@@ -1,11 +1,11 @@
 from pathlib import Path
-from tempfile import TemporaryDirectory
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from cookiecutter.generate import generate_files
 
 from . import utils
 from .utils import example
+from .utils.iohelper import AltTemporaryDirectory
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/")
@@ -19,27 +19,28 @@ def create(
     directory: Optional[str] = None,
     checkout: Optional[str] = None,
     overwrite_if_exists: bool = False,
+    skip: Optional[List[str]] = None,
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
-    with TemporaryDirectory() as cookiecutter_template_dir_str:
+    with AltTemporaryDirectory() as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             template_git_url, cookiecutter_template_dir, checkout
-        )
-        last_commit = repo.head.object.hexsha
+        ) as repo:
+            last_commit = repo.head.object.hexsha
 
-        if directory:
-            cookiecutter_template_dir = cookiecutter_template_dir / directory
+            if directory:
+                cookiecutter_template_dir = cookiecutter_template_dir / directory
 
-        context = utils.cookiecutter.generate_cookiecutter_context(
-            template_git_url,
-            cookiecutter_template_dir,
-            config_file,
-            default_config,
-            extra_context,
-            no_input,
-        )
+            context = utils.cookiecutter.generate_cookiecutter_context(
+                template_git_url,
+                cookiecutter_template_dir,
+                config_file,
+                default_config,
+                extra_context,
+                no_input,
+            )
 
         project_dir = Path(
             generate_files(
@@ -50,18 +51,19 @@ def create(
             )
         )
 
+        cruft_content = {
+            "template": template_git_url,
+            "commit": last_commit,
+            "checkout": checkout,
+            "context": context,
+            "directory": directory,
+        }
+
+        if skip:
+            cruft_content["skip"] = skip
+
         # After generating the project - save the cruft state
         # into the cruft file.
-        (project_dir / ".cruft.json").write_text(
-            utils.cruft.json_dumps(
-                {
-                    "template": template_git_url,
-                    "commit": last_commit,
-                    "checkout": checkout,
-                    "context": context,
-                    "directory": directory,
-                }
-            )
-        )
+        (project_dir / ".cruft.json").write_text(utils.cruft.json_dumps(cruft_content))
 
         return project_dir

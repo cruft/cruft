@@ -1,7 +1,7 @@
 """This module defines CLI interactions when using `cruft`."""
 import json
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 
@@ -100,6 +100,9 @@ def create(
         show_default=False,
         help="Overwrite the contents of the output directory if it already exists",
     ),
+    skip: Optional[List[str]] = typer.Option(
+        None, "--skip", show_default=False, help="Default files/pattern to skip on update"
+    ),
 ) -> None:
     _commands.create(
         template_git_url,
@@ -111,6 +114,7 @@ def create(
         directory=directory,
         checkout=checkout,
         overwrite_if_exists=overwrite_if_exists,
+        skip=skip,
     )
 
 
@@ -135,7 +139,7 @@ def link(
         False,
         "--no-input",
         "-y",
-        help="Do not prompt for parameters and only use cookiecutter.json file content",
+        help="Do not prompt for commit hash. Use latest commit of checked out reference instead.",
         show_default=False,
     ),
     config_file: Optional[Path] = typer.Option(
@@ -189,6 +193,13 @@ def update(
         help="Prompt for cookiecutter parameters for the latest template version",
         show_default=False,
     ),
+    refresh_private_variables: bool = typer.Option(
+        False,
+        "--refresh-private-variables",
+        "-r",
+        help="Refresh cookiecutter private variables for the latest template version",
+        show_default=False,
+    ),
     skip_apply_ask: bool = typer.Option(
         False,
         "--skip-apply-ask",
@@ -233,6 +244,7 @@ def update(
     if not _commands.update(
         project_dir=project_dir,
         cookiecutter_input=cookiecutter_input,
+        refresh_private_variables=refresh_private_variables,
         skip_apply_ask=skip_apply_ask,
         skip_update=skip_update,
         checkout=checkout,

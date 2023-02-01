@@ -9,6 +9,7 @@ import typer
 from git import InvalidGitRepositoryError, Repo
 
 from . import utils
+from .utils.iohelper import AltTemporaryDirectory
 
 
 def diff(
@@ -31,7 +32,8 @@ def diff(
     cruft_state = json.loads(cruft_file.read_text())
     checkout = checkout or cruft_state.get("commit")
 
-    with TemporaryDirectory() as tmpdir_:
+    has_diff = False
+    with AltTemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
         remote_template_dir = tmpdir / "remote"
@@ -42,33 +44,32 @@ def diff(
         local_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Let's clone the template
-        repo = utils.cookiecutter.get_cookiecutter_repo(
+        with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], repo_dir, checkout=checkout
-        )
-
-        # We generate the template for the revision expected by the project
-        utils.generate.cookiecutter_template(
-            output_dir=remote_template_dir,
-            repo=repo,
-            cruft_state=cruft_state,
-            project_dir=project_dir,
-            checkout=checkout,
-            update_deleted_paths=True,
-        )
-        # We delete files from this generated directory that would be ignored by the
-        # project, if respect_gitinore is True and the project directory (not the
-        # template) is a repo.
-        gitignore_repo_path = project_dir if respect_gitignore else None
-        _, paths_to_delete = _filter_files(
-            remote_template_dir,
-            include_paths=include_paths,
-            gitignore_repo_path=gitignore_repo_path,
-        )
-        for path in paths_to_delete:
-            if path.is_file():
-                path.unlink()
-            else:
-                shutil.rmtree(path)
+        ) as repo:
+            # We generate the template for the revision expected by the project
+            utils.generate.cookiecutter_template(
+                output_dir=remote_template_dir,
+                repo=repo,
+                cruft_state=cruft_state,
+                project_dir=project_dir,
+                checkout=checkout,
+                update_deleted_paths=True,
+            )
+            # We delete files from this generated directory that would be ignored by the
+            # project, if respect_gitignore is True and the project directory (not the
+            # template) is a repo.
+            gitignore_repo_path = project_dir if respect_gitignore else None
+            _, paths_to_delete = _filter_files(
+                remote_template_dir,
+                include_paths=include_paths,
+                gitignore_repo_path=gitignore_repo_path,
+            )
+            for path in paths_to_delete:
+                if path.is_file():
+                    path.unlink()
+                else:
+                    shutil.rmtree(path)
 
         # Then we copy the files to compare from the project dir.
         # For a regular diff, files that are present in the template.

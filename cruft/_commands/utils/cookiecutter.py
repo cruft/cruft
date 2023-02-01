@@ -38,10 +38,13 @@ def resolve_template_url(url: str) -> str:
 
 
 def get_cookiecutter_repo(
-    template_git_url: str, cookiecutter_template_dir: Path, checkout: Optional[str] = None
+    template_git_url: str,
+    cookiecutter_template_dir: Path,
+    checkout: Optional[str] = None,
+    **clone_kwargs,
 ) -> Repo:
     try:
-        repo = Repo.clone_from(template_git_url, cookiecutter_template_dir)
+        repo = Repo.clone_from(template_git_url, cookiecutter_template_dir, **clone_kwargs)
     except GitCommandError as error:
         raise InvalidCookiecutterRepository(
             template_git_url, f"Failed to clone the repo. {error.stderr.strip()}"

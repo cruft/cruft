@@ -1,40 +1,45 @@
 [tool.poetry]
 name = "cruft"
-version = "2.8.0a1"
+version = "0.0.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
 authors = ["Timothy Crosley <timothy.crosley@gmail.com>", "Sambhav Kothari <sambhavs.email@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.6"
-cookiecutter = "^1.6"
-gitpython = "^3.0"
-toml = { version = "^0.10", optional = true }
-typer = "^0.3.2"
-click = "^7.1.2"
-examples = {version = "^1.0.2", optional = true}
+python = ">=3.7"
+cookiecutter = ">=1.7"
+gitpython = ">=3.0"
+toml = { version = ">=0.10", optional = true }
+typer = ">=0.4.0"
+click = ">= 7.1.2"
+#examples = {version = ">=1.0.2", optional = true}
+importlib-metadata = {version = ">=2.0.0,<5.0.0", python = "<3.8"}
 
 [tool.poetry.extras]
 pyproject = ["toml"]
 examples = ["examples"]
 
 [tool.poetry.dev-dependencies]
-vulture = "^1.0"
-bandit = "^1.6"
-safety = "^1.8"
-isort = "^5.3"
-flake8-bugbear = "^19.8"
-black = {version = "^20.8b1", allow-prereleases = true}
-mypy = "^0.812.0"
-ipython = "^7.7"
-pytest = "^5.0"
-pytest-cov = "^2.7"
-pep8-naming = "^0.8.2"
-portray = "^1.6.0"
-examples = "^1.0.2"
-pytest-xdist = "^1.34.0"
-pytest-mock = "^3.3.1"
+bandit = ">=1.6"
+black = ">=22.12.0"
+examples = { version = ">=1.0.2", python = ">=3.7.0,<4.0"}
+safety = ">=1.8"
+isort = ">=5.11.0"
+flake8 = "<5.0.0,>=4.0.0"
+flake8-bugbear = ">=19.8"
+mypy = ">=0.971"
+types-toml = ">=0.10"
+ipython = ">=7.16.3"
+mkdocs = ">=1.2"
+pytest = ">=6.2.5"
+pytest-cov = ">=3.0"
+pytest-repeat = ">=0.9.1"
+pytest-xdist = ">=2.5.0"
+pytest-mock = ">=3.3.1"
+pep8-naming = ">=0.8.2"
+portray = { version = ">=1.7.0", python = ">=3.7.0,<4.0"}
+vulture = ">=1.0"
 
 [tool.poetry.scripts]
 cruft = "cruft._cli:app"
@@ -49,8 +54,8 @@ palette = {primary = "orange", accent = "cyan"}
 skip = ["cruft/__init__.py", "tests"]
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.8"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 100
