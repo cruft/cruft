@@ -23,7 +23,7 @@ fi
 # Iterate the string array using for loop. The quotes ensure iteration
 # over multiple words string. It's important that .coverage ends with an empty last line.
 for val in "${XTRA_COV[@]}"; do
-   echo "    $val" >> .coveragerc
+   [ ! -z "$(egrep "    $val" .coveragerc 2>/dev/null)" ] || echo "    $val" >> .coveragerc
 done
 
 
