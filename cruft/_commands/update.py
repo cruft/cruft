@@ -29,6 +29,7 @@ def update(
     respect_gitignore: bool = False,
     interactive: bool = True,
     override: bool = False,
+    dry_run: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -125,6 +126,7 @@ def update(
             allow_modified_files,
             force,
             interactive=interactive,
+            dry_run=dry_run,
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
@@ -295,13 +297,14 @@ def _apply_project_updates(
     allow_modified_files: bool = False,
     force: bool = False,
     interactive: bool = True,
+    dry_run: bool = False,
 ) -> bool:
     diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
     if not skip_apply_ask and not skip_update and not force:
         input_str: str = "v"
         while input_str == "v":
-            if interactive:
+            if interactive and not dry_run:
                 typer.echo(
                     'Respond with "s" to intentionally skip the update while marking '
                     "your project as up-to-date or "
@@ -318,8 +321,13 @@ def _apply_project_updates(
                     utils.diff.display_diff(old_main_directory, new_main_directory)
                 else:
                     click.secho("There are no changes.", fg=typer.colors.YELLOW)
+            if dry_run:
+                input_str = "d"
         if input_str == "n":
             typer.echo("User cancelled Cookiecutter template update.")
+            return False
+        elif input_str == "d":
+            typer.echo("Dry run - skipping Cookiecutter template update.")
             return False
         elif input_str == "s":
             skip_update = True

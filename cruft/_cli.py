@@ -286,6 +286,14 @@ def update(
             "New template content will be added to the project."
         ),
     ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        "-n",
+        help=(
+            "See what will be updated with making any changes. "
+        ),
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -302,6 +310,7 @@ def update(
         force=force,
         interactive=not batch,
         override=override,
+        dry_run=dry_run,
     ):
         raise typer.Exit(1)
 
