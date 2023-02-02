@@ -323,6 +323,8 @@ def _apply_project_updates(
                     click.secho("There are no changes.", fg=typer.colors.YELLOW)
             if dry_run:
                 input_str = "d"
+            if not interactive:
+                input_str = "y"
         if input_str == "n":
             typer.echo("User cancelled Cookiecutter template update.")
             return False
