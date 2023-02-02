@@ -240,6 +240,52 @@ def update(
             " repository (but no other changes)"
         ),
     ),
+    allow_modified_files: bool = typer.Option(
+        False,
+        "--allow-modified-files",
+        help=(
+            "Allow the project's cruft to be updated if there are modified files in the git"
+            " repository (but no other changes)"
+        ),
+    ),
+    gitignore: bool = typer.Option(
+        True,
+        "--gitignore",
+        "-g",
+        help="Respect .gitignore",
+        show_default=True,
+    ),
+    paths: Optional[List[Path]] = typer.Argument(
+        None, help="Paths to include in the diff. By default the whole project is compared."
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help=(
+            "Allow the project's cruft to be updated if there are changes like untracked "
+            "or modified files in the git repository or other factors preventing the update."
+            "In other words: force the update and be ready to do a 'git reset'!"
+        ),
+    ),
+    batch: bool = typer.Option(
+        False,
+        "--batch",
+        "-b",
+        help=(
+            "Perform the update without prompting for confirmation. This is useful for scripting."
+        ),
+    ),
+    override: bool = typer.Option(
+        False,
+        "--override",
+        "-o",
+        help=(
+            "Override template changes with the project content i.e. "
+            "preserve the project content that differ from the template. "
+            "New template content will be added to the project."
+        ),
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -250,6 +296,12 @@ def update(
         checkout=checkout,
         strict=strict,
         allow_untracked_files=allow_untracked_files,
+        allow_modified_files=allow_modified_files,
+        include_paths=paths,
+        respect_gitignore=gitignore,
+        force=force,
+        interactive=not batch,
+        override=override,
     ):
         raise typer.Exit(1)
 

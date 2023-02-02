@@ -1,13 +1,14 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from typing import Optional, Set
+from typing import Iterable, Optional, Set
 
 import click
 import typer
 
 from . import utils
 from .utils import example
+from .utils.diff import _transfer_project_paths, _trim_ignored_paths
 from .utils.iohelper import AltTemporaryDirectory
 
 
@@ -22,13 +23,19 @@ def update(
     checkout: Optional[str] = None,
     strict: bool = True,
     allow_untracked_files: bool = False,
+    allow_modified_files: bool = False,
+    include_paths: Optional[Iterable[Path]] = None,
+    force: bool = False,
+    respect_gitignore: bool = False,
+    interactive: bool = True,
+    override: bool = False,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
-    if not _is_project_repo_clean(project_dir, allow_untracked_files):
+    if not _is_project_repo_clean(project_dir, allow_untracked_files, allow_modified_files):
         typer.secho(
             "Cruft cannot apply updates on an unclean git project."
             " Please make sure your git working tree is clean before proceeding.",
@@ -53,7 +60,7 @@ def update(
 
             # Bail early if the repo is already up to date and no inputs are asked
             if not (
-                cookiecutter_input or refresh_private_variables
+                cookiecutter_input or refresh_private_variables or force
             ) and utils.cruft.is_project_updated(repo, cruft_state["commit"], last_commit, strict):
                 typer.secho(
                     "Nothing to do, project's cruft is already up to date!", fg=typer.colors.GREEN
@@ -74,6 +81,14 @@ def update(
                 deleted_paths=deleted_paths,
                 update_deleted_paths=True,
             )
+
+            _trim_ignored_paths(
+                target_dir=current_template_dir,
+                include_paths=include_paths,
+                respect_gitignore=respect_gitignore,
+                project_dir=project_dir,
+            )
+
             # Remove private variables from cruft_state to refresh their values
             # from the cookiecutter template config
             if refresh_private_variables:
@@ -89,6 +104,14 @@ def update(
                 deleted_paths=deleted_paths,
             )
 
+        if override:
+            _transfer_project_paths(
+                include_paths=include_paths,
+                local_template_dir=current_template_dir,
+                project_dir=project_dir,
+                remote_template_dir=new_template_dir,
+            )
+
         # Given the two versions of the cookiecutter outputs based
         # on the current project's context we calculate the diff and
         # apply the updates to the current project.
@@ -99,6 +122,9 @@ def update(
             skip_update,
             skip_apply_ask,
             allow_untracked_files,
+            allow_modified_files,
+            force,
+            interactive=interactive,
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
@@ -140,7 +166,13 @@ def _has_untracked_file(status_line: str):
     return status_line.strip().startswith("??")
 
 
-def _is_project_repo_clean(directory: Path, allow_untracked_files: bool):
+def _has_modified_file(status_line: str):
+    return status_line.strip().startswith("M")
+
+
+def _is_project_repo_clean(
+    directory: Path, allow_untracked_files: bool, allow_modified_files: bool = False
+):
     if not _is_git_repo(directory):
         return True
     git_status = run(["git", "status", "--porcelain"], stdout=PIPE, stderr=DEVNULL, cwd=directory)
@@ -149,6 +181,8 @@ def _is_project_repo_clean(directory: Path, allow_untracked_files: bool):
     status_lines = [line for line in status_lines if line]
     if allow_untracked_files:
         status_lines = [line for line in status_lines if not _has_untracked_file(line)]
+    if allow_modified_files:
+        status_lines = [line for line in status_lines if not _has_modified_file(line)]
     if status_lines:
         return False
     return True
@@ -181,7 +215,12 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
 
 
-def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
+def _apply_three_way_patch(
+    diff: str,
+    expanded_dir_path: Path,
+    allow_untracked_files: bool,
+    allow_modified_files: bool = False,
+):
     offset = _get_offset(expanded_dir_path)
 
     git_apply = ["git", "apply", "-3"]
@@ -199,7 +238,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_f
         )
     except CalledProcessError as error:
         typer.secho(error.stderr.decode(), err=True)
-        if _is_project_repo_clean(expanded_dir_path, allow_untracked_files):
+        if _is_project_repo_clean(expanded_dir_path, allow_untracked_files, allow_modified_files):
             typer.secho(
                 "Failed to apply the update. Retrying again with a different update strategy.",
                 fg=typer.colors.YELLOW,
@@ -228,7 +267,12 @@ def _get_offset(expanded_dir_path: Path):
             raise error
 
 
-def _apply_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
+def _apply_patch(
+    diff: str,
+    expanded_dir_path: Path,
+    allow_untracked_files: bool,
+    allow_modified_files: bool,
+):
     # Git 3 way merge is the our best bet
     # at applying patches. But it only works
     # with git repos. If the repo is not a git dir
@@ -236,7 +280,7 @@ def _apply_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool
     # diffs cleanly where applicable otherwise creates
     # *.rej files where there are conflicts
     if _is_git_repo(expanded_dir_path):
-        _apply_three_way_patch(diff, expanded_dir_path, allow_untracked_files)
+        _apply_three_way_patch(diff, expanded_dir_path, allow_untracked_files, allow_modified_files)
     else:
         _apply_patch_with_rejections(diff, expanded_dir_path)
 
@@ -248,23 +292,27 @@ def _apply_project_updates(
     skip_update: bool,
     skip_apply_ask: bool,
     allow_untracked_files: bool,
+    allow_modified_files: bool = False,
+    force: bool = False,
+    interactive: bool = True,
 ) -> bool:
     diff = utils.diff.get_diff(old_main_directory, new_main_directory)
 
-    if not skip_apply_ask and not skip_update:
+    if not skip_apply_ask and not skip_update and not force:
         input_str: str = "v"
         while input_str == "v":
-            typer.echo(
-                'Respond with "s" to intentionally skip the update while marking '
-                "your project as up-to-date or "
-                'respond with "v" to view the changes that will be applied.'
-            )
-            input_str = typer.prompt(
-                "Apply diff and update?",
-                type=click.Choice(("y", "n", "s", "v")),
-                show_choices=True,
-                default="y",
-            )
+            if interactive:
+                typer.echo(
+                    'Respond with "s" to intentionally skip the update while marking '
+                    "your project as up-to-date or "
+                    'respond with "v" to view the changes that will be applied.'
+                )
+                input_str = typer.prompt(
+                    "Apply diff and update?",
+                    type=click.Choice(("y", "n", "s", "v")),
+                    show_choices=True,
+                    default="y",
+                )
             if input_str == "v":
                 if diff.strip():
                     utils.diff.display_diff(old_main_directory, new_main_directory)
@@ -277,5 +325,5 @@ def _apply_project_updates(
             skip_update = True
 
     if not skip_update and diff.strip():
-        _apply_patch(diff, project_dir, allow_untracked_files)
+        _apply_patch(diff, project_dir, allow_untracked_files, allow_modified_files)
     return True

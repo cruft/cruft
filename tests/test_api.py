@@ -324,13 +324,13 @@ def test_diff_git_subdir(capfd, tmpdir):
     assert cruft.update(project_dir, checkout="updated")
 
 
-@pytest.mark.parametrize("is_project_diff", (True, False))
+@pytest.mark.parametrize("is_reverse_diff", (True, False))
 @pytest.mark.parametrize("use_exit_code", (True, False))
 @pytest.mark.parametrize("commit_changes", (True, False))
 @pytest.mark.parametrize("respect_gitignore", (True, False))
 @pytest.mark.parametrize("include_paths", (("dir0/file1", "dir2/file6"), ()))
 def test_project_diff(
-    is_project_diff, use_exit_code, commit_changes, respect_gitignore, include_paths, capfd, tmpdir
+    is_reverse_diff, use_exit_code, commit_changes, respect_gitignore, include_paths, capfd, tmpdir
 ):
     """Test project diff and its differences from the regular one."""
 
@@ -391,7 +391,7 @@ def test_project_diff(
         include_paths=[Path(path) for path in include_paths],
         checkout=branch,
         exit_code=use_exit_code,
-        in_project=is_project_diff,
+        reverse=is_reverse_diff,
         respect_gitignore=respect_gitignore,
     )
     captured = capfd.readouterr()
@@ -426,15 +426,15 @@ def test_project_diff(
 
     # New file in the project dir but not the template should be in the project diff only.
     assert (new_file in diff) == (
-        is_project_diff and ((new_file in include_paths) if include_paths else True)
+        is_reverse_diff and ((new_file in include_paths) if include_paths else True)
     )
 
     # New file that is ignored should be in neither diff.
     assert "I am new and ignored" not in diff
 
     # New directory that is in the project but not the template should be in project only.
-    assert (new_directory in diff) == is_project_diff
-    assert (new_directory_file in diff) == is_project_diff
+    assert (new_directory in diff) == is_reverse_diff
+    assert (new_directory_file in diff) == is_reverse_diff
 
     # New directory that is ignored should be in neither diff.
     assert "I am new and in an ignored directory." not in diff
