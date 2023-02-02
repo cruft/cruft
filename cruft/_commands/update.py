@@ -169,7 +169,11 @@ def _has_untracked_file(status_line: str):
 
 
 def _has_modified_file(status_line: str):
-    return status_line.strip().startswith("M") or status_line.strip().startswith("A") or status_line.strip().startswith("D")
+    return (
+        status_line.strip().startswith("M")
+        or status_line.strip().startswith("A")
+        or status_line.strip().startswith("D")
+    )
 
 
 def _is_project_repo_clean(

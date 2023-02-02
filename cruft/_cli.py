@@ -290,9 +290,7 @@ def update(
         False,
         "--dry-run",
         "-n",
-        help=(
-            "See what will be updated with making any changes. "
-        ),
+        help=("See what will be updated with making any changes. "),
     ),
 ) -> None:
     if not _commands.update(
