@@ -10,7 +10,7 @@ readme = "README.md"
 python = ">=3.7"
 cookiecutter = ">=1.7"
 gitpython = ">=3.0"
-toml = { version = ">=0.10", optional = true }
+toml = { version = ">=0.10", optional = true, python = "<3.11" }
 typer = ">=0.4.0"
 click = ">= 7.1.2"
 #examples = {version = ">=1.0.2", optional = true}

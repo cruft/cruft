@@ -110,6 +110,6 @@ def test_remove_paths_with_glob_pattern_and_string(tmp_path: Path):
 
 
 def test_warn_if_cant_read_pyproject_toml(monkeypatch):
-    monkeypatch.setattr(utils.generate, "toml", None)
+    monkeypatch.setattr(utils.generate, "tomllib", None)
     with pytest.warns(UserWarning, match="`toml` package is not installed"):
         utils.generate._get_skip_paths({}, Path(__file__))

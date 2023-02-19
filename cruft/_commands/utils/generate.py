@@ -1,5 +1,6 @@
 import os
 import stat
+import sys
 from pathlib import Path
 from shutil import move, rmtree
 from typing import Optional, Set, Union
@@ -12,10 +13,13 @@ from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
 from .cruft import CruftState
 from .iohelper import AltTemporaryDirectory
 
-try:
-    import toml
-except ImportError:  # pragma: no cover
-    toml = None  # type: ignore
+if not sys.version_info >= (3, 11):
+    try:
+        import toml as tomllib
+    except ImportError:  # pragma: no cover
+        tomllib = None  # type: ignore
+else:
+    import tomllib
 
 
 def cookiecutter_template(
@@ -103,13 +107,13 @@ def _generate_output(
 
 def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
     skip_cruft = cruft_state.get("skip", [])
-    if toml and pyproject_file.is_file():
-        pyproject_cruft = toml.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
+    if tomllib and pyproject_file.is_file():
+        pyproject_cruft = tomllib.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
         skip_cruft.extend(pyproject_cruft.get("skip", []))
     elif pyproject_file.is_file():
         warn(
-            "pyproject.toml is present in repo, but `toml` package is not installed. "
-            "Cruft configuration may be ignored."
+            "pyproject.toml is present in repo, but python version is < 3.11 and "
+            "`toml` package is not installed. Cruft configuration may be ignored."
         )
     return set(map(Path, skip_cruft))
 
