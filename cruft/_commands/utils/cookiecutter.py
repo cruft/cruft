@@ -4,12 +4,11 @@ from urllib.parse import urlparse
 
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context
+from cookiecutter.main import _patch_import_path_for_repo
 from cookiecutter.prompt import prompt_for_config
 from git import GitCommandError, Repo
 
 from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
-
-from cookiecutter.main import _patch_import_path_for_repo
 
 CookiecutterContext = Dict[str, Any]
 
