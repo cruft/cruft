@@ -7,6 +7,7 @@ from typing import Optional, Set, Union
 from warnings import warn
 
 from cookiecutter.generate import generate_files
+from cookiecutter.main import _patch_import_path_for_repo
 from git import Repo
 
 from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
@@ -88,9 +89,10 @@ def _generate_output(
     with AltTemporaryDirectory() as tmpdir:
 
         # Kindly ask cookiecutter to generate the template
-        template_dir = generate_files(
-            repo_dir=inner_dir, context=new_context, overwrite_if_exists=True, output_dir=tmpdir
-        )
+        with _patch_import_path_for_repo(inner_dir):
+            template_dir = generate_files(
+                repo_dir=inner_dir, context=new_context, overwrite_if_exists=True, output_dir=tmpdir
+            )
         template_dir = Path(template_dir)
 
         # Move the template content to the output directory

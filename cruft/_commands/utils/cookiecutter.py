@@ -9,6 +9,8 @@ from git import GitCommandError, Repo
 
 from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
 
+from cookiecutter.main import _patch_import_path_for_repo
+
 CookiecutterContext = Dict[str, Any]
 
 
@@ -87,15 +89,17 @@ def generate_cookiecutter_context(
         config_file=str(config_file) if config_file else None, default_config=default_config
     )
 
-    context = generate_context(
-        context_file=context_file,
-        default_context=config_dict["default_context"],
-        extra_context=extra_context,
-    )
+    with _patch_import_path_for_repo(str(cookiecutter_template_dir)):
 
-    # prompt the user to manually configure at the command line.
-    # except when 'no-input' flag is set
-    context["cookiecutter"] = prompt_for_config(context, no_input)
+        context = generate_context(
+            context_file=context_file,
+            default_context=config_dict["default_context"],
+            extra_context=extra_context,
+        )
+
+        # prompt the user to manually configure at the command line.
+        # except when 'no-input' flag is set
+        context["cookiecutter"] = prompt_for_config(context, no_input)
     context["cookiecutter"]["_template"] = template_git_url
 
     return context
