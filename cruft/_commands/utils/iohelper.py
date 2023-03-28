@@ -1,8 +1,8 @@
-from tempfile import TemporaryDirectory
-from typing import Optional
-from pathlib import Path
-from time import sleep
 import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from time import sleep
+from typing import Optional
 
 
 class AltTemporaryDirectory:
