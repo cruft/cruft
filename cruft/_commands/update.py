@@ -38,7 +38,7 @@ def update(
 
     cruft_state = json.loads(cruft_file.read_text())
 
-    with AltTemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory(cruft_state["directory"]) as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"

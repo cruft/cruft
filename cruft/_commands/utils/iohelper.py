@@ -1,13 +1,16 @@
 from tempfile import TemporaryDirectory
+from typing import Optional
+from pathlib import Path
 from time import sleep
 import sys
 
 
 class AltTemporaryDirectory:
-    def __init__(self):
+    def __init__(self, directory: Optional[str] = None):
         self.tmpdir = TemporaryDirectory()
         self._extended_path = False
-        name = self.tmpdir.name
+        self._directory = directory or ""
+        name = str(Path(self.tmpdir.name) / self._directory)
         if name not in sys.path:
             self._extended_path = True
             sys.path.append(name)
@@ -17,7 +20,8 @@ class AltTemporaryDirectory:
 
     def cleanup(self, cnt=0):
         if self._extended_path:
-            sys.path.remove(self.tmpdir.name)
+            name = str(Path(self.tmpdir.name) / self._directory)
+            sys.path.remove(name)
         if cnt >= 5:  # pragma: no cover
             raise RuntimeError("Could not delete TemporaryDirectory!")
         try:

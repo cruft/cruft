@@ -19,7 +19,7 @@ def diff(
     checkout = checkout or cruft_state.get("commit")
 
     has_diff = False
-    with AltTemporaryDirectory() as tmpdir_:
+    with AltTemporaryDirectory(cruft_state["directory"]) as tmpdir_:
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
         remote_template_dir = tmpdir / "remote"
