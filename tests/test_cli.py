@@ -479,11 +479,11 @@ def test_local_extension(cruft_runner, tmpdir):
             "create",
             "--output-dir",
             str(tmpdir),
-            "https://github.com/Chilipp/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             "--directory",
             "dir",
             "--checkout",
-            "local-extension",
+            "extensions",
             "-y",
         ]
     )
@@ -499,7 +499,7 @@ def test_local_extension_update(cruft_runner, tmpdir):
             "--project-dir",
             str(tmpdir / "test"),
             "--checkout",
-            "local-extension-update",
+            "extensions-update",
             "--skip-apply-ask",
         ]
     )
