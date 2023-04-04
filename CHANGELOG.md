@@ -17,6 +17,9 @@ OR
 Changelog
 =========
 
+## 2.13.0 - 4 April 2023
+- [Implemented #172](https://github.com/cruft/cruft/issues/172) Add support for local extensions
+
 ## 2.12.0 - 28 December 2022
 - Uncapped version requirements (including Python) for greater compatiblity
 - [Fixed issue #166](https://github.com/cruft/cruft/issues/166): Fixed compatiblity with latest version of cookiecutter
