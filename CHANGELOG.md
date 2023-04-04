@@ -17,6 +17,10 @@ OR
 Changelog
 =========
 
+
+## 2.14.0 - 4 April 2023
+- [Implemented #57](https://github.com/cruft/cruft/issues/57): Accept cookiecutter arguments on the command line for update
+
 ## 2.13.0 - 4 April 2023
 - [Implemented #172](https://github.com/cruft/cruft/issues/172): Add support for local extensions
 
