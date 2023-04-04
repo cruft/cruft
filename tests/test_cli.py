@@ -471,3 +471,38 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     print(result.stdout)
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout
+
+
+def test_local_extension(cruft_runner, tmpdir):
+    result = cruft_runner(
+        [
+            "create",
+            "--output-dir",
+            str(tmpdir),
+            "https://github.com/cruft/cookiecutter-test",
+            "--directory",
+            "dir",
+            "--checkout",
+            "extensions",
+            "-y",
+        ]
+    )
+    assert result.exit_code == 0
+    assert result.stdout == ""
+
+
+def test_local_extension_update(cruft_runner, tmpdir):
+    test_local_extension(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "update",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "extensions-update",
+            "--skip-apply-ask",
+        ]
+    )
+    assert result.exit_code == 0
+    with open(tmpdir / "test" / "README.md") as f:
+        assert "Updated11" in f.read()

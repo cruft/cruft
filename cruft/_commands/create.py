@@ -23,7 +23,7 @@ def create(
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
-    with AltTemporaryDirectory() as cookiecutter_template_dir_str:
+    with AltTemporaryDirectory(directory) as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
         with utils.cookiecutter.get_cookiecutter_repo(
             template_git_url, cookiecutter_template_dir, checkout
