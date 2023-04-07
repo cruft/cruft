@@ -2,8 +2,12 @@
 name: Docker publish
 
 on:
-  release:
-    types: [released]
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build-docker:
@@ -13,9 +17,9 @@ jobs:
       contents: read
       packages: write
     env:
-      dockerhub_image: cruft/cruft
-      github_image: ghcr.io/cruft/cruft
-      version: ${{ github.event.release.tag_name }}
+      dockerhub_image: jetexe/cruft
+      github_image: ghcr.io/jetexe/cruft
+      version: 2.14.0
 
     steps:
       - name: Checkout code
@@ -82,11 +86,11 @@ jobs:
             org.opencontainers.image.title="cruft"
             version=${{ env.version }}
           tags: |
-            ${{ env.dockerhub_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}.${{ steps.slug.outputs.version-patch }}
-            ${{ env.dockerhub_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}
-            ${{ env.dockerhub_image }}:${{ steps.slug.outputs.version-major }}
+            ${{ env.dockerhub_image }}:2.14.0
+            ${{ env.dockerhub_image }}:2.14
+            ${{ env.dockerhub_image }}:2
             ${{ env.dockerhub_image }}:latest
-            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}.${{ steps.slug.outputs.version-patch }}
-            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}
-            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}
+            ${{ env.github_image }}:2.14.0
+            ${{ env.github_image }}:2.14
+            ${{ env.github_image }}:2
             ${{ env.github_image }}:latest
