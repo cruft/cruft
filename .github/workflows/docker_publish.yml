@@ -63,7 +63,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
-          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7 # linux/arm/v6 unavailable now <https://github.com/docker-library/python/issues/823>
+          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v6,linux/arm/v7
           build-args: |
             CRUFT_VERSION=${{ env.version }}
           labels: |
@@ -74,7 +74,7 @@ jobs:
             org.opencontainers.image.vendor="cruft"
             org.opencontainers.image.title="cruft"
             version=${{ env.version }}
-          tags: |            
+          tags: |
             ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}.${{ steps.slug.outputs.version-patch }}
             ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}
             ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}
