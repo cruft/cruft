@@ -1,0 +1,81 @@
+---
+name: Docker publish
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  build-docker:
+    name: Build and push docker images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      github_image: ghcr.io/cruft/cruft
+      version: ${{ github.event.release.tag_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.7"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use "3.7"
+          poetry install
+
+      - name: Bump version number
+        run: poetry version ${{ env.version }}
+
+      - name: Build package
+        run: poetry build
+
+      - name: Login to Github image registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup qemu
+        uses: docker/setup-qemu-action@v2 # Action page: <https://github.com/docker/setup-qemu-action>
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Get slugs
+        uses: gacts/github-slug@v1 # Action page: <https://github.com/gacts/github-slug>
+        id: slug
+
+      - name: Build image
+        uses: docker/build-push-action@v4 # Action page: <https://github.com/docker/build-push-action>
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64 # linux/arm/v6,linux/arm/v7,linux/386 is not supported
+          build-args: |
+            CRUFT_VERSION=${{ env.version }}
+          labels: |
+            org.opencontainers.image.url="https://github.com/cruft/cruft"
+            org.opencontainers.image.documentation="https://github.com/cruft/cruft"
+            org.opencontainers.image.source="https://github.com/cruft/cruft"
+            org.opencontainers.image.version=${{ github.event.release.tag_name }}
+            org.opencontainers.image.vendor="cruft"
+            org.opencontainers.image.title="cruft"
+            version=${{ env.version }}
+          tags: |
+            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}.${{ steps.slug.outputs.version-patch }}
+            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}
+            ${{ env.github_image }}:${{ steps.slug.outputs.version-major }}
+            ${{ env.github_image }}:latest
