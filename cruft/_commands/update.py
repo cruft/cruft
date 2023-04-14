@@ -23,6 +23,7 @@ def update(
     strict: bool = True,
     allow_untracked_files: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
+    template: Optional[str] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -52,10 +53,9 @@ def update(
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
+        template_url = template or cruft_state["template"]
         # Clone the template
-        with utils.cookiecutter.get_cookiecutter_repo(
-            cruft_state["template"], repo_dir, checkout
-        ) as repo:
+        with utils.cookiecutter.get_cookiecutter_repo(template_url, repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date and no inputs are asked
