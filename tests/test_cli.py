@@ -446,6 +446,46 @@ def test_update_extra_context(
     assert result.exit_code == 0
 
 
+def test_update_alternative_template(cruft_runner, cookiecutter_dir):
+    # change template in .cruft.json to an invalid one,
+    # so we are sure, that the cli argument is used
+    with (cookiecutter_dir / ".cruft.json").open("r") as f:
+        cruft_json = json.load(f)
+    cruft_json["template"] = "INVALID"
+    cruft_json["context"]["cookiecutter"]["_template"] = "INVALID"
+    with (cookiecutter_dir / ".cruft.json").open("w") as f:
+        json.dump(cruft_json, f)
+    # Commit the changes so that the repo is clean
+    run(["git", "init"], cwd=cookiecutter_dir)
+    run(["git", "add", "-A"], cwd=cookiecutter_dir)
+    run(
+        [
+            "git",
+            "-c",
+            "user.name='test'",
+            "-c",
+            "user.email='user@test.com'",
+            "commit",
+            "-am",
+            "test",
+        ],
+        cwd=cookiecutter_dir,
+    )
+    result = cruft_runner(
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir.as_posix(),
+            "-c",
+            "updated",
+            "--template",
+            "https://github.com/cruft/cookiecutter-test",
+        ]
+    )
+    assert result.exit_code == 0
+    assert "cruft has been updated" in result.stdout
+
+
 @pytest.mark.parametrize("args,expected_exit_code", [([], 0), (["--exit-code"], 1), (["-e"], 1)])
 def test_diff_has_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
     (cookiecutter_dir / "README.md").write_text("changed content\n")
