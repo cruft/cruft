@@ -1,3 +1,5 @@
+from distutils import dir_util
+from distutils.errors import DistutilsFileError
 from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -5,7 +7,7 @@ from urllib.parse import urlparse
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context
 from cookiecutter.prompt import prompt_for_config
-from git import GitCommandError, Repo
+from git import GitCommandError, NoSuchPathError, Repo
 
 from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
 
@@ -38,23 +40,33 @@ def resolve_template_url(url: str) -> str:
 
 
 def get_cookiecutter_repo(
-    template_git_url: str,
+    template_git: str,
     cookiecutter_template_dir: Path,
     checkout: Optional[str] = None,
     **clone_kwargs,
 ) -> Repo:
-    try:
-        repo = Repo.clone_from(template_git_url, cookiecutter_template_dir, **clone_kwargs)
-    except GitCommandError as error:
-        raise InvalidCookiecutterRepository(
-            template_git_url, f"Failed to clone the repo. {error.stderr.strip()}"
-        )
+    if "://" in template_git.split(".")[0]:
+        try:
+            repo = Repo.clone_from(template_git, cookiecutter_template_dir, **clone_kwargs)
+        except GitCommandError as error:
+            raise InvalidCookiecutterRepository(
+                template_git, f"Failed to clone the repo. {error.stderr.strip()}"
+            )
+    else:
+        try:
+            dir_util.copy_tree(template_git, str(cookiecutter_template_dir))
+            repo = Repo(cookiecutter_template_dir)
+        except (NoSuchPathError, FileNotFoundError, DistutilsFileError):
+            raise InvalidCookiecutterRepository(
+                str(cookiecutter_template_dir), f"Template path is not a valid git repo."
+            )
+
     if checkout is not None:
         try:
             repo.git.checkout(checkout)
         except GitCommandError as error:
             raise InvalidCookiecutterRepository(
-                template_git_url,
+                template_git,
                 f"Failed to check out the reference {checkout}. {error.stderr.strip()}",
             )
     return repo

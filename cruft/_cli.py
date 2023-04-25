@@ -246,6 +246,11 @@ def update(
         help="A JSON string describing any extra context to pass to cookiecutter.",
         show_default=False,
     ),
+    template_path: Optional[str] = typer.Option(
+        None,
+        "--template-repo",
+        help="Name of the template repo if it is already cloned locally"
+    ),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -257,6 +262,7 @@ def update(
         strict=strict,
         allow_untracked_files=allow_untracked_files,
         extra_context=json.loads(extra_context),
+        template_path=template_path
     ):
         raise typer.Exit(1)
 
