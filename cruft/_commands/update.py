@@ -23,7 +23,7 @@ def update(
     strict: bool = True,
     allow_untracked_files: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
-    template_path: Optional[str] = None
+    template_path: Optional[str] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
 
@@ -41,8 +41,6 @@ def update(
             directory = str(Path("repo") / dir_name)
         else:
             directory = "repo"
-
-
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
@@ -62,9 +60,7 @@ def update(
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
         # Clone the template or use already checked out repo in .cookiecutters directory
-        with utils.cookiecutter.get_cookiecutter_repo(
-            template, repo_dir, checkout
-        ) as repo:
+        with utils.cookiecutter.get_cookiecutter_repo(template, repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date and no inputs are asked

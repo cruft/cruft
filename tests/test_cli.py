@@ -78,6 +78,7 @@ def test_create(cruft_runner, tmpdir):
     assert result.exit_code == 0
     assert result.stdout == ""
 
+
 def test_create_interactive(cruft_runner, tmpdir):
     result = cruft_runner(
         [
@@ -330,18 +331,22 @@ def test_update_strict(cruft_runner, cookiecutter_dir_updated):
     assert result.exit_code == 0
     assert "cruft has been updated" in result.stdout
 
+
 def test_update_with_template_directory(cruft_runner, cookiecutter_dir_updated, tmp_path):
     template_dir = Path(tmp_path / "templates" / "cookiecutter-test")
     template_dir.mkdir(parents=True)
     Repo.clone_from("https://github.com/cruft/cookiecutter-test.git", str(template_dir))
 
     result = cruft_runner(
-        ["update",
-         "--project-dir",
-         cookiecutter_dir_updated.as_posix(),
-         "--template-repo",
-         template_dir.as_posix(),
-         "-y"])
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir_updated.as_posix(),
+            "--template-repo",
+            template_dir.as_posix(),
+            "-y",
+        ]
+    )
     assert result.exit_code == 0
     assert "cruft has been updated" in result.stdout
 
