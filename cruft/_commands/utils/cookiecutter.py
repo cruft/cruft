@@ -58,7 +58,8 @@ def get_cookiecutter_repo(
             repo = Repo(cookiecutter_template_dir)
         except (NoSuchPathError, FileNotFoundError, DistutilsFileError):
             raise InvalidCookiecutterRepository(
-                str(cookiecutter_template_dir), f"Template path is not a valid git repo."
+                str(cookiecutter_template_dir),
+                f"Template path is not a valid git repo: {cookiecutter_template_dir}",
             )
 
     if checkout is not None:
