@@ -76,7 +76,7 @@ def create(
         False,
         "--no-input",
         "-y",
-        help="Do not prompt for parameters and only use cookiecutter.json file content",
+        help="Do not prompt for template variables and only use cookiecutter.json file content",
         show_default=False,
     ),
     directory: Optional[str] = typer.Option(
@@ -190,7 +190,7 @@ def update(
         False,
         "--cookiecutter-input",
         "-i",
-        help="Prompt for cookiecutter parameters for the latest template version",
+        help="Prompt for cookiecutter template variables for the latest template version",
         show_default=False,
     ),
     refresh_private_variables: bool = typer.Option(
@@ -242,9 +242,32 @@ def update(
     ),
     extra_context: str = typer.Option(
         "{}",
+        "--variables-to-update",
         "--extra-context",
-        help="A JSON string describing any extra context to pass to cookiecutter.",
+        help=(
+            "Cookiecutter template variables to update in the format of a JSON string,"
+            ' e.g. --variables-to-update \'{ "project" : "new-name" }\'.'
+            " Using this option will update the project (including `.cruft.json`)"
+            " to use the new values of any variables specified."
+        ),
         show_default=False,
+    ),
+    extra_context_file: Path = typer.Option(
+        None,
+        "--variables-to-update-file",
+        help=(
+            "Cookiecutter template variables to update in the format of a new cruft file"
+            " (i.e. similar format as `.cruft.json`)."
+            " Using this option will parse the file as a JSON string and read"
+            " `context.cookiecutter` for any new values of variables, then use those to update"
+            " the project. As part of this process `.cruft.json` will be updated as well."
+        ),
+        show_default=False,
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
     ),
 ) -> None:
     if not _commands.update(
@@ -257,12 +280,13 @@ def update(
         strict=strict,
         allow_untracked_files=allow_untracked_files,
         extra_context=json.loads(extra_context),
+        extra_context_file=extra_context_file,
     ):
         raise typer.Exit(1)
 
 
 @app.command(
-    short_help="Show the diff between the project and the current cruft template.",
+    short_help="Show the diff between the project and the current cruft template",
     help=_get_help_string(_commands.diff),
 )
 def diff(
