@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from cookiecutter.generate import generate_files
+
 from cruft.exceptions import InvalidCookiecutterRepository
 
 from . import utils
