@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from cookiecutter.generate import generate_files
+from cruft.exceptions import InvalidCookiecutterRepository
 
 from . import utils
 from .utils import example
@@ -25,45 +26,48 @@ def create(
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
     with AltTemporaryDirectory(directory) as cookiecutter_template_dir_str:
         cookiecutter_template_dir = Path(cookiecutter_template_dir_str)
-        with utils.cookiecutter.get_cookiecutter_repo(
-            template_git_url, cookiecutter_template_dir, checkout
-        ) as repo:
-            last_commit = repo.head.object.hexsha
+        try:
+            with utils.cookiecutter.get_cookiecutter_repo(
+                template_git_url, cookiecutter_template_dir, checkout
+            ) as repo:
+                last_commit = repo.head.object.hexsha
 
-            if directory:
-                cookiecutter_template_dir = cookiecutter_template_dir / directory
+                if directory:
+                    cookiecutter_template_dir = cookiecutter_template_dir / directory
 
-            context = utils.cookiecutter.generate_cookiecutter_context(
-                template_git_url,
-                cookiecutter_template_dir,
-                config_file,
-                default_config,
-                extra_context,
-                no_input,
+                context = utils.cookiecutter.generate_cookiecutter_context(
+                    template_git_url,
+                    cookiecutter_template_dir,
+                    config_file,
+                    default_config,
+                    extra_context,
+                    no_input,
+                )
+
+            project_dir = Path(
+                generate_files(
+                    repo_dir=cookiecutter_template_dir,
+                    context=context,
+                    overwrite_if_exists=overwrite_if_exists,
+                    output_dir=str(output_dir),
+                )
             )
 
-        project_dir = Path(
-            generate_files(
-                repo_dir=cookiecutter_template_dir,
-                context=context,
-                overwrite_if_exists=overwrite_if_exists,
-                output_dir=str(output_dir),
-            )
-        )
+            cruft_content = {
+                "template": template_git_url,
+                "commit": last_commit,
+                "checkout": checkout,
+                "context": context,
+                "directory": directory,
+            }
 
-        cruft_content = {
-            "template": template_git_url,
-            "commit": last_commit,
-            "checkout": checkout,
-            "context": context,
-            "directory": directory,
-        }
+            if skip:
+                cruft_content["skip"] = skip
 
-        if skip:
-            cruft_content["skip"] = skip
+            # After generating the project - save the cruft state
+            # into the cruft file.
+            (project_dir / ".cruft.json").write_text(utils.cruft.json_dumps(cruft_content))
 
-        # After generating the project - save the cruft state
-        # into the cruft file.
-        (project_dir / ".cruft.json").write_text(utils.cruft.json_dumps(cruft_content))
-
-        return project_dir
+            return project_dir
+        except ValueError as err:
+            raise InvalidCookiecutterRepository(f"Failed to get git reference {err}")

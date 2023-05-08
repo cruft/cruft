@@ -48,7 +48,7 @@ def get_cookiecutter_repo(
     if "://" in template_git.split(".")[0]:
         try:
             repo = Repo.clone_from(template_git, cookiecutter_template_dir, **clone_kwargs)
-        except (GitCommandError, ValueError) as error:
+        except GitCommandError as error:
             raise InvalidCookiecutterRepository(
                 template_git, f"Failed to clone the repo. {error.stderr.strip()}"
             )
