@@ -45,7 +45,8 @@ def get_cookiecutter_repo(
     checkout: Optional[str] = None,
     **clone_kwargs,
 ) -> Repo:
-    if "://" in template_git.split(".")[0]:
+    parsed_url = urlparse(template_git)
+    if parsed_url.scheme == "http" or parsed_url.scheme == "https":
         try:
             repo = Repo.clone_from(template_git, cookiecutter_template_dir, **clone_kwargs)
         except GitCommandError as error:
