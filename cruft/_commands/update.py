@@ -23,9 +23,24 @@ def update(
     strict: bool = True,
     allow_untracked_files: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
+    template_path: Optional[str] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
+
     cruft_file = utils.cruft.get_cruft_file(project_dir)
+    cruft_state = json.loads(cruft_file.read_text())
+
+    if template_path:
+        template = template_path
+        directory = "repo"
+    else:
+        template = cruft_state["template"]
+        dir_name = cruft_state.get("directory", "")
+
+        if dir_name:
+            directory = str(Path("repo") / dir_name)
+        else:
+            directory = "repo"
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
@@ -37,14 +52,6 @@ def update(
         )
         return False
 
-    cruft_state = json.loads(cruft_file.read_text())
-
-    directory = cruft_state.get("directory", "")
-    if directory:
-        directory = str(Path("repo") / directory)
-    else:
-        directory = "repo"
-
     with AltTemporaryDirectory(directory) as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
@@ -52,10 +59,8 @@ def update(
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
-        # Clone the template
-        with utils.cookiecutter.get_cookiecutter_repo(
-            cruft_state["template"], repo_dir, checkout
-        ) as repo:
+        # Clone the template or use already checked out repo in .cookiecutters directory
+        with utils.cookiecutter.get_cookiecutter_repo(template, repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date and no inputs are asked
