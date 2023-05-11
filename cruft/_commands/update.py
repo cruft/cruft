@@ -23,9 +23,30 @@ def update(
     strict: bool = True,
     allow_untracked_files: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
+    extra_context_file: Optional[Path] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
+
+    if extra_context_file:
+        if extra_context_file.samefile(cruft_file):
+            typer.secho(
+                f"The file path given to --variables-to-update-file cannot be the same as the"
+                f" project's cruft file ({cruft_file}), as the update process needs"
+                f" to know the old/original values of variables as well. Please specify a"
+                f" different path, and the project's cruft file will be updated as"
+                f" part of the process.",
+                fg=typer.colors.RED,
+            )
+            return False
+
+        extra_context_from_cli = extra_context
+        with open(extra_context_file, "r") as extra_context_fp:
+            extra_context = json.load(extra_context_fp) or {}
+        extra_context = extra_context.get("context") or {}
+        extra_context = extra_context.get("cookiecutter") or {}
+        if extra_context_from_cli:
+            extra_context.update(extra_context_from_cli)
 
     # If the project dir is a git repository, we ensure
     # that the user has a clean working directory before proceeding.
