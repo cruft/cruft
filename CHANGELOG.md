@@ -17,6 +17,9 @@ OR
 Changelog
 =========
 
+## 2.15.0 - 11 May 2023
+- [Improved #57](https://github.com/cruft/cruft/issues/57): Improve how a project can be updated to use new values of template variables
+
 
 ## 2.14.0 - 4 April 2023
 - [Implemented #57](https://github.com/cruft/cruft/issues/57): Accept cookiecutter arguments on the command line for update
