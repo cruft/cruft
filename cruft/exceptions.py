@@ -59,3 +59,12 @@ class ChangesetUnicodeError(CruftError):
                 "unicode. Typically a result of hidden binary files in project folder."
             )
         )
+
+
+class RegexCompilationError(CruftError):
+    """Raised when the regex in `skip-regex` cannot be compiled"""
+
+    def __init__(self, regex):
+        super().__init__(
+            (f'Unable to compile the regular expression provided in `--skip-regex="{regex}"`')
+        )
