@@ -695,4 +695,8 @@ def test_local_extension_update(cruft_runner, tmpdir):
     )
     assert result.exit_code == 0
     with open(tmpdir / "test" / "README.md") as f:
-        assert "Updated11" in f.read()
+        contents = f.read()
+        # check if the text has been updated
+        assert "Updated11" in contents
+        # check if the extension has been updated
+        assert "This has been updated" in contents
