@@ -669,7 +669,11 @@ def test_local_extension(cruft_runner, tmpdir):
             "create",
             "--output-dir",
             str(tmpdir),
-            "https://github.com/cruft/cookiecutter-test",
+            # TODO: This should be reverted to the
+            # official cruft/cookiecutter-test repo once
+            # https://github.com/cruft/cookiecutter-test/pull/7
+            # has been merged
+            "https://github.com/Chilipp/cookiecutter-test",
             "--directory",
             "dir",
             "--checkout",
