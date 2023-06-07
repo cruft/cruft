@@ -115,7 +115,7 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
             "pyproject.toml is present in repo, but python version is < 3.11 and "
             "`toml` package is not installed. Cruft configuration may be ignored."
         )
-    return set(map(Path, skip_cruft))
+    return set(skip_cruft)
 
 
 def _get_deleted_files(template_dir: Path, project_dir: Path):
