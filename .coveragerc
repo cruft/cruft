@@ -8,3 +8,5 @@ exclude_lines =
     pragma: no cov_4_nix
     pragma: no cov_4_nix
     pragma: no cov_4_nix
+    pragma: no cov_4_nix
+    pragma: no cov_4_nix
