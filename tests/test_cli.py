@@ -3,6 +3,7 @@ from functools import partial
 from pathlib import Path
 from subprocess import run  # nosec
 from textwrap import dedent
+from cruft._commands.utils import cookiecutter
 
 import pytest
 from typer.testing import CliRunner
@@ -661,6 +662,20 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     print(result.stdout)
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout
+
+
+@pytest.mark.parametrize("expected_exit_code, include_deleted", [(0, False), (1, True)])
+def test_diff_deleted_files(expected_exit_code, include_deleted, cruft_runner, cookiecutter_dir):
+    print("cookiecutter_dir", cookiecutter_dir)
+    print(list(cookiecutter_dir.iterdir()))
+    # Delete a file from the project
+    (cookiecutter_dir / 'README.md').unlink()
+    args = ["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"]
+    if include_deleted:
+        args += ['--include-deleted-files']
+    result = cruft_runner(args)
+    print(result.stdout)
+    assert result.exit_code == expected_exit_code
 
 
 def test_local_extension(cruft_runner, tmpdir):

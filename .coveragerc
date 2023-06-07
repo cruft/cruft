@@ -6,3 +6,5 @@ exclude_lines =
     pragma: no cover
     pragma: no cov_4_nix
     pragma: no cov_4_nix
+    pragma: no cov_4_nix
+    pragma: no cov_4_nix
