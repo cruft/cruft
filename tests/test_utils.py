@@ -113,3 +113,9 @@ def test_warn_if_cant_read_pyproject_toml(monkeypatch):
     monkeypatch.setattr(utils.generate, "tomllib", None)
     with pytest.warns(UserWarning, match="`toml` package is not installed"):
         utils.generate._get_skip_paths({}, Path(__file__))
+
+
+def test_get_extra_context_from_file():
+    extra_context_file = Path(__file__).parent / "testdata" / "unicode-data" / "extra_context.json"
+    extra_context = utils.cookiecutter.get_extra_context_from_file(extra_context_file)
+    assert extra_context == {"project": "CRUFT-TEST-PROJECT"}
