@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -99,3 +100,11 @@ def generate_cookiecutter_context(
     context["cookiecutter"]["_template"] = template_git_url
 
     return context
+
+
+def get_extra_context_from_file(extra_context_file: Path) -> Dict[str, Any]:
+    extra_context = {}
+    if extra_context_file.exists():
+        with open(extra_context_file, "r") as f:
+            extra_context = json.load(f)
+    return extra_context
