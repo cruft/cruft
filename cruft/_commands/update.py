@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, run  # nosec
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, Optional, Set, Union
 
 import click
 import typer
@@ -65,6 +65,8 @@ def update(
         directory = str(Path("repo") / directory)
     else:
         directory = "repo"
+
+    skip_regex: Union[str, None] = cruft_state.get("skip-regex", None)
 
     with AltTemporaryDirectory(directory) as tmpdir_:
         # Initial setup
@@ -133,6 +135,7 @@ def update(
             skip_update,
             skip_apply_ask,
             allow_untracked_files,
+            skip_regex,
         ):
             # Update the cruft state and dump the new state
             # to the cruft file
@@ -282,8 +285,9 @@ def _apply_project_updates(
     skip_update: bool,
     skip_apply_ask: bool,
     allow_untracked_files: bool,
+    skip_regex: Union[str, None],
 ) -> bool:
-    diff = utils.diff.get_diff(old_main_directory, new_main_directory)
+    diff = utils.diff.get_diff(old_main_directory, new_main_directory, skip_regex)
 
     if not skip_apply_ask and not skip_update:
         input_str: str = "v"

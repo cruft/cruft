@@ -100,6 +100,12 @@ and update the `.cruft.json` file for you.
             ...
         }
 
+    You may also want to skip lines that contain very specific text patterns in files that you cannot ignore. One such example would be updates to versions in your `pyproject.toml`. In this case you may use the `skip-regex` option which accepts typical [regular expressions](https://docs.python.org/3/howto/regex.html#regex-howto). All lines matching your regular expression will be ignored when updating your project.
+
+        [tool.cruft]
+        skip-regex = "(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[a-zA-Z\d][-a-zA-Z.\d]*)?(\+[a-zA-Z\d][-a-zA-Z.\d]*)?" # regex which matches lines containing semver-formatted versions
+    
+
 ## Updating Values of Template Variables
 
 `cruft` can also be used to update a project to use new values of template variables; avoiding the need to regenerate

@@ -1,3 +1,5 @@
+import re
+import typing
 from pathlib import Path
 from re import sub
 from subprocess import PIPE, run  # nosec
@@ -25,7 +27,7 @@ def _git_diff(*args: str) -> List[str]:
     ]
 
 
-def get_diff(repo0: Path, repo1: Path) -> str:
+def get_diff(repo0: Path, repo1: Path, skip_regex: typing.Union[str, None] = None) -> str:
     """Compute the raw diff between two repositories."""
     # Use Path methods in order to straighten out the differences between the the OSs.
     repo0_str = repo0.resolve().as_posix()
@@ -39,6 +41,16 @@ def get_diff(repo0: Path, repo1: Path) -> str:
         ).stdout.decode()
     except UnicodeDecodeError:
         raise exceptions.ChangesetUnicodeError()
+
+    if skip_regex:
+        try:
+            pattern = re.compile(skip_regex)
+        except Exception as error:
+            raise exceptions.RegexCompilationError(skip_regex) from error
+        diff = str.join(
+            "\n", filter(lambda line: pattern.fullmatch(line) is None, diff.splitlines())
+        )
+
     # By default, git diff --no-index will output full paths like so:
     # --- a/tmp/tmpmp34g21y/remote/.coveragerc
     # +++ b/tmp/tmpmp34g21y/local/.coveragerc

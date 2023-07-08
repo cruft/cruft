@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,35 @@ def test_get_diff_with_delete(tmp_path: Path):
     diff = utils.diff.get_diff(repo0, repo1)
 
     assert diff.startswith("diff --git upstream-template-old/file upstream-template-new/file")
+
+
+def test_get_diff_with_skip_regex(tmp_path: Path):
+    repo0 = tmp_path / "repo0"
+    repo1 = tmp_path / "repo1"
+
+    repo0.mkdir()
+    (repo0 / "file").touch()
+
+    shutil.copytree(repo0, repo1)
+
+    with open(repo1 / "file", "w") as file:
+        file.write("this line will match the regex\nand this one won't")
+
+    diff = utils.diff.get_diff(repo0, repo1, skip_regex="^.*regex.*$")
+
+    assert "this line will match the regex" not in diff
+    assert "and this one won't" in diff
+
+
+def test_get_diff_with_skip_regex_invalid_regex(tmp_path: Path):
+    repo0 = tmp_path / "repo0"
+    repo1 = tmp_path / "repo1"
+
+    repo0.mkdir()
+    repo1.mkdir()
+
+    with pytest.raises(exceptions.RegexCompilationError):
+        utils.diff.get_diff(repo0, repo1, skip_regex="*\\ i am not a regex *\\")
 
 
 def test_get_diff_with_unicode(project_dir):
