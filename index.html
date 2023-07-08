@@ -1,0 +1,958 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="art/logo.png">
+      <meta name="generator" content="mkdocs-1.2.4, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>cruft</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ffa724">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="orange" data-md-color-accent="cyan">
+  
+    
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#trending-contributors" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="cruft" class="md-header__button md-logo" aria-label="cruft" data-md-component="logo">
+      
+  <img src="art/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            cruft
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/cruft/cruft/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cruft
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="cruft" class="md-nav__button md-logo" aria-label="cruft" data-md-component="logo">
+      
+  <img src="art/logo.png" alt="logo">
+
+    </a>
+    cruft
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/cruft/cruft/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cruft
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trending-contributors" class="md-nav__link">
+    Trending Contributors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    Key Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-new-project" class="md-nav__link">
+    Creating a New Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-a-project" class="md-nav__link">
+    Updating a Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-values-of-template-variables" class="md-nav__link">
+    Updating Values of Template Variables
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating Values of Template Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-variables-via-the-command-line" class="md-nav__link">
+    Update Variables via the Command Line
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-variables-via-a-cruft-file" class="md-nav__link">
+    Update Variables via a Cruft File
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checking-a-project" class="md-nav__link">
+    Checking a Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linking-an-existing-project" class="md-nav__link">
+    Linking an Existing Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compute-the-diff" class="md-nav__link">
+    Compute the diff
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automating-updates-with-github-actions" class="md-nav__link">
+    Automating updates with GitHub Actions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-create-cruft" class="md-nav__link">
+    Why Create cruft?
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CHANGELOG/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/contributing/1.-contributing-guide/" class="md-nav__link">
+        1. Contributing Guide
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/contributing/2.-coding-standard/" class="md-nav__link">
+        2. Coding Standard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/contributing/3.-code-of-conduct/" class="md-nav__link">
+        3. Code Of Conduct
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/contributing/4.-acknowledgements/" class="md-nav__link">
+        4. Acknowledgements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          Cruft
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cruft" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          Cruft
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/cruft/exceptions/" class="md-nav__link">
+        Exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/cruft/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trending-contributors" class="md-nav__link">
+    Trending Contributors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    Key Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-new-project" class="md-nav__link">
+    Creating a New Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-a-project" class="md-nav__link">
+    Updating a Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-values-of-template-variables" class="md-nav__link">
+    Updating Values of Template Variables
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating Values of Template Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-variables-via-the-command-line" class="md-nav__link">
+    Update Variables via the Command Line
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-variables-via-a-cruft-file" class="md-nav__link">
+    Update Variables via a Cruft File
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checking-a-project" class="md-nav__link">
+    Checking a Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linking-an-existing-project" class="md-nav__link">
+    Linking an Existing Project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compute-the-diff" class="md-nav__link">
+    Compute the diff
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automating-updates-with-github-actions" class="md-nav__link">
+    Automating updates with GitHub Actions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-create-cruft" class="md-nav__link">
+    Why Create cruft?
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/cruft/cruft/edit/main/README.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Home</h1>
+                
+                <p><a href="https://cruft.github.io/cruft/"><img alt="cruft - Fight Back Against the Boilerplate Monster!" src="https://raw.github.com/cruft/cruft/master/art/logo_large.png" /></a></p>
+<hr />
+<p><a href="http://badge.fury.io/py/cruft"><img alt="PyPI version" src="https://badge.fury.io/py/cruft.svg" /></a>
+<a href="https://anaconda.org/conda-forge/cruft"><img alt="Conda Version" src="https://img.shields.io/conda/vn/conda-forge/cruft.svg" /></a>
+<a href="https://github.com/cruft/cruft/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster"><img alt="Build Status" src="https://github.com/cruft/cruft/workflows/Run%20tests/badge.svg" /></a>
+<a href="https://codecov.io/gh/cruft/cruft"><img alt="codecov" src="https://codecov.io/gh/cruft/cruft/branch/master/graph/badge.svg" /></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+<a href="https://timothycrosley.github.io/isort/"><img alt="Imports: isort" src="https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&amp;labelColor=ef8336" /></a>
+<a href="https://gitter.im/cruft/community?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img alt="Join the chat at https://gitter.im/cruft/community" src="https://badges.gitter.im/cruft/community.svg" /></a>
+<a href="https://pypi.python.org/pypi/cruft/"><img alt="License" src="https://img.shields.io/github/license/mashape/apistatus.svg" /></a>
+<a href="https://pepy.tech/project/cruft"><img alt="Downloads" src="https://pepy.tech/badge/cruft" /></a></p>
+<h4 id="trending-contributors">Trending Contributors</h4>
+<p><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/0"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/0" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/1"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/1" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/2"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/2" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/3"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/3" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/4"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/4" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/5"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/5" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/6"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/6" /></a><a href="https://sourcerer.io/fame/samj1912/cruft/cruft/links/7"><img alt="" src="https://sourcerer.io/fame/samj1912/cruft/cruft/images/7" /></a></p>
+<hr />
+<p><a href="https://cruft.github.io/cruft/">Read Latest Documentation</a> - <a href="https://github.com/cruft/cruft/">Browse GitHub Code Repository</a></p>
+<hr />
+<p><strong>cruft</strong> allows you to maintain all the necessary boilerplate for packaging and building projects separate from the code you intentionally write.
+Fully compatible with existing <a href="https://github.com/cookiecutter/cookiecutter">Cookiecutter</a> templates.</p>
+<p>Creating new projects from templates using cruft is easy:</p>
+<p><img alt="Example Usage New Project" src="https://raw.githubusercontent.com/cruft/cruft/master/art/example.gif" /></p>
+<p>And, so is updating them as the template changes overtime:</p>
+<p><img alt="Example Usage New Project" src="https://raw.githubusercontent.com/cruft/cruft/master/art/example_update.gif" /></p>
+<p>Many project template utilities exist that automate the copying and pasting of code to create new projects. This <em>seems</em> great! However, once created, most leave you with that copy-and-pasted code to manage through the life of your project.</p>
+<p>cruft is different. It automates the creation of new projects like the others, but then it also helps you to manage the boilerplate through the life of the project. cruft makes sure your code stays in-sync with the template it came from for you.</p>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Cookiecutter Compatible</strong>: cruft utilizes <a href="https://github.com/cookiecutter/cookiecutter">Cookiecutter</a> as its template expansion engine. Meaning it retains full compatibility with all existing <a href="https://github.com/cookiecutter/cookiecutter">Cookiecutter</a> templates.</li>
+<li><strong>Template Validation</strong>: cruft can quickly validate whether or not a project is using the latest version of a template using <code>cruft check</code>. This check can easily be added to CI pipelines to ensure your projects stay in-sync.</li>
+<li><strong>Automatic Template Updates</strong>: cruft automates the process of updating code to match the latest version of a template, making it easy to utilize template improvements across many projects.</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>To get started - install <code>cruft</code> using a Python package manager:</p>
+<p><code>pip3 install cruft</code></p>
+<p>OR</p>
+<p><code>poetry add cruft</code></p>
+<p>OR</p>
+<p><code>pipenv install cruft</code></p>
+<h2 id="creating-a-new-project">Creating a New Project</h2>
+<p>To create a new project using cruft run <code>cruft create PROJECT_URL</code> from the command line.</p>
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><code>    cruft create https://github.com/timothycrosley/cookiecutter-python/
+</code></pre></div>
+
+<p>cruft will then ask you any necessary questions to create your new project. It will use your answers to expand the provided template, and then return the directory it placed the expanded project.
+Behind the scenes, cruft uses <a href="https://github.com/cookiecutter/cookiecutter">Cookiecutter</a> to do the project expansion. The only difference in the resulting output is a <code>.cruft.json</code> file that
+contains the git hash of the template used as well as the template variables specified.</p>
+<h2 id="updating-a-project">Updating a Project</h2>
+<p>To update an existing project, that was created using cruft, run <code>cruft update</code> in the root of the project.
+If there are any updates, cruft will have you review them before applying. If you accept the changes cruft will apply them to your project
+and update the <code>.cruft.json</code> file for you.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Sometimes certain files just aren't good fits for updating. Such as test cases or <code>__init__</code> files. You can tell cruft to always skip updating these files on a project by generating project with <code>--skip cruft/__init__.py --skip tests</code> arguments or manually adding them to a skip section within your <code>.cruft.json</code> file:</p>
+<div class="codehilite"><pre><span></span><code>{
+    &quot;template&quot;: &quot;https://github.com/timothycrosley/cookiecutter-python&quot;,
+    &quot;commit&quot;: &quot;8a65a360d51250221193ed0ec5ed292e72b32b0b&quot;,
+    &quot;skip&quot;: [
+        &quot;cruft/__init__.py&quot;,
+        &quot;tests&quot;
+    ],
+    ...
+}
+</code></pre></div>
+
+<p>Or, if you have toml installed, you can add skip files directly to a <code>tool.cruft</code> section of your <code>pyproject.toml</code> file:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[tool.cruft]</span><span class="w"></span>
+<span class="na">skip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&quot;cruft/__init__.py&quot;, &quot;tests&quot;]</span><span class="w"></span>
+</code></pre></div>
+
+<p>Note that it is possible to use glob patterns for selecting the files to skip:
+    {
+        "skip": [
+            "*<em>/<strong>init</strong>.py",
+            "tests/</em>"
+        ],
+        ...
+    }</p>
+</div>
+<h2 id="updating-values-of-template-variables">Updating Values of Template Variables</h2>
+<p><code>cruft</code> can also be used to update a project to use new values of template variables; avoiding the need to regenerate
+the project from sratch using <code>cookiecutter</code>.</p>
+<p>For example, imagine a project that was initially generated some while ago, and then later on, you want to change the
+values of some of the template variables, e.g. to change <code>use_some_feature</code> to <code>"yes"</code> or to change <code>project_name</code> to
+<code>"new-project-name"</code>.</p>
+<p>There are 2 ways this can be done, as described below.</p>
+<h3 id="update-variables-via-the-command-line">Update Variables via the Command Line</h3>
+<p>You can perform the update directly via the command line if you have only a handful of simple variables.</p>
+<p>This will change <code>use_some_feature</code> to <code>"yes"</code> while leaving all other variables unchanged:</p>
+<div class="codehilite"><pre><span></span><code>cruft update --variables-to-update <span class="s1">&#39;{ &quot;use_some_feature&quot; : &quot;yes&quot; }&#39;</span>
+</code></pre></div>
+
+<p>This will change both <code>use_some_feature</code> to <code>"yes"</code> and <code>project_name</code> to <code>"new-project-name"</code> (and still leaving all
+other variables unchanged):</p>
+<div class="codehilite"><pre><span></span><code>cruft update --variables-to-update <span class="s1">&#39;{ &quot;use_some_feature&quot; : &quot;yes&quot;, &quot;project_name&quot; : &quot;new-project-name&quot; }&#39;</span>
+</code></pre></div>
+
+<p>The provided argument must be a valid JSON string (i.e. using double quotes, no trailing comma etc.).</p>
+<h3 id="update-variables-via-a-cruft-file">Update Variables via a Cruft File</h3>
+<p>If you prefer to use and editor or you have many or complex variables, you can also perform the changes via providing an
+updated .cruft.json.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># copy the existing cruft file to a temporary location (outside of your repo)</span>
+cp .cruft.json ~/tmp/new-cruft.json
+
+<span class="c1"># edit the file using your faviourite editor</span>
+edit ~/tmp/new-cruft.json
+
+<span class="c1"># perform the update</span>
+<span class="c1"># (this will also update your original .cruft.json automatically)</span>
+cruft update --variables-to-update-file ~/tmp/new-cruft.json
+</code></pre></div>
+
+<h2 id="checking-a-project">Checking a Project</h2>
+<p>Checking to see if a project is missing a template update is as easy as running <code>cruft check</code>. If the project is out-of-date an error and exit code 1 will be returned.
+<code>cruft check</code> can be added to CI pipelines to ensure projects don't unintentionally drift.</p>
+<h2 id="linking-an-existing-project">Linking an Existing Project</h2>
+<p>Have an existing project that you created from a template in the past using Cookiecutter directly? You can link it to the template that was used to create it using: <code>cruft link TEMPLATE_REPOSITORY</code>.</p>
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><code>    cruft link https://github.com/timothycrosley/cookiecutter-python/
+</code></pre></div>
+
+<p>You can then specify the last commit of the template the project has been updated to be consistent with, or accept the default of using the latest commit from the template.</p>
+<h2 id="compute-the-diff">Compute the diff</h2>
+<p>With time, your boilerplate may end up being very different from the actual cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running <code>cruft diff</code>. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to <code>git diff</code>.</p>
+<p>The <code>cruft diff</code> command optionally accepts an <code>--exit-code</code> flag that will make cruft exit with a non-0 code should any diff is found. You can combine this flag with the <code>skip</code> section of your <code>.cruft.json</code> to make stricter CI checks that ensures any improvement to the template is always submitted upstream.</p>
+<h2 id="automating-updates-with-github-actions">Automating updates with GitHub Actions</h2>
+<p>If you have many repositories to manage, you can automate the change detection process with GitHub Actions. This example runs every Monday at 2am UTC and creates a new pull request if there are changes detected which a maintainer can accept or reject. It creates two PRs - one to pull in the new files to the repository and one to update the <code>.cruft.json</code> file only, which has the effect of rejecting the change from the upstream repository.</p>
+<blockquote>
+<p>Since Jan 2022, registries/organisations must explicitly grant the authority to create a pull request. This can be enabled on a per-organisation level, or a per-registry level for personal projects. See <a href="https://github.blog/changelog/2022-05-03-github-actions-prevent-github-actions-from-creating-and-approving-pull-requests/">GitHub</a> for more details.</p>
+</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /.github/workflows/cruft-update.yml</span><span class="w"></span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update repository with Cruft</span><span class="w"></span>
+<span class="nt">permissions</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span><span class="w"></span>
+<span class="w">  </span><span class="nt">pull-requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span><span class="w"></span>
+<span class="nt">on</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cron</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0</span><span class="nv"> </span><span class="s">2</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">1&quot;</span><span class="w"> </span><span class="c1"># Every Monday at 2am</span><span class="w"></span>
+<span class="nt">jobs</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">update</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span><span class="w"></span>
+<span class="w">    </span><span class="nt">strategy</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">fail-fast</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">      </span><span class="nt">matrix</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">include</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">add-paths</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span><span class="w"></span>
+<span class="w">            </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use this to merge the changes to this repository.</span><span class="w"></span>
+<span class="w">            </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cruft/update</span><span class="w"></span>
+<span class="w">            </span><span class="nt">commit-message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;chore:</span><span class="nv"> </span><span class="s">accept</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">Cruft</span><span class="nv"> </span><span class="s">update&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">New updates detected with Cruft</span><span class="w"></span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">add-paths</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.cruft.json</span><span class="w"></span>
+<span class="w">            </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use this to reject the changes in this repository.</span><span class="w"></span>
+<span class="w">            </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cruft/reject</span><span class="w"></span>
+<span class="w">            </span><span class="nt">commit-message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;chore:</span><span class="nv"> </span><span class="s">reject</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">Cruft</span><span class="nv"> </span><span class="s">update&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Reject new updates detected with Cruft</span><span class="w"></span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span><span class="w"></span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v4</span><span class="w"></span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.10&quot;</span><span class="w"></span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install Cruft</span><span class="w"></span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip3 install cruft</span><span class="w"></span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Check if update is available</span><span class="w"></span>
+<span class="w">        </span><span class="nt">continue-on-error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">check</span><span class="w"></span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">          </span><span class="no">CHANGES=0</span><span class="w"></span>
+<span class="w">          </span><span class="no">if [ -f .cruft.json ]; then</span><span class="w"></span>
+<span class="w">            </span><span class="no">if ! cruft check; then</span><span class="w"></span>
+<span class="w">              </span><span class="no">CHANGES=1</span><span class="w"></span>
+<span class="w">            </span><span class="no">fi</span><span class="w"></span>
+<span class="w">          </span><span class="no">else</span><span class="w"></span>
+<span class="w">            </span><span class="no">echo &quot;No .cruft.json file&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="no">fi</span><span class="w"></span>
+
+<span class="w">          </span><span class="no">echo &quot;has_changes=$CHANGES&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;</span><span class="w"></span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run update if available</span><span class="w"></span>
+<span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">steps.check.outputs.has_changes == &#39;1&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">          </span><span class="no">git config --global user.email &quot;you@example.com&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="no">git config --global user.name &quot;GitHub&quot;</span><span class="w"></span>
+
+<span class="w">          </span><span class="no">cruft update --skip-apply-ask --refresh-private-variables</span><span class="w"></span>
+<span class="w">          </span><span class="no">git restore --staged .</span><span class="w"></span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create pull request</span><span class="w"></span>
+<span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">steps.check.outputs.has_changes == &#39;1&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peter-evans/create-pull-request@v4</span><span class="w"></span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span><span class="w"></span>
+<span class="w">          </span><span class="nt">add-paths</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.add-paths }}</span><span class="w"></span>
+<span class="w">          </span><span class="nt">commit-message</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.commit-message }}</span><span class="w"></span>
+<span class="w">          </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.branch }}</span><span class="w"></span>
+<span class="w">          </span><span class="nt">delete-branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">          </span><span class="nt">branch-suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timestamp</span><span class="w"></span>
+<span class="w">          </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.title }}</span><span class="w"></span>
+<span class="w">          </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">            </span><span class="no">This is an autogenerated PR. ${{ matrix.body }}</span><span class="w"></span>
+
+<span class="w">            </span><span class="no">[Cruft](https://cruft.github.io/cruft/) has detected updates from the Cookiecutter repository.</span><span class="w"></span>
+</code></pre></div>
+
+<h2 id="why-create-cruft">Why Create cruft?</h2>
+<p>Since I first saw videos of <a href="https://www.youtube.com/watch?v=9EctXzH2dss">quickly</a> being used to automate Ubuntu application creation, I've had a love/hate relationship with these kinds of tools.
+I've used them for many projects and certainly seen them lead to productivity improvements. However, I've always felt like they were a double-edged sword. Sure, they would automate away the copying and pasting many would do to create projects. However, by doing so,
+they encouraged more code to be copied and pasted! Then, over time, you could easily be left with hundreds of projects that contained copy-and-pasted code with no way to easy way to update them. I created cruft to be a tool that recognized that balance between project creation and maintenance and provided mechanisms to keep built projects up-to-date.</p>
+<p>I hope you too find <code>cruft</code> useful!</p>
+<p>~Timothy Crosley</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+        
+          <a href="CHANGELOG/" title="Changelog" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Changelog
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Powered by
+        <a href="http://timothycrosley.github.io/portray">portray.</a>
+        You too can
+        <a href="http://timothycrosley.github.io/portray">
+          portray</a>
+        your Python project well using automatic documentation.
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.f8263e09.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>
