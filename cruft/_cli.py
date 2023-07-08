@@ -72,6 +72,13 @@ def create(
         help="A JSON string describing any extra context to pass to cookiecutter.",
         show_default=False,
     ),
+    extra_context_file: Optional[Path] = typer.Option(
+        None,
+        "--extra-context-file",
+        "-E",
+        help="Path to a JSON file describing any extra context to pass to cookiecutter.",
+        exists=True,
+    ),
     no_input: bool = typer.Option(
         False,
         "--no-input",
@@ -110,6 +117,7 @@ def create(
         config_file=config_file,
         default_config=default_config,
         extra_context=json.loads(extra_context),
+        extra_context_file=extra_context_file,
         no_input=no_input,
         directory=directory,
         checkout=checkout,
