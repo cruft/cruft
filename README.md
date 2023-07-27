@@ -103,7 +103,7 @@ and update the `.cruft.json` file for you.
 ## Updating Values of Template Variables
 
 `cruft` can also be used to update a project to use new values of template variables; avoiding the need to regenerate
-the project from sratch using `cookiecutter`.
+the project from scratch using `cookiecutter`.
 
 For example, imagine a project that was initially generated some while ago, and then later on, you want to change the
 values of some of the template variables, e.g. to change `use_some_feature` to `"yes"` or to change `project_name` to
