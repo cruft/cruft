@@ -11,7 +11,10 @@ from .utils.iohelper import AltTemporaryDirectory
 
 
 def diff(
-    project_dir: Path = Path("."), exit_code: bool = False, checkout: Optional[str] = None
+    project_dir: Path = Path("."),
+    exit_code: bool = False,
+    checkout: Optional[str] = None,
+    exclude_deleted_files: bool = True,
 ) -> bool:
     """Show the diff between the project and the linked Cookiecutter template"""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -41,7 +44,7 @@ def diff(
                 cruft_state=cruft_state,
                 project_dir=project_dir,
                 checkout=checkout,
-                update_deleted_paths=True,
+                update_deleted_paths=exclude_deleted_files,
             )
 
         # Then we create a new tree with each file in the template that also exist
@@ -50,6 +53,8 @@ def diff(
             relative_path = path.relative_to(remote_template_dir)
             local_path = project_dir / relative_path
             destination = local_template_dir / relative_path
+            if not local_path.exists():
+                continue
             if path.is_file():
                 shutil.copy(str(local_path), str(destination))
             else:

@@ -310,6 +310,19 @@ def diff(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
+    exclude_deleted_files: bool = typer.Option(
+        True,
+        "--exclude-deleted-files/--include-deleted-files",
+        help=(
+            "Control if files present in the template and missing from the project "
+            + "are included in the diff output."
+        ),
+    ),
 ) -> None:
-    if not _commands.diff(project_dir=project_dir, exit_code=exit_code, checkout=checkout):
+    if not _commands.diff(
+        project_dir=project_dir,
+        exit_code=exit_code,
+        checkout=checkout,
+        exclude_deleted_files=exclude_deleted_files,
+    ):
         raise typer.Exit(1)
