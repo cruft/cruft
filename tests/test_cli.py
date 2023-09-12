@@ -94,6 +94,25 @@ def test_create_interactive(cruft_runner, tmpdir):
     assert (Path(tmpdir) / "RANDOM_NAME").exists()
 
 
+def test_create_extra_context_file(cruft_runner, tmpdir):
+    extra_context_file = Path(__file__).parent / "testdata" / "unicode-data" / "extra_context.json"
+    result = cruft_runner(
+        [
+            "create",
+            "--output-dir",
+            str(tmpdir),
+            "--extra-context-file",
+            str(extra_context_file),
+            "--directory",
+            "dir",
+            "--no-input",
+            "https://github.com/cruft/cookiecutter-test",
+        ]
+    )
+    assert result.exit_code == 0
+    assert (Path(tmpdir) / "CRUFT-TEST-PROJECT").exists()
+
+
 def test_check(cruft_runner, cookiecutter_dir):
     result = cruft_runner(["check", "--project-dir", cookiecutter_dir.as_posix()])
     assert result.exit_code == 0
