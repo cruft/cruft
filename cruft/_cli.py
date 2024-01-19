@@ -194,6 +194,12 @@ def update(
     project_dir: Path = typer.Option(
         Path("."), "--project-dir", "-p", help="Path to the project directory.", show_default=False
     ),
+    template_path: Optional[Path] = typer.Option(
+        None,
+        "--template-path",
+        help="Path to a locally cloned template repository. Cruft will automatically "
+        "resolve the linked repository if not specified.",
+    ),
     cookiecutter_input: bool = typer.Option(
         False,
         "--cookiecutter-input",
@@ -280,6 +286,7 @@ def update(
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
+        template_path=template_path,
         cookiecutter_input=cookiecutter_input,
         refresh_private_variables=refresh_private_variables,
         skip_apply_ask=skip_apply_ask,

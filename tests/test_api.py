@@ -133,6 +133,20 @@ def test_update_allows_untracked_files_option(tmpdir):
     assert cruft.update(repo_dir, allow_untracked_files=True)
 
 
+def test_update_locally_cloned_template(tmpdir):
+    tmpdir.chdir()
+    repo_dir = Path(tmpdir) / "cruft"
+    template_dir = Path(tmpdir) / "template"
+    Repo.clone_from("https://github.com/timothycrosley/cruft", repo_dir)
+    Repo.clone_from("https://github.com/timothycrosley/cookiecutter-python", template_dir)
+    with open(os.path.join(repo_dir, "untracked.txt"), "w") as new_file:
+        new_file.write("hello, world!\n")
+    # update should fail since repo is now unclean (has a tracked file)
+    assert not cruft.update(repo_dir, template_path=template_dir)
+    # update should work if allow_untracked_files is True
+    assert cruft.update(repo_dir, template_path=template_dir, allow_untracked_files=True)
+
+
 def test_relative_repo_check(tmpdir):
     tmpdir.chdir()
     temp_dir = Path(tmpdir)
