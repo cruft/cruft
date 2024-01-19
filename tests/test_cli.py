@@ -682,6 +682,32 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     assert ".git" not in result.stdout
 
 
+@pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
+def test_diff_skip_glob(args, expected_exit_code, cruft_runner, cookiecutter_dir):
+    print("cookiecutter_dir", cookiecutter_dir)
+    # The two points below could as well be nicely stored within
+    # a cookiecutter-test branch.
+    # Write a skip section into pyproject.toml
+    # This file is not (yet) in the test branch and is thus not diffed to the template.
+    skip_section = """
+        [tool.cruft]
+        skip = ["*.md"]
+        """
+    with (cookiecutter_dir / "pyproject.toml").open("w") as f:
+        f.write(dedent(skip_section))
+    with (cookiecutter_dir / "README.md").open("a") as f:
+        f.write("Adding extra junk!")
+    # Alter the git repo.
+    # run(["git", "config", "--global", "user.email", "user@test.com"], cwd=cookiecutter_dir)
+    # run(["git", "config", "--global", "user.name", "testm"], cwd=cookiecutter_dir)
+    # run(["git", "add", "--all"], cwd=cookiecutter_dir)
+    # run(["git", "commit", "-m", "2nd commit"], cwd=cookiecutter_dir)
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"])
+    print(result.stdout)
+    assert result.exit_code == expected_exit_code
+    assert ".md" not in result.stdout
+
+
 def test_local_extension(cruft_runner, tmpdir):
     result = cruft_runner(
         [
