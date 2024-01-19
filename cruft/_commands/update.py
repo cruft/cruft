@@ -15,6 +15,7 @@ from .utils.iohelper import AltTemporaryDirectory
 @example()
 def update(
     project_dir: Path = Path("."),
+    template_path: Optional[Path] = None,
     cookiecutter_input: bool = False,
     refresh_private_variables: bool = False,
     skip_apply_ask: bool = True,
@@ -65,7 +66,10 @@ def update(
         directory = str(Path("repo") / directory)
     else:
         directory = "repo"
-
+    if template_path is None:
+        template_git_str = cruft_state["template"]
+    else:
+        template_git_str = utils.cookiecutter.resolve_template_url(str(template_path))
     with AltTemporaryDirectory(directory) as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
@@ -73,10 +77,9 @@ def update(
         current_template_dir = tmpdir / "current_template"
         new_template_dir = tmpdir / "new_template"
         deleted_paths: Set[Path] = set()
+
         # Clone the template
-        with utils.cookiecutter.get_cookiecutter_repo(
-            cruft_state["template"], repo_dir, checkout
-        ) as repo:
+        with utils.cookiecutter.get_cookiecutter_repo(template_git_str, repo_dir, checkout) as repo:
             last_commit = repo.head.object.hexsha
 
             # Bail early if the repo is already up to date and no inputs are asked
