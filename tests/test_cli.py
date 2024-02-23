@@ -700,6 +700,43 @@ def test_local_extension(cruft_runner, tmpdir):
     assert result.stdout == ""
 
 
+def test_local_extension_check(cruft_runner, tmpdir):
+    test_local_extension(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "check",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "extensions-update",
+        ]
+    )
+    assert result.exit_code == 1
+    assert (
+        "Project's cruft is out of date! Run `cruft update` to clean this mess up."
+        in result.stdout
+    )
+
+
+def test_local_extension_diff(cruft_runner, tmpdir):
+    test_local_extension(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "diff",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "extensions-update",
+        ]
+    )
+    print(result.stdout)
+    assert result.exit_code == 0
+    assert (
+        "diff --git upstream-template-old/README.md upstream-template-new/README.md"
+        in result.stdout
+    )
+
+
 def test_local_extension_update(cruft_runner, tmpdir):
     test_local_extension(cruft_runner, tmpdir)
     result = cruft_runner(
