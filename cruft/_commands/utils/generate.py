@@ -41,7 +41,9 @@ def cookiecutter_template(
     repo.head.reset(commit=commit, working_tree=True)
 
     assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
-    context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
+    context = _generate_output(
+        cruft_state, commit, Path(repo.working_dir), cookiecutter_input, output_dir
+    )
 
     # Get all paths that we are supposed to skip before generating the diff and applying updates
     skip_paths = _get_skip_paths(cruft_state, pyproject_file)
@@ -62,7 +64,11 @@ def cookiecutter_template(
 
 
 def _generate_output(
-    cruft_state: CruftState, project_dir: Path, cookiecutter_input: bool, output_dir: Path
+    cruft_state: CruftState,
+    commit: str,
+    project_dir: Path,
+    cookiecutter_input: bool,
+    output_dir: Path,
 ) -> CookiecutterContext:
     inner_dir = project_dir / (cruft_state.get("directory") or "")
 
@@ -74,6 +80,7 @@ def _generate_output(
     }
     new_context = generate_cookiecutter_context(
         cruft_state["template"],
+        commit,
         inner_dir,
         extra_context=extra_context,
         no_input=not cookiecutter_input,
