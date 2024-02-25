@@ -75,6 +75,7 @@ def _validate_cookiecutter(cookiecutter_template_dir: Path):
 
 def generate_cookiecutter_context(
     template_git_url: str,
+    last_commit: str,
     cookiecutter_template_dir: Path,
     config_file: Optional[Path] = None,
     default_config: bool = False,
@@ -98,6 +99,7 @@ def generate_cookiecutter_context(
     # except when 'no-input' flag is set
     context["cookiecutter"] = prompt_for_config(context, no_input)
     context["cookiecutter"]["_template"] = template_git_url
+    context["cookiecutter"]["_commit"] = last_commit
 
     return context
 

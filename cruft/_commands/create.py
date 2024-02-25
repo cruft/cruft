@@ -38,6 +38,7 @@ def create(
                 extra_context = utils.cookiecutter.get_extra_context_from_file(extra_context_file)
             context = utils.cookiecutter.generate_cookiecutter_context(
                 template_git_url,
+                last_commit,
                 cookiecutter_template_dir,
                 config_file,
                 default_config,
