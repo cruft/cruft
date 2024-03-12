@@ -700,6 +700,42 @@ def test_local_extension(cruft_runner, tmpdir):
     assert result.stdout == ""
 
 
+def test_local_extension_check(cruft_runner, tmpdir):
+    test_local_extension(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "check",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "extensions-update",
+        ]
+    )
+    assert result.exit_code == 1
+    assert (
+        "Project's cruft is out of date! Run `cruft update` to clean this mess up." in result.stdout
+    )
+
+
+def test_local_extension_diff(cruft_runner, tmpdir):
+    test_local_extension(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "diff",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "extensions-update",
+        ]
+    )
+    print(result.stdout)
+    assert result.exit_code == 0
+    assert (
+        "diff --git upstream-template-old/README.md upstream-template-new/README.md"
+        in result.stdout
+    )
+
+
 def test_local_extension_update(cruft_runner, tmpdir):
     test_local_extension(cruft_runner, tmpdir)
     result = cruft_runner(
@@ -709,6 +745,76 @@ def test_local_extension_update(cruft_runner, tmpdir):
             str(tmpdir / "test"),
             "--checkout",
             "extensions-update",
+            "--skip-apply-ask",
+        ]
+    )
+    assert result.exit_code == 0
+    with open(tmpdir / "test" / "README.md") as f:
+        assert "Updated11" in f.read()
+
+
+def test_local_extension_without_dir(cruft_runner, tmpdir):
+    result = cruft_runner(
+        [
+            "create",
+            "--output-dir",
+            str(tmpdir),
+            # FIXME: Replace Fabi89 by cruft if PR is merged
+            "https://github.com/Fabi89/cookiecutter-test",
+            "--checkout",
+            "no-dir-extensions",
+            "-y",
+        ]
+    )
+    assert result.exit_code == 0
+    assert result.stdout == ""
+
+
+def test_local_extension_without_dir_check(cruft_runner, tmpdir):
+    test_local_extension_without_dir(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "check",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "no-dir-extensions-update",
+        ]
+    )
+    assert result.exit_code == 1
+    assert (
+        "Project's cruft is out of date! Run `cruft update` to clean this mess up." in result.stdout
+    )
+
+
+def test_local_extension_without_dir_diff(cruft_runner, tmpdir):
+    test_local_extension_without_dir(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "diff",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "no-dir-extensions-update",
+        ]
+    )
+    print(result.stdout)
+    assert result.exit_code == 0
+    assert (
+        "diff --git upstream-template-old/README.md upstream-template-new/README.md"
+        in result.stdout
+    )
+
+
+def test_local_extension_without_dir_update(cruft_runner, tmpdir):
+    test_local_extension_without_dir(cruft_runner, tmpdir)
+    result = cruft_runner(
+        [
+            "update",
+            "--project-dir",
+            str(tmpdir / "test"),
+            "--checkout",
+            "no-dir-extensions-update",
             "--skip-apply-ask",
         ]
     )
