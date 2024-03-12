@@ -62,18 +62,6 @@ def cookiecutter_dir_input(tmpdir):
     )
 
 
-@pytest.fixture
-def cookiecutter_dir_extensions(tmpdir):
-    yield Path(
-        cruft.create(
-            "https://github.com/gmsantos/cookiecutter-test",
-            Path(tmpdir),
-            directory="dir",
-            checkout="extensions",
-        )
-    )
-
-
 def test_create(cruft_runner, tmpdir):
     result = cruft_runner(
         [
