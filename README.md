@@ -254,7 +254,7 @@ jobs:
 
 Since I first saw videos of [quickly](https://www.youtube.com/watch?v=9EctXzH2dss) being used to automate Ubuntu application creation, I've had a love/hate relationship with these kinds of tools.
 I've used them for many projects and certainly seen them lead to productivity improvements. However, I've always felt like they were a double-edged sword. Sure, they would automate away the copying and pasting many would do to create projects. However, by doing so,
-they encouraged more code to be copied and pasted! Then, over time, you could easily be left with hundreds of projects that contained copy-and-pasted code with no way to easy way to update them. I created cruft to be a tool that recognized that balance between project creation and maintenance and provided mechanisms to keep built projects up-to-date.
+they encouraged more code to be copied and pasted! Then, over time, you could easily be left with hundreds of projects that contained copy-and-pasted code with no easy way to update them. I created cruft to be a tool that recognized that balance between project creation and maintenance and provided mechanisms to keep built projects up-to-date.
 
 I hope you too find `cruft` useful!
 
