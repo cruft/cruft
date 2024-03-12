@@ -795,8 +795,7 @@ def test_local_extension_without_dir_check(cruft_runner, tmpdir):
     )
     assert result.exit_code == 1
     assert (
-        "Project's cruft is out of date! Run `cruft update` to clean this mess up."
-        in result.stdout
+        "Project's cruft is out of date! Run `cruft update` to clean this mess up." in result.stdout
     )
 
 
