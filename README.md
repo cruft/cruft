@@ -26,7 +26,7 @@ Creating new projects from templates using cruft is easy:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example.gif)
 
-And, so is updating them as the template changes overtime:
+And, so is updating them as the template changes over time:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example_update.gif)
 
@@ -90,7 +90,7 @@ and update the `.cruft.json` file for you.
 
         [tool.cruft]
         skip = ["cruft/__init__.py", "tests"]
-    
+
     Note that it is possible to use glob patterns for selecting the files to skip:
         {
             "skip": [
@@ -103,7 +103,7 @@ and update the `.cruft.json` file for you.
 ## Updating Values of Template Variables
 
 `cruft` can also be used to update a project to use new values of template variables; avoiding the need to regenerate
-the project from sratch using `cookiecutter`.
+the project from scratch using `cookiecutter`.
 
 For example, imagine a project that was initially generated some while ago, and then later on, you want to change the
 values of some of the template variables, e.g. to change `use_some_feature` to `"yes"` or to change `project_name` to
