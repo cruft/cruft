@@ -23,9 +23,9 @@ def resolve_template_url(url: str, config_file: Optional[Path]) -> str:
     config_dict = get_user_config(
         config_file=str(config_file) if config_file else None, default_config=False
     )
-    ABBREV_KEY = "abbreviations"
-    if ABBREV_KEY in config_dict:
-        url = expand_abbreviations(url, config_dict[ABBREV_KEY])
+    abbrev_key = "abbreviations"
+    if abbrev_key in config_dict:
+        url = expand_abbreviations(url, config_dict[abbrev_key])
     parsed_url = urlparse(url)
     # If we are given a file URI, we should convert
     # relative paths to absolute paths. This is to
