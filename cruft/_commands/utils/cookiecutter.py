@@ -9,7 +9,7 @@ from cookiecutter.prompt import prompt_for_config
 from cookiecutter.repository import expand_abbreviations
 from git import GitCommandError, Repo
 
-from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate 
+from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
 
 CookiecutterContext = Dict[str, Any]
 
