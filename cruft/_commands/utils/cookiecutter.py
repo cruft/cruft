@@ -19,7 +19,7 @@ CookiecutterContext = Dict[str, Any]
 #################################
 
 
-def resolve_template_url(url: str, config_file: str) -> str:
+def resolve_template_url(url: str, config_file: Optional[Path]) -> str:
     config_dict = get_user_config(
         config_file=str(config_file) if config_file else None, default_config=False
     )
