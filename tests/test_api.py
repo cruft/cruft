@@ -4,6 +4,7 @@ import re
 import sys
 from pathlib import Path
 from subprocess import run
+from unittest.mock import MagicMock
 
 import pytest
 from examples import verify_and_test_examples
@@ -24,8 +25,20 @@ def test_invalid_cookiecutter_reference(tmpdir):
         cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir), checkout="DNE")
 
 
-def test_no_cookiecutter_dir(tmpdir):
+def test_no_cookiecutter_dir(tmpdir, mocker):
     with pytest.raises(exceptions.UnableToFindCookiecutterTemplate):
+        mock_repo_context_manager = MagicMock()
+        mock_repo_context_manager.__enter__.return_value.head.object.hexsha = "abc123"
+        mocker.patch(
+            "cruft._commands.utils.cookiecutter.get_cookiecutter_repo",
+            return_value=mock_repo_context_manager,
+        )
+
+        mocker.patch(
+            "cruft._commands.utils.cookiecutter.generate_cookiecutter_context",
+            return_value={"cookiecutter": {}},
+        )
+
         cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir))
 
 
@@ -322,3 +335,30 @@ def test_diff_git_subdir(capfd, tmpdir):
     )
 
     assert cruft.update(project_dir, checkout="updated")
+
+
+def test_nested_template(mocker, tmpdir):
+    tmpdir.chdir()
+
+    test_file_directory = os.path.dirname(__file__)
+    main_dir = f"{test_file_directory}/testdata/nested-templates"
+
+    mocker.patch("cruft._commands.utils.cookiecutter.resolve_template_url", return_value="foo")
+
+    mock_temp_dir_context_manager = MagicMock()
+    mock_temp_dir_context_manager.__enter__.return_value = main_dir
+    mocker.patch(
+        "cruft._commands.create.AltTemporaryDirectory", return_value=mock_temp_dir_context_manager
+    )
+
+    mock_repo_context_manager = MagicMock()
+    mock_repo_context_manager.__enter__.return_value.head.object.hexsha = "abc123"
+    mocker.patch(
+        "cruft._commands.utils.cookiecutter.get_cookiecutter_repo",
+        return_value=mock_repo_context_manager,
+    )
+
+    cruft.create("foo", tmpdir, no_input=True)
+
+    with open(f"{tmpdir}/nested-app/.cruft.json", "r") as cruft_file:
+        assert json.load(cruft_file)["directory"] == "fake-project"
