@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -80,6 +81,8 @@ def generate_cookiecutter_context(
     default_config: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
     no_input: bool = False,
+    project_dir: Path = Path("."),
+    checkout: Optional[str] = None,
 ) -> CookiecutterContext:
     _validate_cookiecutter(cookiecutter_template_dir)
 
@@ -98,6 +101,16 @@ def generate_cookiecutter_context(
     # except when 'no-input' flag is set
     context["cookiecutter"] = prompt_for_config(context, no_input)
     context["cookiecutter"]["_template"] = template_git_url
+
+    # include output dir in the context dict
+    context["cookiecutter"]["_output_dir"] = os.path.abspath(project_dir)
+
+    # include repo dir in the context dict
+    context["cookiecutter"]["_repo_dir"] = os.path.abspath(cookiecutter_template_dir)
+
+    # include checkout details in the context dict
+    if checkout is not None:
+        context["cookiecutter"]["_checkout"] = checkout
 
     return context
 

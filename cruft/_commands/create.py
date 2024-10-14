@@ -5,6 +5,7 @@ from cookiecutter.generate import generate_files
 
 from . import utils
 from .utils import example
+from .utils.clean import clean_context
 from .utils.iohelper import AltTemporaryDirectory
 
 
@@ -43,6 +44,8 @@ def create(
                 default_config,
                 extra_context,
                 no_input,
+                output_dir,
+                checkout,
             )
 
         project_dir = Path(
@@ -58,7 +61,7 @@ def create(
             "template": template_git_url,
             "commit": last_commit,
             "checkout": checkout,
-            "context": context,
+            "context": clean_context(context),
             "directory": directory,
         }
 

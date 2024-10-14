@@ -160,6 +160,8 @@ def test_link(cruft_runner, cookiecutter_dir):
     # compare the 2 .cruft.json
     cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
     cruft_config_from_link = json.loads(cruft_file.read_text())
+    assert "_output_dir" not in cruft_config_from_create
+    assert "_repo_dir" not in cruft_config_from_create
     assert cruft_config_from_create == cruft_config_from_link
 
 
