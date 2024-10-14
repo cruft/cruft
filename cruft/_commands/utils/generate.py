@@ -12,6 +12,7 @@ from git import Repo
 from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
 from .cruft import CruftState
 from .iohelper import AltTemporaryDirectory
+from .validate import validate_cookiecutter
 
 if not sys.version_info >= (3, 11):
     try:
@@ -78,6 +79,8 @@ def _generate_output(
         extra_context=extra_context,
         no_input=not cookiecutter_input,
     )
+
+    validate_cookiecutter(inner_dir)
 
     # This generates the cookiecutter template.
     # Unfortunately, cookiecutter doesn't let us output the template in an

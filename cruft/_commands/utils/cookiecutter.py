@@ -8,7 +8,9 @@ from cookiecutter.generate import generate_context
 from cookiecutter.prompt import prompt_for_config
 from git import GitCommandError, Repo
 
-from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
+from cruft.exceptions import InvalidCookiecutterRepository
+
+from .nested import is_nested_template
 
 CookiecutterContext = Dict[str, Any]
 
@@ -61,18 +63,6 @@ def get_cookiecutter_repo(
     return repo
 
 
-def _validate_cookiecutter(cookiecutter_template_dir: Path):
-    main_cookiecutter_directory: Optional[Path] = None
-
-    for dir_item in cookiecutter_template_dir.glob("*cookiecutter.*"):
-        if dir_item.is_dir() and "{{" in dir_item.name and "}}" in dir_item.name:
-            main_cookiecutter_directory = dir_item
-            break
-
-    if not main_cookiecutter_directory:
-        raise UnableToFindCookiecutterTemplate(cookiecutter_template_dir)
-
-
 def generate_cookiecutter_context(
     template_git_url: str,
     cookiecutter_template_dir: Path,
@@ -81,7 +71,6 @@ def generate_cookiecutter_context(
     extra_context: Optional[Dict[str, Any]] = None,
     no_input: bool = False,
 ) -> CookiecutterContext:
-    _validate_cookiecutter(cookiecutter_template_dir)
 
     context_file = cookiecutter_template_dir / "cookiecutter.json"
     config_dict = get_user_config(
@@ -93,6 +82,9 @@ def generate_cookiecutter_context(
         default_context=config_dict["default_context"],
         extra_context=extra_context,
     )
+
+    if is_nested_template(context):
+        return context
 
     # prompt the user to manually configure at the command line.
     # except when 'no-input' flag is set

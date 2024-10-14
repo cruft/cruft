@@ -6,6 +6,7 @@ import typer
 from . import utils
 from .utils import example
 from .utils.iohelper import AltTemporaryDirectory
+from .utils.validate import validate_cookiecutter
 
 
 @example("https://github.com/timothycrosley/cookiecutter-python/")
@@ -40,6 +41,9 @@ def link(
             extra_context,
             no_input,
         )
+
+        validate_cookiecutter(cookiecutter_template_dir)
+
         if no_input:
             use_commit = last_commit
         else:
