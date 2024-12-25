@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 
 import pytest
 
@@ -119,3 +120,74 @@ def test_get_extra_context_from_file():
     extra_context_file = Path(__file__).parent / "testdata" / "unicode-data" / "extra_context.json"
     extra_context = utils.cookiecutter.get_extra_context_from_file(extra_context_file)
     assert extra_context == {"project": "CRUFT-TEST-PROJECT"}
+
+
+def test_remove_paths_with_get_skip_paths_from_cruft_state_and_pyproject_toml(tmp_path: Path):
+    repo0 = tmp_path / "repo0"
+    repo0.mkdir(parents=True)
+
+    (repo0 / "file0").touch()
+    (repo0 / "file1").touch()
+
+    (repo0 / "tests").mkdir(parents=True)
+    (repo0 / "tests" / "test0.py").touch()
+    (repo0 / "tests" / "test1.py").touch()
+
+    (repo0 / "package" / "__pycache__").mkdir(parents=True)
+    (repo0 / "package" / "__init__.py").touch()
+    (repo0 / "package" / "test0.py").touch()
+    (repo0 / "package" / "test1.py").touch()
+    (repo0 / "package" / "__pycache__" / "test0.cpython-38.pyc").touch()
+    (repo0 / "package" / "__pycache__" / "test1.cpython-38.pyc").touch()
+    (repo0 / "package" / "module" / "__pycache__").mkdir(parents=True)
+    (repo0 / "package" / "module" / "__init__.py").touch()
+    (repo0 / "package" / "module" / "__pycache__" / "test0.cpython-38.pyc").touch()
+    (repo0 / "package" / "module" / "test0.py").touch()
+
+    (repo0 / ".mypy_cache").mkdir(parents=True)
+    (repo0 / ".mypy_cache" / "test0.json").touch()
+    (repo0 / ".ruff_cache").mkdir(parents=True)
+    (repo0 / ".ruff_cache" / "test0.json").touch()
+
+    (repo0 / ".git").mkdir(parents=True)
+    (repo0 / ".git" / "file").touch()
+    (repo0 / ".git" / "tests").mkdir(parents=True)
+    (repo0 / ".git" / "tests" / "test0.py").touch()
+
+    pyproject = repo0 / "pyproject.toml"
+    with pyproject.open("w") as f:
+        f.write(
+            dedent(
+                """
+            [tool.cruft]
+            skip = [
+                "file1",
+                "tests/*",
+                "**/__pycache__/",
+                "**/__init__.py",
+                "*_cache/",
+            ]
+            """
+            )
+        )
+
+    paths_to_remove = utils.generate._get_skip_paths({"skip": [".git"]}, pyproject)
+    utils.generate._remove_paths(repo0, paths_to_remove)
+
+    assert (repo0 / "file0").exists()
+    assert not (repo0 / "file1").exists()
+
+    assert not (repo0 / ".git").exists()
+
+    assert (repo0 / "tests").exists()
+    assert not (repo0 / "tests" / "test0.py").exists()
+    assert not (repo0 / "tests" / "test0.py").exists()
+
+    assert not (repo0 / "package" / "__pycache__").exists()
+    assert (repo0 / "package").exists()
+
+    assert not (repo0 / "package" / "module" / "__pycache__").exists()
+    assert (repo0 / "package" / "module").exists()
+
+    assert not (repo0 / ".mypy_cache").exists()
+    assert not (repo0 / ".ruff_cache").exists()

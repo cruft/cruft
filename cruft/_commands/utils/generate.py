@@ -105,7 +105,7 @@ def _generate_output(
 ##############################
 
 
-def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
+def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Union[str, Path]]:
     skip_cruft = cruft_state.get("skip", [])
     if tomllib and pyproject_file.is_file():
         pyproject_cruft = tomllib.loads(pyproject_file.read_text()).get("tool", {}).get("cruft", {})
@@ -116,7 +116,7 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Path]:
             "`toml` package is not installed. Cruft configuration may be ignored.",
             stacklevel=2,
         )
-    return set(map(Path, skip_cruft))
+    return set(map(lambda p: p if "*" in p else Path(p), skip_cruft))
 
 
 def _get_deleted_files(template_dir: Path, project_dir: Path):
