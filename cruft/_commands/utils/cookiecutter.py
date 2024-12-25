@@ -58,6 +58,7 @@ def get_cookiecutter_repo(
                 template_git_url,
                 f"Failed to check out the reference {checkout}. {error.stderr.strip()}",
             )
+    repo.submodule_update(recursive=True, force_reset=True)
     return repo
 
 
