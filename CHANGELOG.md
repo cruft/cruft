@@ -17,6 +17,11 @@ OR
 Changelog
 =========
 
+
+## 2.16.0 - 25 Dev 2024
+
+See [Release 2.16.0 on Github](https://github.com/cruft/cruft/releases/tag/2.16.0)
+
 ## 2.15.0 - 11 May 2023
 - [Improved #57](https://github.com/cruft/cruft/issues/57): Improve how a project can be updated to use new values of template variables
 
