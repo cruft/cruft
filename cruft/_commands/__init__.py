@@ -1,4 +1,5 @@
 """Contains the core logic behind all cruft commands."""
+
 from .check import check
 from .create import create
 from .diff import diff
