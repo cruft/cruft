@@ -1,64 +1,63 @@
-[tool.poetry]
+[project]
 name = "cruft"
 version = "0.0.0"
 description = "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter."
-authors = ["Timothy Crosley <timothy.crosley@gmail.com>", "Sambhav Kothari <sambhavs.email@gmail.com>"]
-license = "MIT"
+authors = [
+    {name = "Timothy Crosley", email = "timothy.crosley@gmail.com"},
+    {name = "Sambhav Kothari", email = "sambhavs.email@gmail.com"}
+]
+license = {text = "MIT"}
 readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "cookiecutter>=1.7",
+    "gitpython>=3.0",
+    "typer>=0.4.0",
+    "click>=7.1.2",
+    "toml>=0.10; python_version<'3.11'",
+    "importlib-metadata>=2.0.0,<5.0.0; python_version<'3.8'"
+]
 
-[tool.poetry.dependencies]
-python = ">=3.7"
-cookiecutter = ">=1.7"
-gitpython = ">=3.0"
-toml = { version = ">=0.10", optional = true, python = "<3.11" }
-typer = ">=0.4.0"
-click = ">= 7.1.2"
-#examples = {version = ">=1.0.2", optional = true}
-importlib-metadata = {version = ">=2.0.0,<5.0.0", python = "<3.8"}
-
-[tool.poetry.extras]
+[project.optional-dependencies]
 pyproject = ["toml"]
-examples = ["examples"]
 
-[tool.poetry.dev-dependencies]
-bandit = ">=1.6"
-black = ">=22.12.0"
-examples = { version = ">=1.0.2", python = ">=3.7.0,<4.0"}
-safety = ">=1.8"
-isort = ">=5.11.0"
-flake8 = "<5.0.0,>=4.0.0"
-flake8-bugbear = ">=19.8"
-mypy = ">=0.971"
-types-toml = ">=0.10"
-ipython = ">=7.16.3"
-mkdocs = ">=1.2"
-pytest = ">=6.2.5"
-pytest-cov = ">=3.0"
-pytest-repeat = ">=0.9.1"
-pytest-xdist = ">=2.5.0"
-pytest-mock = ">=3.3.1"
-pep8-naming = ">=0.8.2"
-portray = { version = ">=1.7.0", python = ">=3.7.0,<4.0"}
-vulture = ">=1.0"
-
-[tool.poetry.scripts]
+[project.scripts]
 cruft = "cruft._cli:app"
-
-[tool.portray.mkdocs.theme]
-favicon = "art/logo.png"
-logo = "art/logo.png"
-name = "material"
-palette = {primary = "orange", accent = "cyan"}
 
 [tool.cruft]
 skip = ["cruft/__init__.py", "tests"]
 
-[build-system]
-requires = ["poetry-core>=1.0.8"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
+[tool.ruff]
 line-length = 100
+target-version = "py37"
 
-[tool.isort]
-profile = "hug"
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "B",    # flake8-bugbear
+    "N",    # pep8-naming
+    "I",    # isort
+]
+ignore = ["E203", "B008", "N818", "E501", "B904"]
+
+[build-system]
+requires = ["hatchling>=1.18.0"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.4",
+    "examples>=1.0.2; python_version>='3.7.0' and python_version<'4.0'",
+    "ruff>=0.1.3",
+    "mypy>=0.971",
+    "types-toml>=0.10",
+    "ipython>=7.16.3",
+    "mkdocs>=1.2",
+    "pytest>=6.2.5",
+    "pytest-cov>=3.0",
+    "pytest-repeat>=0.9.1",
+    "pytest-xdist>=2.5.0",
+    "pytest-mock>=3.3.1",
+    "portray>=1.7.0; python_version>='3.7.0' and python_version<'4.0'",
+]

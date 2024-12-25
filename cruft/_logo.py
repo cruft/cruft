@@ -15,5 +15,5 @@ If you need the boilerplate, at least let cruft manage it.
 
 Version: {__version__}
 
-Copyright Timothy Edmund Crosley, Sambhav Kothari 2020 MIT License
+Copyright Timothy Edmund Crosley, Sambhav Kothari 2024 MIT License
 """

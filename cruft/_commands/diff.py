@@ -40,7 +40,6 @@ def diff(
         with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], repo_dir, checkout=checkout
         ) as repo:
-
             # We generate the template for the revision expected by the project
             utils.generate.cookiecutter_template(
                 output_dir=remote_template_dir,

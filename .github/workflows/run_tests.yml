@@ -1,41 +1,48 @@
 name: Run tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.12"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.8"
+          - os: ubuntu-latest
+            python-version: "3.9"
+          - os: ubuntu-latest
+            python-version: "3.10"
+          - os: ubuntu-latest
+            python-version: "3.11"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
 
       - name: Install dependencies
-        run: |
-          poetry env use python
-          poetry install
+        run: uv sync --all-extras --dev
 
       - name: Run Checks
-        run: |
-          bash scripts/test.sh --ci
+        run: bash scripts/test.sh --ci
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
-        uses: codecov/codecov-action@v2
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v3
