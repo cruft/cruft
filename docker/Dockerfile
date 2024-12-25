@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/python:3.11.3-dev as builder
+FROM cgr.dev/chainguard/python:latest-dev as builder
 
 # Cruft version should be set from CI pipeline
 ARG CRUFT_VERSION
@@ -14,7 +14,7 @@ RUN set -eux; \
     pip install --target="/app/cruft" "/tmp/cruft-${CRUFT_VERSION}-py3-none-any.whl"; \
     /app/cruft/bin/cruft
 
-FROM cgr.dev/chainguard/python:3.11.3-dev
+FROM cgr.dev/chainguard/python:latest-dev
 
 WORKDIR /cruft
 

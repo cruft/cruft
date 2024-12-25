@@ -46,7 +46,7 @@ def test_check_examples(tmpdir, project_dir):
 def test_create_with_skips(tmpdir):
     tmpdir.chdir()
     skips = ["setup.cfg"]
-    cruft.create("https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), skip=skips)
+    cruft.create("https://github.com/cruft/cookiecutter-python", Path(tmpdir), skip=skips)
 
     assert json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["skip"] == skips
 
@@ -55,9 +55,7 @@ def test_create_with_skips(tmpdir):
 def test_create_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
 
-    cruft.create(
-        "https://github.com/timothycrosley/cookiecutter-python", Path(tmpdir), checkout=value
-    )
+    cruft.create("https://github.com/cruft/cookiecutter-python", Path(tmpdir), checkout=value)
 
     assert (
         json.load((tmpdir / "python_project_name" / ".cruft.json").open("r"))["checkout"] == value
@@ -68,7 +66,7 @@ def test_create_stores_checkout_value(value, tmpdir):
 def test_link_stores_checkout_value(value, tmpdir):
     project_dir = Path(tmpdir)
     cruft.link(
-        "https://github.com/timothycrosley/cookiecutter-python",
+        "https://github.com/cruft/cookiecutter-python",
         project_dir=project_dir,
         checkout=value,
     )
@@ -80,7 +78,7 @@ def test_link_stores_checkout_value(value, tmpdir):
 def test_update_stores_checkout_value(value, tmpdir):
     tmpdir.chdir()
     cruft.create(
-        "https://github.com/timothycrosley/cookiecutter-python",
+        "https://github.com/cruft/cookiecutter-python",
         Path(tmpdir),
         checkout="ea8f733f85e7089df338d41ace199d3f4d397e29",
     )
@@ -93,7 +91,7 @@ def test_update_stores_checkout_value(value, tmpdir):
 
 def test_update_and_check_real_repo(tmpdir):
     tmpdir.chdir()
-    repo = Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    repo = Repo.clone_from("https://github.com/cruft/cruft", str(tmpdir))
     repo.head.reset(commit="86a6e6beda8095690414ff7652c15b7ae36e6128", working_tree=True)
     with open(os.path.join(tmpdir, ".cruft.json")) as cruft_file:
         cruft_state = json.load(cruft_file)
@@ -123,7 +121,7 @@ def test_update_and_check_real_repo(tmpdir):
 
 def test_update_allows_untracked_files_option(tmpdir):
     tmpdir.chdir()
-    Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    Repo.clone_from("https://github.com/cruft/cruft", str(tmpdir))
     with open(os.path.join(tmpdir, "untracked.txt"), "w") as new_file:
         new_file.write("hello, world!\n")
     repo_dir = Path(tmpdir)
@@ -170,7 +168,7 @@ def test_link_examples(project_dir, tmpdir):
         verify_and_test_examples(cruft.link)
 
     tmpdir.chdir()
-    Repo.clone_from("https://github.com/timothycrosley/cruft", str(tmpdir))
+    Repo.clone_from("https://github.com/cruft/cruft", str(tmpdir))
     os.remove(os.path.join(tmpdir, ".cruft.json"))
     verify_and_test_examples(cruft.link)
 
@@ -286,10 +284,10 @@ def test_diff_no_diff(exit_code, capfd, mocker, tmpdir):
 
 def test_diff_checkout(capfd, tmpdir):
     project_dir = cruft.create(
-        "https://github.com/samj1912/cookiecutter-test",
+        "https://github.com/cruft/cookiecutter-test",
         Path(tmpdir),
         directory="dir",
-        checkout="master",
+        checkout="main",
     )
 
     assert cruft.diff(project_dir, exit_code=True, checkout="updated") is False
@@ -315,7 +313,7 @@ def test_diff_git_subdir(capfd, tmpdir):
         "https://github.com/cruft/cookiecutter-test",
         Path("tmpdir/foo/bar"),
         directory="dir",
-        checkout="master",
+        checkout="main",
     )
     # not added & committed
     assert not cruft.update(project_dir)
