@@ -66,9 +66,9 @@ def cookiecutter_dir_input(tmpdir):
 def cookiecutter_dir_submodule(tmpdir):
     yield Path(
         cruft.create(
-            "https://github.com/ottonemo/cookiecutter-test-submodules",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
-            checkout="master",
+            checkout="submodules",
         )
     )
 
@@ -736,7 +736,13 @@ def test_submodule_create(cruft_runner, cookiecutter_dir_submodule):
 def test_submodule_update_has_submodule_diff(cruft_runner, cookiecutter_dir_submodule, capfd):
     # the diff during an update should include the submodule changes
     result = cruft_runner(
-        ["update", "--project-dir", cookiecutter_dir_submodule.as_posix(), "-c", "updated"],
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir_submodule.as_posix(),
+            "-c",
+            "submodules-updated",
+        ],
         input="v\ny\n",
     )
     assert result.exit_code == 0

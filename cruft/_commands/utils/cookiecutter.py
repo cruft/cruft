@@ -44,9 +44,6 @@ def get_cookiecutter_repo(
     checkout: Optional[str] = None,
     **clone_kwargs,
 ) -> Repo:
-    # By default we allow for submodules in the template
-    if "multi_options" not in clone_kwargs:
-        clone_kwargs["multi_options"] = ["--recurse-submodules"]
     try:
         repo = Repo.clone_from(template_git_url, cookiecutter_template_dir, **clone_kwargs)
     except GitCommandError as error:
@@ -61,6 +58,7 @@ def get_cookiecutter_repo(
                 template_git_url,
                 f"Failed to check out the reference {checkout}. {error.stderr.strip()}",
             )
+    repo.submodule_update(recursive=True, force_reset=True)
     return repo
 
 
