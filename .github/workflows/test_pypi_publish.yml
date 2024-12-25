@@ -13,25 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.7"
-          cache: "poetry"
+          python-version: "3.8"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.8"
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
 
       - name: Install dependencies
-        run: |
-          poetry env use "3.7"
-          poetry install
+        run: uv sync --all-extras --dev
 
       - name: Bump version number
-        run: poetry version ${{ github.event.release.tag_name }}
+        run: |
+          sed -i "s/version = \".*\"/version = \"${{ github.event.release.tag_name }}\"/" pyproject.toml
 
       - name: Build package
-        run: poetry build
+        run: uv build
 
       - name: Publish package
-        run: poetry publish -r testpypi -u __token__ -p ${{ secrets.TEST_PYPI_PASSWORD }}
+        run: uv publish -u __token__ -p ${{ secrets.TEST_PYPI_PASSWORD }} --publish-url https://test.pypi.org/legacy/

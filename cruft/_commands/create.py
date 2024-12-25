@@ -15,6 +15,7 @@ def create(
     config_file: Optional[Path] = None,
     default_config: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
+    extra_context_file: Optional[Path] = None,
     no_input: bool = True,
     directory: Optional[str] = None,
     checkout: Optional[str] = None,
@@ -33,8 +34,11 @@ def create(
             if directory:
                 cookiecutter_template_dir = cookiecutter_template_dir / directory
 
+            if extra_context_file:
+                extra_context = utils.cookiecutter.get_extra_context_from_file(extra_context_file)
             context = utils.cookiecutter.generate_cookiecutter_context(
                 template_git_url,
+                last_commit,
                 cookiecutter_template_dir,
                 config_file,
                 default_config,

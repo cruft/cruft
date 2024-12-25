@@ -42,7 +42,7 @@ def cookiecutter_dir_hooked_git(tmpdir):
     yield Path(
         cruft.create(
             # See pull request!
-            "https://github.com/juhuebner/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
             directory="dir",
             checkout="with-git-from-hook",
@@ -54,10 +54,21 @@ def cookiecutter_dir_hooked_git(tmpdir):
 def cookiecutter_dir_input(tmpdir):
     yield Path(
         cruft.create(
-            "https://github.com/gmsantos/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
             directory="dir",
             checkout="input",
+        )
+    )
+
+
+@pytest.fixture
+def cookiecutter_dir_submodule(tmpdir):
+    yield Path(
+        cruft.create(
+            "https://github.com/cruft/cookiecutter-test",
+            Path(tmpdir),
+            checkout="submodules",
         )
     )
 
@@ -92,6 +103,25 @@ def test_create_interactive(cruft_runner, tmpdir):
     )
     assert result.exit_code == 0
     assert (Path(tmpdir) / "RANDOM_NAME").exists()
+
+
+def test_create_extra_context_file(cruft_runner, tmpdir):
+    extra_context_file = Path(__file__).parent / "testdata" / "unicode-data" / "extra_context.json"
+    result = cruft_runner(
+        [
+            "create",
+            "--output-dir",
+            str(tmpdir),
+            "--extra-context-file",
+            str(extra_context_file),
+            "--directory",
+            "dir",
+            "--no-input",
+            "https://github.com/cruft/cookiecutter-test",
+        ]
+    )
+    assert result.exit_code == 0
+    assert (Path(tmpdir) / "CRUFT-TEST-PROJECT").exists()
 
 
 def test_check(cruft_runner, cookiecutter_dir):
@@ -148,6 +178,7 @@ def test_link_interactive(cruft_runner, cookiecutter_dir):
     cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
     cruft_config_from_create = json.loads(cruft_file.read_text())
     commit = cruft_config_from_create["commit"]
+    assert commit == cruft_config_from_create["context"]["cookiecutter"]["_commit"]
     cruft_file.unlink()
     result = cruft_runner(
         [
@@ -704,3 +735,45 @@ def test_local_extension_update(cruft_runner, tmpdir):
         assert "Updated11" in contents
         # check if the extension has been updated
         assert "This has been updated" in contents
+
+
+def test_submodule_create(cruft_runner, cookiecutter_dir_submodule):
+    # the submodule was properly cloned if the file of the submodule exists
+    assert (cookiecutter_dir_submodule / "submodule" / "test-file").exists()
+
+
+def test_submodule_update_has_submodule_diff(cruft_runner, cookiecutter_dir_submodule, capfd):
+    # the diff during an update should include the submodule changes
+    result = cruft_runner(
+        [
+            "update",
+            "--project-dir",
+            cookiecutter_dir_submodule.as_posix(),
+            "-c",
+            "submodules-updated",
+        ],
+        input="v\ny\n",
+    )
+    assert result.exit_code == 0
+
+    git_diff_captured = capfd.readouterr()
+
+    assert "current_template/submodule/test-file" in git_diff_captured.out
+    assert "new_template/submodule/test-file" in git_diff_captured.out
+    assert "@@ -1 +1 @@" in git_diff_captured.out
+    assert "-revision 1" in git_diff_captured.out
+    assert "+revision 2" in git_diff_captured.out
+
+    assert "cruft has been updated" in result.stdout
+
+
+def test_submodule_diff_includes_submodule(cruft_runner, cookiecutter_dir_submodule):
+    with open(cookiecutter_dir_submodule / "submodule" / "test-file", "w") as f:
+        f.write("revision 3")
+
+    result = cruft_runner(["diff", "--project-dir", cookiecutter_dir_submodule.as_posix()])
+    assert result.exit_code == 0
+
+    assert "@@ -1 +1 @@" in result.stdout
+    assert "-revision 3" in result.stdout
+    assert "+revision 1" in result.stdout

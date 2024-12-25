@@ -1,4 +1,5 @@
 """This module defines CLI interactions when using `cruft`."""
+
 import json
 from pathlib import Path
 from typing import List, Optional
@@ -72,6 +73,13 @@ def create(
         help="A JSON string describing any extra context to pass to cookiecutter.",
         show_default=False,
     ),
+    extra_context_file: Optional[Path] = typer.Option(
+        None,
+        "--extra-context-file",
+        "-E",
+        help="Path to a JSON file describing any extra context to pass to cookiecutter.",
+        exists=True,
+    ),
     no_input: bool = typer.Option(
         False,
         "--no-input",
@@ -110,6 +118,7 @@ def create(
         config_file=config_file,
         default_config=default_config,
         extra_context=json.loads(extra_context),
+        extra_context_file=extra_context_file,
         no_input=no_input,
         directory=directory,
         checkout=checkout,
@@ -185,6 +194,12 @@ def link(
 def update(
     project_dir: Path = typer.Option(
         Path("."), "--project-dir", "-p", help="Path to the project directory.", show_default=False
+    ),
+    template_path: Optional[Path] = typer.Option(
+        None,
+        "--template-path",
+        help="Path to a locally cloned template repository. Cruft will automatically "
+        "resolve the linked repository if not specified.",
     ),
     cookiecutter_input: bool = typer.Option(
         False,
@@ -272,6 +287,7 @@ def update(
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
+        template_path=template_path,
         cookiecutter_input=cookiecutter_input,
         refresh_private_variables=refresh_private_variables,
         skip_apply_ask=skip_apply_ask,
