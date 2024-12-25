@@ -24,14 +24,14 @@ jobs:
         run: pipx install poetry
 
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.7"
+          python-version: "3.8"
           cache: "poetry"
 
       - name: Install dependencies
         run: |
-          poetry env use "3.7"
+          poetry env use "3.8"
           poetry install
 
       - name: Bump version number
