@@ -1,4 +1,5 @@
 """Contains all custom exceptions raised by cruft."""
+
 from pathlib import Path
 from typing import Union
 

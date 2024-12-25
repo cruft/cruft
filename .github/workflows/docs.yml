@@ -4,7 +4,7 @@ name: Docs publish
 on:
   push:
     branches:
-      - master
+      - main
       - release
 
 jobs:
@@ -14,19 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.7"
-          cache: "poetry"
+          python-version: "3.8"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.8"
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
 
       - name: Install dependencies
-        run: |
-          poetry env use "3.7"
-          poetry install
+        run: uv sync --all-extras --dev
 
       - name: Deploy docs
-        run: poetry run portray on_github_pages -f
+        run: uv run portray on_github_pages -f

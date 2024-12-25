@@ -39,6 +39,7 @@ def cookiecutter_template(
     commit = checkout or repo.remotes.origin.refs["HEAD"]
 
     repo.head.reset(commit=commit, working_tree=True)
+    repo.submodule_update(recursive=True, force_reset=True)
 
     assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
     context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
@@ -86,7 +87,6 @@ def _generate_output(
     # See https://github.com/cookiecutter/cookiecutter/pull/907
     output_dir.mkdir(parents=True, exist_ok=True)
     with AltTemporaryDirectory(cruft_state.get("directory")) as tmpdir:
-
         # Kindly ask cookiecutter to generate the template
         template_dir = generate_files(
             repo_dir=inner_dir, context=new_context, overwrite_if_exists=True, output_dir=tmpdir
@@ -113,7 +113,8 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Union[
     elif pyproject_file.is_file():
         warn(
             "pyproject.toml is present in repo, but python version is < 3.11 and "
-            "`toml` package is not installed. Cruft configuration may be ignored."
+            "`toml` package is not installed. Cruft configuration may be ignored.",
+            stacklevel=2,
         )
     return set(map(lambda p: p if "*" in p else Path(p), skip_cruft))
 
@@ -162,7 +163,7 @@ def _remove_paths(root: Path, paths_to_remove: Set[Union[Path, str]]):
         elif isinstance(path_to_remove, str):  # assumes the string is a glob-pattern
             abs_paths_to_remove += list(root.glob(path_to_remove))
         else:
-            warn(f"{path_to_remove} is not a Path object or a string glob-pattern")
+            warn(f"{path_to_remove} is not a Path object or a string glob-pattern", stacklevel=2)
 
     for path in abs_paths_to_remove:
         _remove_single_path(path)

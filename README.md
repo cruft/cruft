@@ -26,7 +26,7 @@ Creating new projects from templates using cruft is easy:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example.gif)
 
-And, so is updating them as the template changes overtime:
+And, so is updating them as the template changes over time:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example_update.gif)
 
@@ -90,7 +90,7 @@ and update the `.cruft.json` file for you.
 
         [tool.cruft]
         skip = ["cruft/__init__.py", "tests"]
-    
+
     Note that it is possible to use glob patterns for selecting the files to skip:
         {
             "skip": [
@@ -103,7 +103,7 @@ and update the `.cruft.json` file for you.
 ## Updating Values of Template Variables
 
 `cruft` can also be used to update a project to use new values of template variables; avoiding the need to regenerate
-the project from sratch using `cookiecutter`.
+the project from scratch using `cookiecutter`.
 
 For example, imagine a project that was initially generated some while ago, and then later on, you want to change the
 values of some of the template variables, e.g. to change `use_some_feature` to `"yes"` or to change `project_name` to
@@ -165,7 +165,7 @@ You can then specify the last commit of the template the project has been update
 
 With time, your boilerplate may end up being very different from the actual cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running `cruft diff`. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to `git diff`.
 
-The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code should any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
+The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code if any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
 
 ## Automating updates with GitHub Actions
 
@@ -254,7 +254,7 @@ jobs:
 
 Since I first saw videos of [quickly](https://www.youtube.com/watch?v=9EctXzH2dss) being used to automate Ubuntu application creation, I've had a love/hate relationship with these kinds of tools.
 I've used them for many projects and certainly seen them lead to productivity improvements. However, I've always felt like they were a double-edged sword. Sure, they would automate away the copying and pasting many would do to create projects. However, by doing so,
-they encouraged more code to be copied and pasted! Then, over time, you could easily be left with hundreds of projects that contained copy-and-pasted code with no way to easy way to update them. I created cruft to be a tool that recognized that balance between project creation and maintenance and provided mechanisms to keep built projects up-to-date.
+they encouraged more code to be copied and pasted! Then, over time, you could easily be left with hundreds of projects that contained copy-and-pasted code with no easy way to update them. I created cruft to be a tool that recognized that balance between project creation and maintenance and provided mechanisms to keep built projects up-to-date.
 
 I hope you too find `cruft` useful!
 
