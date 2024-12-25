@@ -1,0 +1,1912 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.4, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>Exceptions - cruft</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4cae4f">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="green" data-md-color-accent="lightgreen">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-cruftexceptions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="cruft" class="md-header__button md-logo" aria-label="cruft" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            cruft
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Exceptions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/cruft/cruft/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cruft
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="cruft" class="md-nav__button md-logo" aria-label="cruft" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    cruft
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/cruft/cruft/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cruft
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CHANGELOG/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../docs/contributing/1.-contributing-guide/" class="md-nav__link">
+        1. Contributing Guide
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../docs/contributing/2.-coding-standard/" class="md-nav__link">
+        2. Coding Standard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../docs/contributing/3.-code-of-conduct/" class="md-nav__link">
+        3. Code Of Conduct
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../docs/contributing/4.-acknowledgements/" class="md-nav__link">
+        4. Acknowledgements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          Cruft
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cruft" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          Cruft
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Exceptions
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Exceptions
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changesetunicodeerror" class="md-nav__link">
+    ChangesetUnicodeError
+  </a>
+  
+    <nav class="md-nav" aria-label="ChangesetUnicodeError">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cruftalreadypresent" class="md-nav__link">
+    CruftAlreadyPresent
+  </a>
+  
+    <nav class="md-nav" aria-label="CruftAlreadyPresent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_1" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_1" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_1" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_1" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_1" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crufterror" class="md-nav__link">
+    CruftError
+  </a>
+  
+    <nav class="md-nav" aria-label="CruftError">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_2" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descendants" class="md-nav__link">
+    Descendants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_2" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_2" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_2" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_2" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invalidcookiecutterrepository" class="md-nav__link">
+    InvalidCookiecutterRepository
+  </a>
+  
+    <nav class="md-nav" aria-label="InvalidCookiecutterRepository">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_3" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_3" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_3" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_3" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_3" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_3" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nocruftfound" class="md-nav__link">
+    NoCruftFound
+  </a>
+  
+    <nav class="md-nav" aria-label="NoCruftFound">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_4" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_4" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_4" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_4" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_4" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_4" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unabletofindcookiecuttertemplate" class="md-nav__link">
+    UnableToFindCookiecutterTemplate
+  </a>
+  
+    <nav class="md-nav" aria-label="UnableToFindCookiecutterTemplate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_5" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_5" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_5" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_5" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_5" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_5" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changesetunicodeerror" class="md-nav__link">
+    ChangesetUnicodeError
+  </a>
+  
+    <nav class="md-nav" aria-label="ChangesetUnicodeError">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cruftalreadypresent" class="md-nav__link">
+    CruftAlreadyPresent
+  </a>
+  
+    <nav class="md-nav" aria-label="CruftAlreadyPresent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_1" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_1" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_1" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_1" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_1" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crufterror" class="md-nav__link">
+    CruftError
+  </a>
+  
+    <nav class="md-nav" aria-label="CruftError">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_2" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descendants" class="md-nav__link">
+    Descendants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_2" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_2" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_2" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_2" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invalidcookiecutterrepository" class="md-nav__link">
+    InvalidCookiecutterRepository
+  </a>
+  
+    <nav class="md-nav" aria-label="InvalidCookiecutterRepository">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_3" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_3" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_3" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_3" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_3" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_3" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nocruftfound" class="md-nav__link">
+    NoCruftFound
+  </a>
+  
+    <nav class="md-nav" aria-label="NoCruftFound">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_4" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_4" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_4" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_4" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_4" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_4" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unabletofindcookiecuttertemplate" class="md-nav__link">
+    UnableToFindCookiecutterTemplate
+  </a>
+  
+    <nav class="md-nav" aria-label="UnableToFindCookiecutterTemplate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro_5" class="md-nav__link">
+    Ancestors (in MRO)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-variables_5" class="md-nav__link">
+    Class variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_5" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format_message_5" class="md-nav__link">
+    format_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_5" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_traceback_5" class="md-nav__link">
+    with_traceback
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/cruft/cruft/edit/main/reference/cruft/exceptions.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="module-cruftexceptions">Module cruft.exceptions</h1>
+<p>Contains all custom exceptions raised by cruft.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="sd">&quot;&quot;&quot;Contains all custom exceptions raised by cruft.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">click</span> <span class="kn">import</span> <span class="n">ClickException</span>
+
+<span class="k">class</span> <span class="nc">CruftError</span><span class="p">(</span><span class="n">ClickException</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base exception for any error originating from the cruft project.&quot;&quot;&quot;</span>
+
+<span class="k">class</span> <span class="nc">UnableToFindCookiecutterTemplate</span><span class="p">(</span><span class="n">CruftError</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when Cruft is unable to find a cookiecutter template.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+            <span class="n">directory</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Was unable to locate a Cookiecutter template in `</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">` !&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span>
+
+<span class="k">class</span> <span class="nc">NoCruftFound</span><span class="p">(</span><span class="n">CruftError</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when no .cruft.json state is found in the current directory.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+            <span class="n">directory</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Was unable to locate a `.cruft.json` state file in `</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">` !&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span>
+
+<span class="k">class</span> <span class="nc">CruftAlreadyPresent</span><span class="p">(</span><span class="n">CruftError</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when there is an attempt to create a new .cruft.json file but one already exists.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_location</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_location</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+            <span class="n">file_location</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_location</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`.cruft.json` is already defined at `</span><span class="si">{</span><span class="n">file_location</span><span class="si">}</span><span class="s2">` !&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_location</span> <span class="o">=</span> <span class="n">file_location</span>
+
+<span class="k">class</span> <span class="nc">InvalidCookiecutterRepository</span><span class="p">(</span><span class="n">CruftError</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when an invalid cookiecutter repository is provided.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookiecutter_repo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookiecutter_repo</span> <span class="o">=</span> <span class="n">cookiecutter_repo</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+
+            <span class="sa">f</span><span class="s2">&quot;Unable to initialize the cookiecutter using </span><span class="si">{</span><span class="n">cookiecutter_repo</span><span class="si">}</span><span class="s2">! </span><span class="si">{</span><span class="n">details</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ChangesetUnicodeError</span><span class="p">(</span><span class="n">CruftError</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when `cruft update` is unable to generate the change&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+
+            <span class="p">(</span>
+
+                <span class="s2">&quot;Unable to interpret changes between current project and cookiecutter template as &quot;</span>
+
+                <span class="s2">&quot;unicode. Typically a result of hidden binary files in project folder.&quot;</span>
+
+            <span class="p">)</span>
+
+        <span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h2 id="classes">Classes</h2>
+<h3 id="changesetunicodeerror">ChangesetUnicodeError</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">ChangesetUnicodeError</span><span class="p">(</span>
+
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Raised when <code>cruft update</code> is unable to generate the change</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">ChangesetUnicodeError</span>(<span class="n">CruftError</span>):
+
+    <span class="s">&quot;&quot;&quot;Raised when `cruft update` is unable to generate the change&quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>):
+
+        <span class="n">super</span>().<span class="n">__init__</span>(
+
+            (
+
+                <span class="s">&quot;Unable to interpret changes between current project and cookiecutter template as &quot;</span>
+
+                <span class="s">&quot;unicode. Typically a result of hidden binary files in project folder.&quot;</span>
+
+            )
+
+        )
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro">Ancestors (in MRO)</h4>
+<ul>
+<li>cruft.exceptions.CruftError</li>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="class-variables">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods">Methods</h4>
+<h4 id="format_message">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+<h3 id="cruftalreadypresent">CruftAlreadyPresent</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">CruftAlreadyPresent</span><span class="p">(</span>
+    <span class="n">file_location</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Raised when there is an attempt to create a new .cruft.json file but one already exists.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">CruftAlreadyPresent</span>(<span class="n">CruftError</span>):
+
+    <span class="s">&quot;&quot;&quot;Raised when there is an attempt to create a new .cruft.json file but one already exists.&quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="n">file_location:</span> <span class="n">Union</span>[<span class="n">str</span>, <span class="n">Path</span>]):
+
+        <span class="k">if</span> <span class="nb">not</span> <span class="n">isinstance</span>(<span class="n">file_location</span>, <span class="n">str</span>):
+
+            <span class="n">file_location</span> = <span class="n">str</span>(<span class="n">file_location</span>)
+
+        <span class="n">super</span>().<span class="n">__init__</span>(<span class="nb">f</span><span class="s">&quot;`.cruft.json` is already defined at `{file_location}` !&quot;</span>)
+
+        <span class="nb">self</span>.<span class="n">file_location</span> = <span class="n">file_location</span>
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro_1">Ancestors (in MRO)</h4>
+<ul>
+<li>cruft.exceptions.CruftError</li>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="class-variables_1">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods_1">Methods</h4>
+<h4 id="format_message_1">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show_1">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback_1">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+<h3 id="crufterror">CruftError</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">CruftError</span><span class="p">(</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>The base exception for any error originating from the cruft project.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">CruftError</span>(<span class="n">ClickException</span>):
+
+    <span class="s">&quot;&quot;&quot;The base exception for any error originating from the cruft project.&quot;&quot;&quot;</span>
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro_2">Ancestors (in MRO)</h4>
+<ul>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="descendants">Descendants</h4>
+<ul>
+<li>cruft.exceptions.UnableToFindCookiecutterTemplate</li>
+<li>cruft.exceptions.NoCruftFound</li>
+<li>cruft.exceptions.CruftAlreadyPresent</li>
+<li>cruft.exceptions.InvalidCookiecutterRepository</li>
+<li>cruft.exceptions.ChangesetUnicodeError</li>
+</ul>
+<h4 id="class-variables_2">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods_2">Methods</h4>
+<h4 id="format_message_2">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show_2">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback_2">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+<h3 id="invalidcookiecutterrepository">InvalidCookiecutterRepository</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">InvalidCookiecutterRepository</span><span class="p">(</span>
+    <span class="n">cookiecutter_repo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">details</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Raised when an invalid cookiecutter repository is provided.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">InvalidCookiecutterRepository</span>(<span class="n">CruftError</span>):
+
+    <span class="s">&quot;&quot;&quot;Raised when an invalid cookiecutter repository is provided.&quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="n">cookiecutter_repo:</span> <span class="n">str</span>, <span class="n">details:</span> <span class="n">str</span> = <span class="s">&quot;&quot;</span>):
+
+        <span class="nb">self</span>.<span class="n">cookiecutter_repo</span> = <span class="n">cookiecutter_repo</span>
+
+        <span class="n">super</span>().<span class="n">__init__</span>(
+
+            <span class="nb">f</span><span class="s">&quot;Unable to initialize the cookiecutter using {cookiecutter_repo}! {details.strip()}&quot;</span>
+
+        )
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro_3">Ancestors (in MRO)</h4>
+<ul>
+<li>cruft.exceptions.CruftError</li>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="class-variables_3">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods_3">Methods</h4>
+<h4 id="format_message_3">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show_3">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback_3">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+<h3 id="nocruftfound">NoCruftFound</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">NoCruftFound</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Raised when no .cruft.json state is found in the current directory.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">NoCruftFound</span>(<span class="n">CruftError</span>):
+
+    <span class="s">&quot;&quot;&quot;Raised when no .cruft.json state is found in the current directory.&quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="n">directory:</span> <span class="n">Union</span>[<span class="n">str</span>, <span class="n">Path</span>]):
+
+        <span class="k">if</span> <span class="nb">not</span> <span class="n">isinstance</span>(<span class="n">directory</span>, <span class="n">str</span>):
+
+            <span class="n">directory</span> = <span class="n">str</span>(<span class="n">directory</span>)
+
+        <span class="n">super</span>().<span class="n">__init__</span>(<span class="nb">f</span><span class="s">&quot;Was unable to locate a `.cruft.json` state file in `{directory}` !&quot;</span>)
+
+        <span class="nb">self</span>.<span class="n">directory</span> = <span class="n">directory</span>
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro_4">Ancestors (in MRO)</h4>
+<ul>
+<li>cruft.exceptions.CruftError</li>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="class-variables_4">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods_4">Methods</h4>
+<h4 id="format_message_4">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show_4">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback_4">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+<h3 id="unabletofindcookiecuttertemplate">UnableToFindCookiecutterTemplate</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">UnableToFindCookiecutterTemplate</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Raised when Cruft is unable to find a cookiecutter template.</p>
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="n">UnableToFindCookiecutterTemplate</span>(<span class="n">CruftError</span>):
+
+    <span class="s">&quot;&quot;&quot;Raised when Cruft is unable to find a cookiecutter template.&quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="n">directory:</span> <span class="n">Union</span>[<span class="n">str</span>, <span class="n">Path</span>]):
+
+        <span class="k">if</span> <span class="nb">not</span> <span class="n">isinstance</span>(<span class="n">directory</span>, <span class="n">str</span>):
+
+            <span class="n">directory</span> = <span class="n">str</span>(<span class="n">directory</span>)
+
+        <span class="n">super</span>().<span class="n">__init__</span>(<span class="nb">f</span><span class="s">&quot;Was unable to locate a Cookiecutter template in `{directory}` !&quot;</span>)
+
+        <span class="nb">self</span>.<span class="n">directory</span> = <span class="n">directory</span>
+</code></pre></div>
+
+</details>
+<hr />
+<h4 id="ancestors-in-mro_5">Ancestors (in MRO)</h4>
+<ul>
+<li>cruft.exceptions.CruftError</li>
+<li>click.exceptions.ClickException</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h4 id="class-variables_5">Class variables</h4>
+<div class="codehilite"><pre><span></span><code><span class="n">args</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">exit_code</span>
+</code></pre></div>
+
+<h4 id="methods_5">Methods</h4>
+<h4 id="format_message_5">format_message</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">format_message</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">format_message</span><span class="p">(</span><span class="kr">self</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">str</span><span class="o">:</span>
+
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kr">self</span><span class="p">.</span><span class="n">message</span>
+</code></pre></div>
+
+</details>
+<h4 id="show_5">show</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+<details class="example">
+<summary>View Source</summary>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">def</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="kr">self</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="o">:</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">IO</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="kr">Any</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">None</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">None</span><span class="o">:</span>
+
+<span class="w">            </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_text_stderr</span><span class="p">()</span>
+
+<span class="w">        </span><span class="n">echo</span><span class="p">(</span>
+
+<span class="w">            </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Error: {message}&quot;</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">format_message</span><span class="p">()),</span>
+
+<span class="w">            </span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+
+<span class="w">            </span><span class="n">color</span><span class="o">=</span><span class="kr">self</span><span class="p">.</span><span class="n">show_color</span><span class="p">,</span>
+
+<span class="w">        </span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h4 id="with_traceback_5">with_traceback</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">with_traceback</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --</p>
+<p>set self.<strong>traceback</strong> to tb and return self.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../../../docs/contributing/4.-acknowledgements/" title="4. Acknowledgements" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                4. Acknowledgements
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../" title="Index" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Index
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Powered by
+        <a href="http://timothycrosley.github.io/portray">portray.</a>
+        You too can
+        <a href="http://timothycrosley.github.io/portray">
+          portray</a>
+        your Python project well using automatic documentation.
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.f8263e09.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>
