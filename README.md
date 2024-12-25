@@ -103,7 +103,7 @@ and update the `.cruft.json` file for you.
 ## Updating Values of Template Variables
 
 `cruft` can also be used to update a project to use new values of template variables; avoiding the need to regenerate
-the project from sratch using `cookiecutter`.
+the project from scratch using `cookiecutter`.
 
 For example, imagine a project that was initially generated some while ago, and then later on, you want to change the
 values of some of the template variables, e.g. to change `use_some_feature` to `"yes"` or to change `project_name` to
@@ -165,7 +165,7 @@ You can then specify the last commit of the template the project has been update
 
 With time, your boilerplate may end up being very different from the actual cookiecutter template. Cruft allows you to quickly see what changed in your local project compared to the template. It is as easy as running `cruft diff`. If any local file differs from the template, the diff will appear in your terminal in a similar fashion to `git diff`.
 
-The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code should any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
+The `cruft diff` command optionally accepts an `--exit-code` flag that will make cruft exit with a non-0 code if any diff is found. You can combine this flag with the `skip` section of your `.cruft.json` to make stricter CI checks that ensures any improvement to the template is always submitted upstream.
 
 ## Automating updates with GitHub Actions
 
