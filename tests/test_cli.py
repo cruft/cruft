@@ -875,4 +875,3 @@ def test_submodule_diff_includes_submodule(cruft_runner, cookiecutter_dir_submod
     assert "@@ -1 +1 @@" in result.stdout
     assert "-revision 3" in result.stdout
     assert "+revision 1" in result.stdout
-
