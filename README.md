@@ -26,7 +26,7 @@ Creating new projects from templates using cruft is easy:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example.gif)
 
-And, so is updating them as the template changes overtime:
+And, so is updating them as the template changes over time:
 
 ![Example Usage New Project](https://raw.githubusercontent.com/cruft/cruft/master/art/example_update.gif)
 
@@ -90,7 +90,7 @@ and update the `.cruft.json` file for you.
 
         [tool.cruft]
         skip = ["cruft/__init__.py", "tests"]
-    
+
     Note that it is possible to use glob patterns for selecting the files to skip:
         {
             "skip": [
