@@ -73,6 +73,29 @@ def cookiecutter_dir_submodule(tmpdir):
     )
 
 
+@pytest.fixture
+def cookiecutter_dir_extensions(tmpdir):
+    yield Path(
+        cruft.create(
+            "https://github.com/cruft/cookiecutter-test",
+            Path(tmpdir),
+            checkout="extensions",
+            directory="dir",
+        )
+    )
+
+
+@pytest.fixture
+def cookiecutter_no_dir_extensions(tmpdir):
+    yield Path(
+        cruft.create(
+            "https://github.com/cruft/cookiecutter-test",
+            Path(tmpdir),
+            checkout="no-dir-extensions",
+        )
+    )
+
+
 def test_create(cruft_runner, tmpdir):
     result = cruft_runner(
         [
@@ -575,14 +598,6 @@ def test_update_changed_variables(
 
     git_diff_captured = capfd.readouterr()
 
-    print()
-    print("========== STDERR ==========")
-    print(git_diff_captured.err)
-    print("========== STDOUT ==========")
-    print(git_diff_captured.out)
-    print(result.stdout)
-    print("============================")
-
     expected_input_value = vtu_cli_expected or vtu_file_expected  # CLI takes precedence
 
     # validate input value used in project
@@ -625,15 +640,7 @@ def test_update_changed_variables_wrong_file(
         input="v\ny\n",
     )
 
-    git_diff_captured = capfd.readouterr()
-
-    print()
-    print("========== STDERR ==========")
-    print(git_diff_captured.err)
-    print("========== STDOUT ==========")
-    print(git_diff_captured.out)
-    print(result.stdout)
-    print("============================")
+    capfd.readouterr()
 
     assert "cannot be the same as the project's cruft file" in result.stdout
     assert result.exit_code != 0
@@ -672,7 +679,6 @@ def test_diff_no_diff(args, expected_exit_code, cruft_runner, cookiecutter_dir):
 @pytest.mark.parametrize("args, expected_exit_code", [([], 0)])
 def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_dir_hooked_git):
     cookiecutter_dir = cookiecutter_dir_hooked_git
-    print("cookiecutter_dir", cookiecutter_dir)
     # The two points below could as well be nicely stored within
     # a cookiecutter-test branch.
     # Write a skip section into pyproject.toml
@@ -689,36 +695,16 @@ def test_diff_skip_git_dir(args, expected_exit_code, cruft_runner, cookiecutter_
     run(["git", "add", "--all"], cwd=cookiecutter_dir)
     run(["git", "commit", "-m", "2nd commit"], cwd=cookiecutter_dir)
     result = cruft_runner(["diff", "--project-dir", cookiecutter_dir.as_posix(), "--exit-code"])
-    print(result.stdout)
     assert result.exit_code == expected_exit_code
     assert ".git" not in result.stdout
 
 
-def test_local_extension(cruft_runner, tmpdir):
-    result = cruft_runner(
-        [
-            "create",
-            "--output-dir",
-            str(tmpdir),
-            "https://github.com/cruft/cookiecutter-test",
-            "--directory",
-            "dir",
-            "--checkout",
-            "extensions",
-            "-y",
-        ]
-    )
-    assert result.exit_code == 0
-    assert result.stdout == ""
-
-
-def test_local_extension_check(cruft_runner, tmpdir):
-    test_local_extension(cruft_runner, tmpdir)
+def test_local_extension_check(cruft_runner, cookiecutter_dir_extensions):
     result = cruft_runner(
         [
             "check",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_dir_extensions),
             "--checkout",
             "extensions-update",
         ]
@@ -729,18 +715,16 @@ def test_local_extension_check(cruft_runner, tmpdir):
     )
 
 
-def test_local_extension_diff(cruft_runner, tmpdir):
-    test_local_extension(cruft_runner, tmpdir)
+def test_local_extension_diff(cruft_runner, cookiecutter_dir_extensions):
     result = cruft_runner(
         [
             "diff",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_dir_extensions),
             "--checkout",
             "extensions-update",
         ]
     )
-    print(result.stdout)
     assert result.exit_code == 0
     assert (
         "diff --git upstream-template-old/README.md upstream-template-new/README.md"
@@ -748,31 +732,29 @@ def test_local_extension_diff(cruft_runner, tmpdir):
     )
 
 
-def test_local_extension_update(cruft_runner, tmpdir):
-    test_local_extension(cruft_runner, tmpdir)
+def test_local_extension_update(cruft_runner, cookiecutter_dir_extensions):
     result = cruft_runner(
         [
             "update",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_dir_extensions),
             "--checkout",
             "extensions-update",
             "--skip-apply-ask",
         ]
     )
     assert result.exit_code == 0
-    with open(tmpdir / "test" / "README.md") as f:
+    with open(cookiecutter_dir_extensions / "README.md") as f:
         assert "Updated11" in f.read()
 
 
-def test_local_extension_without_dir(cruft_runner, tmpdir):
+def test_local_extension_without_dir(cruft_runner, cookiecutter_no_dir_extensions):
     result = cruft_runner(
         [
             "create",
             "--output-dir",
-            str(tmpdir),
-            # FIXME: Replace Fabi89 by cruft if PR is merged
-            "https://github.com/Fabi89/cookiecutter-test",
+            str(cookiecutter_no_dir_extensions),
+            "https://github.com/cruft/cookiecutter-test",
             "--checkout",
             "no-dir-extensions",
             "-y",
@@ -782,13 +764,12 @@ def test_local_extension_without_dir(cruft_runner, tmpdir):
     assert result.stdout == ""
 
 
-def test_local_extension_without_dir_check(cruft_runner, tmpdir):
-    test_local_extension_without_dir(cruft_runner, tmpdir)
+def test_local_extension_without_dir_check(cruft_runner, cookiecutter_no_dir_extensions):
     result = cruft_runner(
         [
             "check",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_no_dir_extensions),
             "--checkout",
             "no-dir-extensions-update",
         ]
@@ -799,18 +780,16 @@ def test_local_extension_without_dir_check(cruft_runner, tmpdir):
     )
 
 
-def test_local_extension_without_dir_diff(cruft_runner, tmpdir):
-    test_local_extension_without_dir(cruft_runner, tmpdir)
+def test_local_extension_without_dir_diff(cruft_runner, cookiecutter_no_dir_extensions):
     result = cruft_runner(
         [
             "diff",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_no_dir_extensions),
             "--checkout",
             "no-dir-extensions-update",
         ]
     )
-    print(result.stdout)
     assert result.exit_code == 0
     assert (
         "diff --git upstream-template-old/README.md upstream-template-new/README.md"
@@ -818,20 +797,19 @@ def test_local_extension_without_dir_diff(cruft_runner, tmpdir):
     )
 
 
-def test_local_extension_without_dir_update(cruft_runner, tmpdir):
-    test_local_extension_without_dir(cruft_runner, tmpdir)
+def test_local_extension_without_dir_update(cruft_runner, cookiecutter_no_dir_extensions):
     result = cruft_runner(
         [
             "update",
             "--project-dir",
-            str(tmpdir / "test"),
+            str(cookiecutter_no_dir_extensions),
             "--checkout",
             "no-dir-extensions-update",
             "--skip-apply-ask",
         ]
     )
     assert result.exit_code == 0
-    with open(tmpdir / "test" / "README.md") as f:
+    with open(cookiecutter_no_dir_extensions / "README.md") as f:
         assert "Updated11" in f.read()
 
 
