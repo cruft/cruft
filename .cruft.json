@@ -1,15 +1,15 @@
 {
-  "template": "https://github.com/timothycrosley/cookiecutter-python",
+  "template": "https://github.com/cruft/cookiecutter-python",
   "commit": "71391fd9999067ef4b38aa05e7116087fac431f8",
   "context": {
     "cookiecutter": {
       "full_name": "Timothy Crosley",
       "email": "timothy.crosley@gmail.com",
-      "github_username": "timothycrosley",
+      "github_username": "cruft",
       "project_name": "cruft",
       "description": "Allows you to maintain all the necessary cruft for packaging and building projects separate from the code you intentionally write. Built on-top of CookieCutter.",
       "version": "0.0.1",
-      "_template": "https://github.com/timothycrosley/cookiecutter-python"
+      "_template": "https://github.com/cruft/cookiecutter-python"
     }
   },
   "directory": "",
