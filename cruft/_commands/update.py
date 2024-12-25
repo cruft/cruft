@@ -218,6 +218,28 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
 
 
+def _apply_with_merge(diff: str, expanded_dir_path: Path):
+    patch_merge = ["patch", "-p1", "--merge", "--no-backup-if-mismatch"]
+
+    try:
+        run(
+            patch_merge,
+            input=diff.encode(),
+            stderr=PIPE,
+            stdout=PIPE,
+            check=True,
+            cwd=expanded_dir_path,
+        )
+    except CalledProcessError as error:
+        typer.secho(error.stderr.decode(), err=True)
+        typer.secho(
+            (
+                "Failed to cleanly apply the update, there may be merge conflicts."
+            ),
+            fg=typer.colors.YELLOW,
+        )
+
+
 def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_files: bool):
     offset = _get_offset(expanded_dir_path)
 
@@ -241,7 +263,7 @@ def _apply_three_way_patch(diff: str, expanded_dir_path: Path, allow_untracked_f
                 "Failed to apply the update. Retrying again with a different update strategy.",
                 fg=typer.colors.YELLOW,
             )
-            _apply_patch_with_rejections(diff, expanded_dir_path)
+            _apply_with_merge(diff, expanded_dir_path)
 
 
 def _get_offset(expanded_dir_path: Path):
