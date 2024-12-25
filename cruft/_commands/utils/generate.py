@@ -39,6 +39,7 @@ def cookiecutter_template(
     commit = checkout or repo.remotes.origin.refs["HEAD"]
 
     repo.head.reset(commit=commit, working_tree=True)
+    repo.submodule_update(recursive=True, force_reset=True)
 
     assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
     context = _generate_output(cruft_state, Path(repo.working_dir), cookiecutter_input, output_dir)
