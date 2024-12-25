@@ -152,7 +152,7 @@ def update(
 
 def _clean_cookiecutter_private_variables(cruft_state: dict):
     for key in list(cruft_state["context"]["cookiecutter"].keys()):
-        if key != "_template" and key.startswith("_"):
+        if key not in ["_commit", "_template"] and key.startswith("_"):
             del cruft_state["context"]["cookiecutter"][key]
 
 

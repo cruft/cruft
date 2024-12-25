@@ -178,6 +178,7 @@ def test_link_interactive(cruft_runner, cookiecutter_dir):
     cruft_file = utils.cruft.get_cruft_file(cookiecutter_dir)
     cruft_config_from_create = json.loads(cruft_file.read_text())
     commit = cruft_config_from_create["commit"]
+    assert commit == cruft_config_from_create["context"]["cookiecutter"]["_commit"]
     cruft_file.unlink()
     result = cruft_runner(
         [
