@@ -13,25 +13,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.8"
-          cache: "poetry"
+
+      - name: Install uv
+        uses: actions/uv@v1
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
 
       - name: Install dependencies
-        run: |
-          poetry env use "3.8"
-          poetry install
+        run: uv install
 
       - name: Bump version number
-        run: poetry version ${{ github.event.release.tag_name }}
+        run: uv version ${{ github.event.release.tag_name }}
 
       - name: Build package
-        run: poetry build
+        run: uv build
 
       - name: Publish package
-        run: poetry publish -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
+        run: uv publish -u __token__ -p ${{ secrets.PYPI_PASSWORD }}

@@ -1,5 +1,5 @@
 #!/bin/bash
 set -euxo pipefail
 
-poetry run ruff format cruft/ tests/
-poetry run ruff check --fix --unsafe-fixes cruft/ tests/
+uv run ruff format cruft/ tests/
+uv run ruff check --fix --unsafe-fixes cruft/ tests/
