@@ -1,4 +1,7 @@
 name: Run tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -12,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.8", "3.13"]
+        python-version: ["3.8", "3.12"]
         include:
           - os: ubuntu-latest
             python-version: "3.8"
@@ -20,8 +23,6 @@ jobs:
             python-version: "3.9"
           - os: ubuntu-latest
             python-version: "3.10"
-          - os: ubuntu-latest
-            python-version: "3.12"
           - os: ubuntu-latest
             python-version: "3.11"
     runs-on: ${{ matrix.os }}
