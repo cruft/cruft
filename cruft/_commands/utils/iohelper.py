@@ -20,9 +20,15 @@ class AltTemporaryDirectory:
 
     def cleanup(self, cnt=0):
         if self._extended_path:
-            name = str(Path(self.tmpdir.name) / self._directory)
-            if name in sys.path:
-                sys.path.remove(name)
+            dir_path = Path(self.tmpdir.name) / self._directory
+            dir_name = str(dir_path)
+            if dir_name in sys.path:
+                sys.path.remove(dir_name)
+            for name, mod in list(sys.modules.items()):
+                if getattr(mod, "__file__", None):
+                    mod_path = Path(mod.__file__)
+                    if dir_path < mod_path:
+                        del sys.modules[name]
         if cnt >= 5:  # pragma: no cover
             raise RuntimeError("Could not delete TemporaryDirectory!")
         try:

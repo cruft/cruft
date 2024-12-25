@@ -700,7 +700,11 @@ def test_local_extension(cruft_runner, tmpdir):
             "create",
             "--output-dir",
             str(tmpdir),
-            "https://github.com/cruft/cookiecutter-test",
+            # TODO: This should be reverted to the
+            # official cruft/cookiecutter-test repo once
+            # https://github.com/cruft/cookiecutter-test/pull/7
+            # has been merged
+            "https://github.com/Chilipp/cookiecutter-test",
             "--directory",
             "dir",
             "--checkout",
@@ -726,7 +730,11 @@ def test_local_extension_update(cruft_runner, tmpdir):
     )
     assert result.exit_code == 0
     with open(tmpdir / "test" / "README.md") as f:
-        assert "Updated11" in f.read()
+        contents = f.read()
+        # check if the text has been updated
+        assert "Updated11" in contents
+        # check if the extension has been updated
+        assert "This has been updated" in contents
 
 
 def test_submodule_create(cruft_runner, cookiecutter_dir_submodule):
