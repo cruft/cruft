@@ -42,7 +42,7 @@ def cookiecutter_dir_hooked_git(tmpdir):
     yield Path(
         cruft.create(
             # See pull request!
-            "https://github.com/juhuebner/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
             directory="dir",
             checkout="with-git-from-hook",
@@ -54,7 +54,7 @@ def cookiecutter_dir_hooked_git(tmpdir):
 def cookiecutter_dir_input(tmpdir):
     yield Path(
         cruft.create(
-            "https://github.com/gmsantos/cookiecutter-test",
+            "https://github.com/cruft/cookiecutter-test",
             Path(tmpdir),
             directory="dir",
             checkout="input",
