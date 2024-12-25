@@ -19,19 +19,18 @@ jobs:
           python-version: "3.8"
 
       - name: Install uv
-        uses: actions/uv@v1
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: astral-sh/setup-uv@v4
         with:
-          path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
+          python-version: "3.8"
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
 
       - name: Install dependencies
-        run: uv install
+        run: uv sync --all-extras --dev
 
       - name: Bump version number
-        run: uv version ${{ github.event.release.tag_name }}
+        run: |
+          sed -i "s/version = \".*\"/version = \"${{ github.event.release.tag_name }}\"/" pyproject.toml
 
       - name: Build package
         run: uv build
