@@ -5,6 +5,7 @@ import typer
 
 from . import utils
 from .utils import example
+from .utils.clean import clean_context
 from .utils.iohelper import AltTemporaryDirectory
 
 
@@ -40,6 +41,8 @@ def link(
             default_config,
             extra_context,
             no_input,
+            project_dir,
+            checkout,
         )
         if no_input:
             use_commit = last_commit
@@ -57,7 +60,7 @@ def link(
                     "template": template_git_url,
                     "commit": use_commit,
                     "checkout": checkout,
-                    "context": context,
+                    "context": clean_context(context),
                     "directory": directory,
                 }
             )
