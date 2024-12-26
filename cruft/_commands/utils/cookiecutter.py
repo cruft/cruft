@@ -59,6 +59,7 @@ def get_cookiecutter_repo(
                 template_git_url,
                 f"Failed to check out the reference {checkout}. {error.stderr.strip()}",
             )
+    repo.submodule_update(recursive=True, force_reset=True)
     return repo
 
 
@@ -76,6 +77,7 @@ def _validate_cookiecutter(cookiecutter_template_dir: Path):
 
 def generate_cookiecutter_context(
     template_git_url: str,
+    last_commit: str,
     cookiecutter_template_dir: Path,
     config_file: Optional[Path] = None,
     default_config: bool = False,
@@ -101,6 +103,7 @@ def generate_cookiecutter_context(
     # except when 'no-input' flag is set
     context["cookiecutter"] = prompt_for_config(context, no_input)
     context["cookiecutter"]["_template"] = template_git_url
+    context["cookiecutter"]["_commit"] = last_commit
 
     # include output dir in the context dict
     context["cookiecutter"]["_output_dir"] = os.path.abspath(project_dir)

@@ -35,6 +35,7 @@ def link(
 
         context = utils.cookiecutter.generate_cookiecutter_context(
             template_git_url,
+            last_commit,
             cookiecutter_template_dir,
             config_file,
             default_config,

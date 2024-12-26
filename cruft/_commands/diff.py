@@ -19,7 +19,14 @@ def diff(
     checkout = checkout or cruft_state.get("commit")
 
     has_diff = False
-    with AltTemporaryDirectory(cruft_state.get("directory")) as tmpdir_:
+
+    directory = cruft_state.get("directory", "")
+    if directory:
+        directory = str(Path("repo") / directory)
+    else:
+        directory = "repo"
+
+    with AltTemporaryDirectory(directory) as tmpdir_:
         tmpdir = Path(tmpdir_)
         repo_dir = tmpdir / "repo"
         remote_template_dir = tmpdir / "remote"
@@ -33,7 +40,6 @@ def diff(
         with utils.cookiecutter.get_cookiecutter_repo(
             cruft_state["template"], repo_dir, checkout=checkout
         ) as repo:
-
             # We generate the template for the revision expected by the project
             utils.generate.cookiecutter_template(
                 output_dir=remote_template_dir,
