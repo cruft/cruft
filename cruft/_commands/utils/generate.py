@@ -73,17 +73,11 @@ def _generate_output(
 ) -> CookiecutterContext:
     inner_dir = project_dir / (cruft_state.get("directory") or "")
 
-    # Don't pass entries prefixed by "_" = cookiecutter extensions, not direct user intent
-    extra_context = {
-        key: value
-        for key, value in cruft_state["context"]["cookiecutter"].items()
-        if not key.startswith("_")
-    }
     new_context = generate_cookiecutter_context(
         cruft_state["template"],
         commit,
         inner_dir,
-        extra_context=extra_context,
+        extra_context=cruft_state["context"]["cookiecutter"],
         no_input=not cookiecutter_input,
     )
 
