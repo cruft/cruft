@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context
 from cookiecutter.prompt import prompt_for_config
+from cookiecutter.repository import expand_abbreviations
 from git import GitCommandError, Repo
 
 from cruft.exceptions import InvalidCookiecutterRepository, UnableToFindCookiecutterTemplate
@@ -18,7 +19,13 @@ CookiecutterContext = Dict[str, Any]
 #################################
 
 
-def resolve_template_url(url: str) -> str:
+def resolve_template_url(url: str, config_file: Optional[Path]) -> str:
+    config_dict = get_user_config(
+        config_file=str(config_file) if config_file else None, default_config=False
+    )
+    abbrev_key = "abbreviations"
+    if abbrev_key in config_dict:
+        url = expand_abbreviations(url, config_dict[abbrev_key])
     parsed_url = urlparse(url)
     # If we are given a file URI, we should convert
     # relative paths to absolute paths. This is to
