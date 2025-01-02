@@ -1,4 +1,5 @@
 import os
+import re
 import stat
 import sys
 from pathlib import Path
@@ -123,7 +124,8 @@ def _get_skip_paths(cruft_state: CruftState, pyproject_file: Path) -> Set[Union[
             "`toml` package is not installed. Cruft configuration may be ignored.",
             stacklevel=2,
         )
-    return set(map(lambda p: p if "*" in p else Path(p), skip_cruft))
+    non_globs = {p for p in skip_cruft if not re.search(r"(?<!\\)\*", p)}
+    return {Path(p) for p in non_globs} | (set(skip_cruft) - non_globs)
 
 
 def _get_deleted_files(template_dir: Path, project_dir: Path):
