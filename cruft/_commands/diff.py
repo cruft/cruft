@@ -11,7 +11,10 @@ from .utils.iohelper import AltTemporaryDirectory
 
 
 def diff(
-    project_dir: Path = Path("."), exit_code: bool = False, checkout: Optional[str] = None
+    project_dir: Path = Path("."),
+    exit_code: bool = False,
+    checkout: Optional[str] = None,
+    accept_hooks: Optional[bool] = None,
 ) -> bool:
     """Show the diff between the project and the linked Cookiecutter template"""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -25,6 +28,11 @@ def diff(
         directory = str(Path("repo") / directory)
     else:
         directory = "repo"
+
+    if accept_hooks is None:
+        accept_hooks_bool = cruft_state.get("accept_hooks", True)
+    else:
+        accept_hooks_bool = accept_hooks
 
     with AltTemporaryDirectory(directory) as tmpdir_:
         tmpdir = Path(tmpdir_)
@@ -45,6 +53,7 @@ def diff(
                 output_dir=remote_template_dir,
                 repo=repo,
                 cruft_state=cruft_state,
+                accept_hooks=accept_hooks_bool,
                 project_dir=project_dir,
                 checkout=checkout,
                 update_deleted_paths=True,

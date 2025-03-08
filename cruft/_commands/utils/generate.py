@@ -26,6 +26,7 @@ def cookiecutter_template(
     output_dir: Path,
     repo: Repo,
     cruft_state: CruftState,
+    accept_hooks: bool,
     project_dir: Path = Path("."),
     cookiecutter_input: bool = False,
     checkout: Optional[str] = None,
@@ -43,7 +44,7 @@ def cookiecutter_template(
 
     assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
     context = _generate_output(
-        cruft_state, commit, Path(repo.working_dir), cookiecutter_input, output_dir
+        cruft_state, commit, Path(repo.working_dir), cookiecutter_input, output_dir, accept_hooks
     )
 
     # Get all paths that we are supposed to skip before generating the diff and applying updates
@@ -70,6 +71,7 @@ def _generate_output(
     project_dir: Path,
     cookiecutter_input: bool,
     output_dir: Path,
+    accept_hooks: bool,
 ) -> CookiecutterContext:
     inner_dir = project_dir / (cruft_state.get("directory") or "")
 
@@ -96,7 +98,11 @@ def _generate_output(
     with AltTemporaryDirectory(cruft_state.get("directory")) as tmpdir:
         # Kindly ask cookiecutter to generate the template
         template_dir = generate_files(
-            repo_dir=inner_dir, context=new_context, overwrite_if_exists=True, output_dir=tmpdir
+            repo_dir=inner_dir,
+            context=new_context,
+            overwrite_if_exists=True,
+            output_dir=tmpdir,
+            accept_hooks=accept_hooks,
         )
         template_dir = Path(template_dir)
 

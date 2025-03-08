@@ -111,6 +111,7 @@ def create(
     skip: Optional[List[str]] = typer.Option(
         None, "--skip", show_default=False, help="Default files/pattern to skip on update"
     ),
+    accept_hooks: bool = typer.Option(True, "--accept-hooks", help="Accept pre/post hooks"),
 ) -> None:
     _commands.create(
         template_git_url,
@@ -124,6 +125,7 @@ def create(
         checkout=checkout,
         overwrite_if_exists=overwrite_if_exists,
         skip=skip,
+        accept_hooks=accept_hooks,
     )
 
 
@@ -284,6 +286,7 @@ def update(
         writable=False,
         readable=True,
     ),
+    accept_hooks: bool = typer.Option(True, "--accept-hooks", help="Accept pre/post hooks"),
 ) -> None:
     if not _commands.update(
         project_dir=project_dir,
@@ -297,6 +300,7 @@ def update(
         allow_untracked_files=allow_untracked_files,
         extra_context=json.loads(extra_context),
         extra_context_file=extra_context_file,
+        accept_hooks=accept_hooks,
     ):
         raise typer.Exit(1)
 
@@ -318,6 +322,9 @@ def diff(
         "-c",
         help=("The git reference to check against. Supports branches, tags and commit hashes."),
     ),
+    accept_hooks: bool = typer.Option(True, "--accept-hooks", help="Accept pre/post hooks"),
 ) -> None:
-    if not _commands.diff(project_dir=project_dir, exit_code=exit_code, checkout=checkout):
+    if not _commands.diff(
+        project_dir=project_dir, exit_code=exit_code, checkout=checkout, accept_hooks=accept_hooks
+    ):
         raise typer.Exit(1)

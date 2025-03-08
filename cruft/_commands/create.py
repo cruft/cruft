@@ -21,6 +21,7 @@ def create(
     checkout: Optional[str] = None,
     overwrite_if_exists: bool = False,
     skip: Optional[List[str]] = None,
+    accept_hooks: bool = True,
 ) -> Path:
     """Expand a Git based Cookiecutter template into a new project on disk."""
     template_git_url = utils.cookiecutter.resolve_template_url(template_git_url)
@@ -52,6 +53,7 @@ def create(
                 context=context,
                 overwrite_if_exists=overwrite_if_exists,
                 output_dir=str(output_dir),
+                accept_hooks=accept_hooks,
             )
         )
 
@@ -61,6 +63,7 @@ def create(
             "checkout": checkout,
             "context": context,
             "directory": directory,
+            "accept_hooks": accept_hooks,
         }
 
         if skip:

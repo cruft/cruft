@@ -59,6 +59,7 @@ def link(
                     "checkout": checkout,
                     "context": context,
                     "directory": directory,
+                    "accept_hooks": True,
                 }
             )
         )

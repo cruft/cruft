@@ -62,6 +62,32 @@ def test_create_stores_checkout_value(value, tmpdir):
     )
 
 
+def test_create_with_hooks(tmpdir):
+    tmpdir.chdir()
+    accept_hooks = True
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        accept_hooks=accept_hooks,
+    )
+
+    assert json.load((tmpdir / "test" / ".cruft.json").open("r"))["accept_hooks"] == accept_hooks
+
+
+def test_create_without_hooks(tmpdir):
+    tmpdir.chdir()
+    accept_hooks = False
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        accept_hooks=accept_hooks,
+    )
+
+    assert json.load((tmpdir / "test" / ".cruft.json").open("r"))["accept_hooks"] == accept_hooks
+
+
 @pytest.mark.parametrize("value", ["main", None])
 def test_link_stores_checkout_value(value, tmpdir):
     project_dir = Path(tmpdir)
@@ -148,6 +174,33 @@ def test_update_locally_cloned_template(tmpdir):
         json.loads(utils.cruft.get_cruft_file(repo_dir).read_text())["template"]
         == cookiecutter_repo
     )
+
+
+def test_update_with_hooks(tmpdir):
+    tmpdir.chdir()
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        checkout="initial",
+    )
+    project_dir = tmpdir / "test"
+    assert cruft.update(Path(project_dir), checkout="updated", accept_hooks=False)
+    assert not json.load((project_dir / ".cruft.json").open("r"))["accept_hooks"]
+
+
+def test_update_without_hooks(tmpdir):
+    tmpdir.chdir()
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        checkout="initial",
+        accept_hooks=False,
+    )
+    project_dir = tmpdir / "test"
+    assert cruft.update(Path(project_dir), checkout="updated", accept_hooks=True)
+    assert json.load((project_dir / ".cruft.json").open("r"))["accept_hooks"]
 
 
 def test_relative_repo_check(tmpdir):
@@ -339,3 +392,25 @@ def test_diff_git_subdir(capfd, tmpdir):
     )
 
     assert cruft.update(project_dir, checkout="updated")
+
+
+def test_diff_with_hooks(tmpdir):
+    tmpdir.chdir()
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        checkout="initial",
+    )
+    assert cruft.diff(Path(tmpdir / "test"), checkout="updated", accept_hooks=True)
+
+
+def test_diff_without_hooks(tmpdir):
+    tmpdir.chdir()
+    cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        output_dir=Path(tmpdir),
+        directory="dir",
+        checkout="initial",
+    )
+    assert cruft.diff(Path(tmpdir / "test"), checkout="updated", accept_hooks=False)

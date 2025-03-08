@@ -25,6 +25,7 @@ def update(
     allow_untracked_files: bool = False,
     extra_context: Optional[Dict[str, Any]] = None,
     extra_context_file: Optional[Path] = None,
+    accept_hooks: Optional[bool] = None,
 ) -> bool:
     """Update specified project's cruft to the latest and greatest release."""
     cruft_file = utils.cruft.get_cruft_file(project_dir)
@@ -70,6 +71,12 @@ def update(
         template_git_str = cruft_state["template"]
     else:
         template_git_str = utils.cookiecutter.resolve_template_url(str(template_path))
+
+    if accept_hooks is None:
+        accept_hooks_bool = cruft_state.get("accept_hooks", True)
+    else:
+        accept_hooks_bool = accept_hooks
+
     with AltTemporaryDirectory(directory) as tmpdir_:
         # Initial setup
         tmpdir = Path(tmpdir_)
@@ -104,6 +111,7 @@ def update(
                 checkout=cruft_state["commit"],
                 deleted_paths=deleted_paths,
                 update_deleted_paths=True,
+                accept_hooks=accept_hooks_bool,
             )
             # Remove private variables from cruft_state to refresh their values
             # from the cookiecutter template config
@@ -124,6 +132,7 @@ def update(
                 cookiecutter_input=cookiecutter_input,
                 checkout=last_commit,
                 deleted_paths=deleted_paths,
+                accept_hooks=accept_hooks_bool,
             )
 
         # Given the two versions of the cookiecutter outputs based
@@ -142,6 +151,7 @@ def update(
             cruft_state["commit"] = last_commit
             cruft_state["checkout"] = checkout
             cruft_state["context"] = new_context
+            cruft_state["accept_hooks"] = accept_hooks_bool
             cruft_file.write_text(utils.cruft.json_dumps(cruft_state))
             typer.secho(
                 "Good work! Project's cruft has been updated and is as clean as possible!",
