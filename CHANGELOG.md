@@ -33,8 +33,8 @@ See [Release 2.16.0 on Github](https://github.com/cruft/cruft/releases/tag/2.16.
 - [Implemented #172](https://github.com/cruft/cruft/issues/172): Add support for local extensions
 
 ## 2.12.0 - 28 December 2022
-- Uncapped version requirements (including Python) for greater compatiblity
-- [Fixed issue #166](https://github.com/cruft/cruft/issues/166): Fixed compatiblity with latest version of cookiecutter
+- Uncapped version requirements (including Python) for greater compatibility
+- [Fixed issue #166](https://github.com/cruft/cruft/issues/166): Fixed compatibility with latest version of cookiecutter
 - [Implemented #184](https://github.com/cruft/cruft/issues/184): Store checkout parameter when using link command
 - Improvements to update command
 
@@ -89,7 +89,7 @@ See [Release 2.16.0 on Github](https://github.com/cruft/cruft/releases/tag/2.16.
 - [Fixed issue #56](https://github.com/cruft/cruft/issues/56): Improve error message when providing incorrect credentials
 
 ## 2.3.0 - 16 August 2020
-- [Fixed issue #46](https://github.com/cruft/cruft/issues/46): Cruft update fails to apply without providing conflits to resolve manually
+- [Fixed issue #46](https://github.com/cruft/cruft/issues/46): Cruft update fails to apply without providing conflicts to resolve manually
 
 ## 2.2.0 - 16 August 2020
 - [Fixed issue #44](https://github.com/cruft/cruft/issues/44): Cruft update can drop changes
@@ -99,7 +99,7 @@ See [Release 2.16.0 on Github](https://github.com/cruft/cruft/releases/tag/2.16.
 
 ## 2.0.0 - 12 August 2020
 - [Implemented #31](https://github.com/cruft/cruft/issues/31): Moved from hug -> typer and refactored Python API.
-- [Implemented #39](https://github.com/cruft/cruft/issues/39): Simplify internals by fully droping Windows support beyond WSL.
+- [Implemented #39](https://github.com/cruft/cruft/issues/39): Simplify internals by fully dropping Windows support beyond WSL.
 - [Fixed issue #7](https://github.com/cruft/cruft/issues/7): Incorrect CLI help documentation.
 - [Fixed issue #23](https://github.com/cruft/cruft/issues/23): Relative paths not supported.
 

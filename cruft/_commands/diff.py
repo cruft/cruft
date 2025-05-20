@@ -80,7 +80,7 @@ def diff(
                 # exist anymore.
                 typer.echo(diff, nl=False)
             else:
-                # We're outputing the diff to a real user. We can delegate the job
+                # We're outputting the diff to a real user. We can delegate the job
                 # to git diff so that they can benefit from coloration and paging.
                 # Ouputing absolute paths is less of a concern although it would be
                 # better to find a way to make git shrink those paths.
