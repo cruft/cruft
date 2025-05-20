@@ -24,6 +24,13 @@ pyproject = ["toml"]
 [project.scripts]
 cruft = "cruft._cli:app"
 
+[tool.codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = '.git*,*.lock,data.txt'
+check-hidden = true
+# ignore-regex = ''
+ignore-words-list = 'dne'
+
 [tool.cruft]
 skip = ["cruft/__init__.py", "tests"]
 
