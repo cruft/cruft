@@ -34,6 +34,26 @@ Many project template utilities exist that automate the copying and pasting of c
 
 cruft is different. It automates the creation of new projects like the others, but then it also helps you to manage the boilerplate through the life of the project. cruft makes sure your code stays in-sync with the template it came from for you.
 
+## How Cruft Works
+
+Cruft helps keep your project in sync with its template by automating the update and check process. Here’s a high-level overview of how cruft works internally:
+
+1. **Project Generation in Temporary Directories**
+   - Cruft generates a copy of your project’s template in a temporary directory using the commit hash stored in your project’s `.cruft.json` file. This represents the current state of your project as last updated from the template.
+   - It then generates another copy of the template in a separate temporary directory, using either the latest commit from the template repository or a specific commit provided via the command line. This represents the desired state after update.
+
+2. **Skipping and Deleting Files**
+   - Before creating a diff, cruft processes the list of files to skip (as defined in `.cruft.json` or `pyproject.toml`).
+   - Files and patterns listed in the skip section are removed from both temporary directories. This ensures that files you want to ignore (such as local customizations or files not managed by the template) are not included in the diff or update process.
+
+3. **Creating a Patch with git diff**
+   - Cruft runs `git diff` between the two temporary directories. This generates a patch file that describes the changes needed to bring your project up to date with the latest template version (excluding skipped files).
+
+4. **Applying the Patch with git apply**
+   - Cruft applies the generated patch to your actual project directory using `git apply`. This updates your project files to match the latest template, while preserving your own code and any skipped files.
+
+This workflow allows cruft to safely and efficiently update your project, making it easy to stay in sync with upstream template changes while respecting your customizations and skipped files.
+
 ## Key Features
 
 * **Cookiecutter Compatible**: cruft utilizes [Cookiecutter](https://github.com/cookiecutter/cookiecutter) as its template expansion engine. Meaning it retains full compatibility with all existing [Cookiecutter](https://github.com/cookiecutter/cookiecutter) templates.
@@ -48,7 +68,7 @@ To get started - install `cruft` using a Python package manager:
 
 OR
 
-`poetry add cruft`
+`uv pip install cruft`
 
 OR
 
@@ -259,3 +279,34 @@ they encouraged more code to be copied and pasted! Then, over time, you could ea
 I hope you too find `cruft` useful!
 
 ~Timothy Crosley
+
+## Troubleshooting & FAQ
+
+### What kinds of changes will cruft have trouble resolving?
+Cruft works best with straightforward template updates. It may struggle with:
+- File renames or moves (since git diff/patch cannot automatically map renamed files).
+- Large refactors or structural changes in the template.
+- Binary files or files with complex merge conflicts.
+
+### How do I handle file renames or moves?
+If a file is renamed or moved in the template, manually perform the rename/move in your project before running `cruft update`. Alternatively, add the old or new file path to the skip list in `.cruft.json` or `pyproject.toml` to avoid patching issues.
+
+### How do I skip troublesome files?
+Add file paths or glob patterns to the `skip` section in `.cruft.json` or `[tool.cruft] skip` in `pyproject.toml`. This prevents cruft from updating or patching those files.
+
+### Tips for manually applying a .rej file
+If `git apply` fails, it may produce a `.rej` file containing rejected patch hunks. To resolve:
+- Open the `.rej` file and review the changes.
+- Manually apply the changes to your project files.
+- Remove the `.rej` file after resolving.
+
+### How do I handle changed default values in a cookiecutter recipe?
+If the template’s default values change, update your `.cruft.json` or use `cruft update --variables-to-update` to specify new values. Review the template documentation for variable changes.
+
+### Why are diffs missing or not detected?
+Possible reasons:
+- Skipped files: If a file is listed in the skip section, it will not appear in the diff.
+- Changed defaults: If template variables are not updated, changes may not be reflected.
+- File moves/renames: Cruft cannot detect diffs for files that have been moved or renamed unless handled manually.
+
+If you suspect missing diffs, review your skip configuration and template variable values.

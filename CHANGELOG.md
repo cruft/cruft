@@ -7,7 +7,7 @@ To install the latest version of cruft simply run:
 
 OR
 
-`poetry add cruft`
+`uv pip install cruft`
 
 OR
 
