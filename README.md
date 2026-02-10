@@ -279,3 +279,34 @@ they encouraged more code to be copied and pasted! Then, over time, you could ea
 I hope you too find `cruft` useful!
 
 ~Timothy Crosley
+
+## Troubleshooting & FAQ
+
+### What kinds of changes will cruft have trouble resolving?
+Cruft works best with straightforward template updates. It may struggle with:
+- File renames or moves (since git diff/patch cannot automatically map renamed files).
+- Large refactors or structural changes in the template.
+- Binary files or files with complex merge conflicts.
+
+### How do I handle file renames or moves?
+If a file is renamed or moved in the template, manually perform the rename/move in your project before running `cruft update`. Alternatively, add the old or new file path to the skip list in `.cruft.json` or `pyproject.toml` to avoid patching issues.
+
+### How do I skip troublesome files?
+Add file paths or glob patterns to the `skip` section in `.cruft.json` or `[tool.cruft] skip` in `pyproject.toml`. This prevents cruft from updating or patching those files.
+
+### Tips for manually applying a .rej file
+If `git apply` fails, it may produce a `.rej` file containing rejected patch hunks. To resolve:
+- Open the `.rej` file and review the changes.
+- Manually apply the changes to your project files.
+- Remove the `.rej` file after resolving.
+
+### How do I handle changed default values in a cookiecutter recipe?
+If the template’s default values change, update your `.cruft.json` or use `cruft update --variables-to-update` to specify new values. Review the template documentation for variable changes.
+
+### Why are diffs missing or not detected?
+Possible reasons:
+- Skipped files: If a file is listed in the skip section, it will not appear in the diff.
+- Changed defaults: If template variables are not updated, changes may not be reflected.
+- File moves/renames: Cruft cannot detect diffs for files that have been moved or renamed unless handled manually.
+
+If you suspect missing diffs, review your skip configuration and template variable values.
