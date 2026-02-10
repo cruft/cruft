@@ -48,7 +48,7 @@ To get started - install `cruft` using a Python package manager:
 
 OR
 
-`poetry add cruft`
+`uv pip install cruft`
 
 OR
 
