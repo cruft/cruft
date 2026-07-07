@@ -15,6 +15,8 @@ def _git_diff(*args: str) -> List[str]:
         "git",
         "-c",
         "diff.noprefix=",
+        "-c",
+        "diff.mnemonicprefix=false",
         "diff",
         "--no-index",
         "--relative",
