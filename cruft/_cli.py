@@ -53,6 +53,7 @@ def check(
             typer.secho("Failure! Project is not up-to-date.", fg=typer.colors.RED, err=True)
         raise typer.Exit(1)
 
+
 @app.command(
     short_help="Create a new project from a Cookiecutter template",
     help=_get_help_string(_commands.create),
