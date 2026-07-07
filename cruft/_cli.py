@@ -39,8 +39,18 @@ def check(
             " commit is an ancestor of the project commit."
         ),
     ),
+    # 1. 這裡是你新增加的命令列參數開關！
+    quiet: bool = typer.Option(
+        False,
+        "--quiet",
+        "-q",
+        help="If enabled, suppresses the error output and exits silently.",
+    ),
 ) -> None:
     if not _commands.check(project_dir=project_dir, checkout=checkout, strict=strict):
+        # 2. 這裡加上你的邏輯判斷：如果使用者「沒有」開靜音，我們才印出提示（這裡專案原本沒寫提示，但我們可以保留擴充性）
+        if not quiet:
+            typer.secho("Failure! Project is not up-to-date.", fg=typer.colors.RED, err=True)
         raise typer.Exit(1)
 
 
