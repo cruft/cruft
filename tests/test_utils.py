@@ -191,3 +191,29 @@ def test_remove_paths_with_get_skip_paths_from_cruft_state_and_pyproject_toml(tm
 
     assert not (repo0 / ".mypy_cache").exists()
     assert not (repo0 / ".ruff_cache").exists()
+
+
+def test_example_import_tolerates_polluted_examples(monkeypatch):
+    """A third-party top-level ``examples`` package must not break imports (#339)."""
+    import importlib
+    import sys
+    import types
+
+    class BoomExamples(types.ModuleType):
+        def __getattr__(self, name):
+            raise OSError("Can't connect to MySQL server on '127.0.0.1'")
+
+    monkeypatch.setitem(sys.modules, "examples", BoomExamples("examples"))
+
+    # Re-import utils so the try/except runs against the polluted package.
+    for name in list(sys.modules):
+        if name == "cruft._commands.utils" or name.startswith("cruft._commands.utils."):
+            del sys.modules[name]
+
+    utils_reloaded = importlib.import_module("cruft._commands.utils")
+
+    @utils_reloaded.example()
+    def sample():
+        return 42
+
+    assert sample() == 42
