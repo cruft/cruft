@@ -11,7 +11,7 @@ from git import Repo
 
 from .cookiecutter import CookiecutterContext, generate_cookiecutter_context
 from .cruft import CruftState
-from .iohelper import AltTemporaryDirectory
+from .iohelper import AltTemporaryDirectory, forget_modules_under
 
 if not sys.version_info >= (3, 11):
     try:
@@ -42,6 +42,9 @@ def cookiecutter_template(
     repo.submodule_update(recursive=True, force_reset=True)
 
     assert repo.working_dir is not None  # nosec B101 (allow assert for type checking)
+    # update and diff render two commits from this working tree in one process. Without
+    # this, the second commit would get the local extensions the first one imported.
+    forget_modules_under(Path(repo.working_dir))
     context = _generate_output(
         cruft_state, commit, Path(repo.working_dir), cookiecutter_input, output_dir
     )
