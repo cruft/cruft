@@ -748,6 +748,101 @@ def test_local_extension_update(cruft_runner, cookiecutter_dir_extensions):
         assert "Updated11" in f.read()
 
 
+def _commit_extension_template(template_dir, extensions, filter_results, readme):
+    """Write a template with one Jinja filter per extension in local_extensions, and commit it."""
+    module = ["from jinja2.ext import Extension\n"]
+    for extension, (filter_name, result) in zip(extensions, filter_results.items()):
+        module.append(
+            f"""
+class {extension}(Extension):
+    def __init__(self, environment):
+        super().__init__(environment)
+        environment.filters["{filter_name}"] = lambda value: "{result}"
+"""
+        )
+    (template_dir / "local_extensions.py").write_text("".join(module))
+    (template_dir / "cookiecutter.json").write_text(
+        json.dumps(
+            {
+                "name": "project",
+                "_extensions": [f"local_extensions.{extension}" for extension in extensions],
+            }
+        )
+    )
+    project_dir = template_dir / "{{cookiecutter.name}}"
+    project_dir.mkdir(exist_ok=True)
+    (project_dir / "README.md").write_text(readme)
+    run(["git", "add", "-A"], cwd=template_dir, check=True)  # nosec
+    run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-qm", "commit"],
+        cwd=template_dir,
+        check=True,
+    )  # nosec
+
+
+@pytest.fixture
+def extension_template_dir(tmp_path):
+    template_dir = tmp_path / "template"
+    template_dir.mkdir()
+    run(["git", "init", "-q"], cwd=template_dir, check=True)  # nosec
+    yield template_dir
+
+
+def _create_git_project(template_dir, tmp_path):
+    project_dir = Path(cruft.create(str(template_dir), tmp_path / "output", no_input=True))
+    run(["git", "init", "-q"], cwd=project_dir, check=True)  # nosec
+    run(["git", "add", "-A"], cwd=project_dir, check=True)  # nosec
+    run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-qm", "commit"],
+        cwd=project_dir,
+        check=True,
+    )  # nosec
+    return project_dir
+
+
+def test_local_extension_update_adds_extension(cruft_runner, extension_template_dir, tmp_path):
+    _commit_extension_template(
+        extension_template_dir,
+        ["FirstExtension"],
+        {"first": "old"},
+        "{{ cookiecutter.name | first }}\n",
+    )
+    project_dir = _create_git_project(extension_template_dir, tmp_path)
+    _commit_extension_template(
+        extension_template_dir,
+        ["FirstExtension", "SecondExtension"],
+        {"first": "old", "second": "new"},
+        "{{ cookiecutter.name | second }}\n",
+    )
+
+    result = cruft_runner(["update", "--project-dir", str(project_dir), "--skip-apply-ask"])
+
+    assert result.exit_code == 0, result.output
+    assert (project_dir / "README.md").read_text() == "new\n"
+
+
+def test_local_extension_update_changes_extension(cruft_runner, extension_template_dir, tmp_path):
+    # Same length, so bytecode cached for the old source could also pass for the new one.
+    _commit_extension_template(
+        extension_template_dir,
+        ["FirstExtension"],
+        {"first": "old"},
+        "{{ cookiecutter.name | first }}\n",
+    )
+    project_dir = _create_git_project(extension_template_dir, tmp_path)
+    _commit_extension_template(
+        extension_template_dir,
+        ["FirstExtension"],
+        {"first": "new"},
+        "{{ cookiecutter.name | first }}\n",
+    )
+
+    result = cruft_runner(["update", "--project-dir", str(project_dir), "--skip-apply-ask"])
+
+    assert result.exit_code == 0, result.output
+    assert (project_dir / "README.md").read_text() == "new\n"
+
+
 def test_local_extension_without_dir(cruft_runner, cookiecutter_no_dir_extensions):
     result = cruft_runner(
         [
